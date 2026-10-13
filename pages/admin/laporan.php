@@ -1,5 +1,101 @@
-<?php $role='admin';$active='laporan';$pageTitle='Laporan Keuangan';$pageDescription='Lihat ringkasan arus kas semua grup dan siapkan ekspor laporan.';$content=<<<'HTML'
-<section class="content-card"><div class="content-card-header"><div><h3>Filter Laporan</h3><p>Pilih periode dan grup untuk melihat rekap.</p></div></div><div class="report-filters"><select><option>Semua Grup</option><option>Angkatan 2025</option><option>Angkatan 2024</option><option>Angkatan 2023</option></select><input type="date" value="2026-10-01"><input type="date" value="2026-10-31"><button class="btn btn-primary" data-demo-action="Filter laporan akan aktif setelah data backend tersedia.">Tampilkan</button><button class="btn btn-outline" data-demo-action="Ekspor PDF memerlukan backend/library PDF.">Ekspor PDF</button><button class="btn btn-outline" data-demo-action="Ekspor XLSX memerlukan backend/library XLSX.">Ekspor XLSX</button></div></section>
-<div class="stats-grid"><article class="stat-card"><div class="stat-top">Total Pemasukan <span class="stat-icon green">↙</span></div><div class="stat-value">Rp 8,6 jt</div><div class="stat-foot">Periode terpilih</div></article><article class="stat-card"><div class="stat-top">Total Pengeluaran <span class="stat-icon orange">↗</span></div><div class="stat-value">Rp 3,2 jt</div><div class="stat-foot">Periode terpilih</div></article><article class="stat-card"><div class="stat-top">Saldo Bersih <span class="stat-icon">Rp</span></div><div class="stat-value">Rp 5,4 jt</div><div class="stat-foot">Pemasukan dikurangi pengeluaran</div></article><article class="stat-card"><div class="stat-top">Transaksi <span class="stat-icon purple">▤</span></div><div class="stat-value">74</div><div class="stat-foot">Semua grup</div></article></div>
-<section class="content-card"><div class="content-card-header"><div><h3>Ringkasan Arus Kas</h3><p>Visualisasi contoh pemasukan dan pengeluaran per bulan.</p></div><div class="legend"><span>Pemasukan</span><span class="legend-current">Pengeluaran</span></div></div><div class="mini-bars"><div class="bar-item"><div class="bar" style="height:60%"></div><div class="bar current" style="height:28%"></div><small>Jul</small></div><div class="bar-item"><div class="bar" style="height:78%"></div><div class="bar current" style="height:35%"></div><small>Agu</small></div><div class="bar-item"><div class="bar" style="height:54%"></div><div class="bar current" style="height:22%"></div><small>Sep</small></div><div class="bar-item"><div class="bar" style="height:90%"></div><div class="bar current" style="height:45%"></div><small>Okt</small></div><div class="bar-item"><div class="bar" style="height:42%"></div><div class="bar current" style="height:18%"></div><small>Nov</small></div><div class="bar-item"><div class="bar" style="height:65%"></div><div class="bar current" style="height:30%"></div><small>Des</small></div></div></section>
-HTML; require '../../components/layout.php';
+
+<?php
+$role = 'admin';
+$active = 'laporan';
+$pageTitle = 'Laporan Keuangan';
+$pageDescription = 'Lihat ringkasan arus kas semua grup dan siapkan ekspor laporan.';
+$content = <<<'HTML'
+<section class="content-card">
+    <div class="content-card-header">
+        <div>
+            <h3>Filter Laporan</h3>
+            <p>Pilih periode dan grup untuk melihat rekap.</p>
+        </div>
+    </div>
+
+    <div class="report-filters">
+        <select>
+            <option>Semua Grup</option>
+            <option>Angkatan 2025</option>
+            <option>Angkatan 2024</option>
+            <option>Angkatan 2023</option>
+        </select>
+        <input type="date" value="2026-10-01">
+        <input type="date" value="2026-10-31">
+        <button class="btn btn-primary" data-demo-action="Filter laporan akan aktif setelah data backend tersedia.">Tampilkan</button>
+        <button class="btn btn-outline" data-demo-action="Ekspor PDF memerlukan backend/library PDF.">Ekspor PDF</button>
+        <button class="btn btn-outline" data-demo-action="Ekspor XLSX memerlukan backend/library XLSX.">Ekspor XLSX</button>
+    </div>
+</section>
+
+<div class="stats-grid">
+    <article class="stat-card">
+        <div class="stat-top">Total Pemasukan <span class="stat-icon green">↙</span></div>
+        <div class="stat-value">Rp 8,6 jt</div>
+        <div class="stat-foot">Periode terpilih</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-top">Total Pengeluaran <span class="stat-icon orange">↗</span></div>
+        <div class="stat-value">Rp 3,2 jt</div>
+        <div class="stat-foot">Periode terpilih</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-top">Saldo Bersih <span class="stat-icon">Rp</span></div>
+        <div class="stat-value">Rp 5,4 jt</div>
+        <div class="stat-foot">Pemasukan dikurangi pengeluaran</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-top">Transaksi <span class="stat-icon purple">▤</span></div>
+        <div class="stat-value">74</div>
+        <div class="stat-foot">Semua grup</div>
+    </article>
+</div>
+
+<section class="content-card">
+    <div class="content-card-header">
+        <div>
+            <h3>Ringkasan Arus Kas</h3>
+            <p>Visualisasi contoh pemasukan dan pengeluaran per bulan.</p>
+        </div>
+        <div class="legend">
+            <span>Pemasukan</span>
+            <span class="legend-current">Pengeluaran</span>
+        </div>
+    </div>
+
+    <div class="mini-bars">
+        <div class="bar-item">
+            <div class="bar" style="height:60%"></div>
+            <div class="bar current" style="height:28%"></div>
+            <small>Jul</small>
+        </div>
+        <div class="bar-item">
+            <div class="bar" style="height:78%"></div>
+            <div class="bar current" style="height:35%"></div>
+            <small>Agu</small>
+        </div>
+        <div class="bar-item">
+            <div class="bar" style="height:54%"></div>
+            <div class="bar current" style="height:22%"></div>
+            <small>Sep</small>
+        </div>
+        <div class="bar-item">
+            <div class="bar" style="height:90%"></div>
+            <div class="bar current" style="height:45%"></div>
+            <small>Okt</small>
+        </div>
+        <div class="bar-item">
+            <div class="bar" style="height:42%"></div>
+            <div class="bar current" style="height:18%"></div>
+            <small>Nov</small>
+        </div>
+        <div class="bar-item">
+            <div class="bar" style="height:65%"></div>
+            <div class="bar current" style="height:30%"></div>
+            <small>Des</small>
+        </div>
+    </div>
+</section>
+HTML;
+
+require '../../components/layout.php';

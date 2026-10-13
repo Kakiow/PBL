@@ -1,7 +1,97 @@
-<?php $role='bendahara';$active='verifikasi';$pageTitle='Verifikasi Pembayaran';$pageDescription='Tinjau bukti bayar anggota sebelum pemasukan dicatat.';$content=<<<'HTML'
-<section class="content-card"><div class="content-card-header"><div><h3>Menunggu Verifikasi</h3><p>5 pembayaran menunggu pemeriksaan.</p></div><span class="status pending">5 Menunggu</span></div><div class="table-tools"><input class="table-search" data-filter-table="#verify-table" placeholder="Cari nama anggota..."></div><div class="table-wrap"><table id="verify-table"><thead><tr><th>Anggota</th><th>Tagihan</th><th>Tanggal Bayar</th><th>Nominal</th><th>Metode</th><th>Aksi</th></tr></thead><tbody>
-<tr><td><div class="person-cell"><span class="person-avatar">DP</span><span><strong>Dinda Putri</strong><small>dinda25</small></span></div></td><td>Kas Oktober</td><td>10 Okt 2026</td><td>Rp 50.000</td><td>Transfer</td><td><button class="table-action" data-demo-action="Fitur lihat bukti perlu URL file dari backend.">Lihat bukti</button> <button class="table-action" data-demo-action="Pembayaran belum diverifikasi.">Verifikasi</button></td></tr>
-<tr><td><div class="person-cell"><span class="person-avatar">AF</span><span><strong>Ahmad Fauzi</strong><small>ahmad25</small></span></div></td><td>Kas Oktober</td><td>10 Okt 2026</td><td>Rp 50.000</td><td>Transfer</td><td><button class="table-action" data-demo-action="Fitur lihat bukti perlu URL file dari backend.">Lihat bukti</button> <button class="table-action" data-demo-action="Pembayaran belum diverifikasi.">Verifikasi</button></td></tr>
-<tr><td><div class="person-cell"><span class="person-avatar">SR</span><span><strong>Salsa Rahma</strong><small>salsa25</small></span></div></td><td>Kas Oktober</td><td>09 Okt 2026</td><td>Rp 50.000</td><td>Tunai</td><td><button class="table-action" data-demo-action="Fitur lihat bukti perlu URL file dari backend.">Lihat bukti</button> <button class="table-action" data-demo-action="Pembayaran belum diverifikasi.">Verifikasi</button></td></tr>
-</tbody></table></div></section>
-HTML; require '../../components/layout.php';
+
+<?php
+$role = 'bendahara';
+$active = 'verifikasi';
+$pageTitle = 'Verifikasi Pembayaran';
+$pageDescription = 'Tinjau bukti bayar anggota sebelum pemasukan dicatat.';
+$content = <<<'HTML'
+<section class="content-card">
+    <div class="content-card-header">
+        <div>
+            <h3>Menunggu Verifikasi</h3>
+            <p>5 pembayaran menunggu pemeriksaan.</p>
+        </div>
+        <span class="status pending">5 Menunggu</span>
+    </div>
+
+    <div class="table-tools">
+        <input class="table-search" data-filter-table="#verify-table" placeholder="Cari nama anggota...">
+    </div>
+
+    <div class="table-wrap">
+        <table id="verify-table">
+            <thead>
+                <tr>
+                    <th>Anggota</th>
+                    <th>Tagihan</th>
+                    <th>Tanggal Bayar</th>
+                    <th>Nominal</th>
+                    <th>Metode</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="person-cell">
+                            <span class="person-avatar">DP</span>
+                            <span>
+                                <strong>Dinda Putri</strong>
+                                <small>dinda25</small>
+                            </span>
+                        </div>
+                    </td>
+                    <td>Kas Oktober</td>
+                    <td>10 Okt 2026</td>
+                    <td>Rp 50.000</td>
+                    <td>Transfer</td>
+                    <td>
+                        <button class="table-action" data-demo-action="Fitur lihat bukti perlu URL file dari backend.">Lihat bukti</button>
+                        <button class="table-action" data-demo-action="Pembayaran belum diverifikasi.">Verifikasi</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="person-cell">
+                            <span class="person-avatar">AF</span>
+                            <span>
+                                <strong>Ahmad Fauzi</strong>
+                                <small>ahmad25</small>
+                            </span>
+                        </div>
+                    </td>
+                    <td>Kas Oktober</td>
+                    <td>10 Okt 2026</td>
+                    <td>Rp 50.000</td>
+                    <td>Transfer</td>
+                    <td>
+                        <button class="table-action" data-demo-action="Fitur lihat bukti perlu URL file dari backend.">Lihat bukti</button>
+                        <button class="table-action" data-demo-action="Pembayaran belum diverifikasi.">Verifikasi</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="person-cell">
+                            <span class="person-avatar">SR</span>
+                            <span>
+                                <strong>Salsa Rahma</strong>
+                                <small>salsa25</small>
+                            </span>
+                        </div>
+                    </td>
+                    <td>Kas Oktober</td>
+                    <td>09 Okt 2026</td>
+                    <td>Rp 50.000</td>
+                    <td>Tunai</td>
+                    <td>
+                        <button class="table-action" data-demo-action="Fitur lihat bukti perlu URL file dari backend.">Lihat bukti</button>
+                        <button class="table-action" data-demo-action="Pembayaran belum diverifikasi.">Verifikasi</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+HTML;
+
+require '../../components/layout.php';

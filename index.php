@@ -1,3 +1,4 @@
+
 <?php
 // Prototype frontend KasKelas. Autentikasi backend belum dihubungkan.
 ?>

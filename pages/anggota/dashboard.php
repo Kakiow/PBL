@@ -1,5 +1,130 @@
-<?php $role='anggota';$active='dashboard';$pageTitle='Dashboard';$pageDescription='Lihat informasi grup, kewajiban kas, dan riwayat pembayaran.';$content=<<<'HTML'
-<div class="stats-grid"><article class="stat-card"><div class="stat-top">Grup Saya <span class="stat-icon">▦</span></div><div class="stat-value">Angkatan 2025</div><div class="stat-foot">Grup aktif</div></article><article class="stat-card"><div class="stat-top">Tagihan Aktif <span class="stat-icon orange">▤</span></div><div class="stat-value">1</div><div class="stat-foot">Perlu dibayar</div></article><article class="stat-card"><div class="stat-top">Total Dibayar <span class="stat-icon green">✓</span></div><div class="stat-value">Rp 450.000</div><div class="stat-foot">Akumulasi pembayaran</div></article><article class="stat-card"><div class="stat-top">Status Kas <span class="stat-icon purple">◷</span></div><div class="stat-value">Belum Lunas</div><div class="stat-foot">Kas Oktober 2026</div></article></div>
-<div class="payment-callout"><div><h3>Kas Bulanan Oktober</h3><p>Jatuh tempo 25 Oktober 2026 · Angkatan 2025</p></div><div><div class="amount-highlight">Rp 50.000</div><a class="text-link" href="pembayaran.php">Lanjut pembayaran →</a></div></div>
-<div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h3>Riwayat Pembayaran</h3><p>Status pembayaran kas terakhir.</p></div><a class="text-link" href="pembayaran.php">Lihat semua →</a></div><div class="transaction-list"><div class="transaction-row"><span class="transaction-symbol">✓</span><div class="transaction-info"><strong>Kas September 2026</strong><small>10 Sep 2026 · Transfer</small></div><div class="transaction-amount positive">Rp 50.000<small class="status success">Lunas</small></div></div><div class="transaction-row"><span class="transaction-symbol">✓</span><div class="transaction-info"><strong>Kas Agustus 2026</strong><small>08 Agu 2026 · Transfer</small></div><div class="transaction-amount positive">Rp 50.000<small class="status success">Lunas</small></div></div><div class="transaction-row"><span class="transaction-symbol expense">◷</span><div class="transaction-info"><strong>Kas Oktober 2026</strong><small>Belum melakukan pembayaran</small></div><div class="transaction-amount">Rp 50.000<small class="status pending">Belum bayar</small></div></div></div></section><section class="panel"><div class="panel-heading"><div><h3>Informasi Grup</h3><p>Detail grup keanggotaanmu.</p></div><a class="text-link" href="grup.php">Detail →</a></div><div class="group-card"><span class="group-symbol">25</span><div class="group-main"><strong>Angkatan 2025</strong><small>Grup aktif</small></div></div><div class="transaction-list"><div class="transaction-row"><div class="transaction-info"><strong>Jumlah anggota</strong></div><div class="transaction-amount">32 orang</div></div><div class="transaction-row"><div class="transaction-info"><strong>Bendahara</strong></div><div class="transaction-amount">Rizky Firmansyah</div></div><div class="transaction-row"><div class="transaction-info"><strong>Kas bulanan</strong></div><div class="transaction-amount">Rp 50.000</div></div></div></section></div>
-HTML; require '../../components/layout.php';
+
+<?php
+$role = 'anggota';
+$active = 'dashboard';
+$pageTitle = 'Dashboard';
+$pageDescription = 'Lihat informasi grup, kewajiban kas, dan riwayat pembayaran.';
+$content = <<<'HTML'
+<div class="stats-grid">
+    <article class="stat-card">
+        <div class="stat-top">Grup Saya <span class="stat-icon">▦</span></div>
+        <div class="stat-value">Angkatan 2025</div>
+        <div class="stat-foot">Grup aktif</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-top">Tagihan Aktif <span class="stat-icon orange">▤</span></div>
+        <div class="stat-value">1</div>
+        <div class="stat-foot">Perlu dibayar</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-top">Total Dibayar <span class="stat-icon green">✓</span></div>
+        <div class="stat-value">Rp 450.000</div>
+        <div class="stat-foot">Akumulasi pembayaran</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-top">Status Kas <span class="stat-icon purple">◷</span></div>
+        <div class="stat-value">Belum Lunas</div>
+        <div class="stat-foot">Kas Oktober 2026</div>
+    </article>
+</div>
+
+<div class="payment-callout">
+    <div>
+        <h3>Kas Bulanan Oktober</h3>
+        <p>Jatuh tempo 25 Oktober 2026 · Angkatan 2025</p>
+    </div>
+    <div>
+        <div class="amount-highlight">Rp 50.000</div>
+        <a class="text-link" href="pembayaran.php">Lanjut pembayaran →</a>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <h3>Riwayat Pembayaran</h3>
+                <p>Status pembayaran kas terakhir.</p>
+            </div>
+            <a class="text-link" href="pembayaran.php">Lihat semua →</a>
+        </div>
+
+        <div class="transaction-list">
+            <div class="transaction-row">
+                <span class="transaction-symbol">✓</span>
+                <div class="transaction-info">
+                    <strong>Kas September 2026</strong>
+                    <small>10 Sep 2026 · Transfer</small>
+                </div>
+                <div class="transaction-amount positive">
+                    Rp 50.000
+                    <small class="status success">Lunas</small>
+                </div>
+            </div>
+            <div class="transaction-row">
+                <span class="transaction-symbol">✓</span>
+                <div class="transaction-info">
+                    <strong>Kas Agustus 2026</strong>
+                    <small>08 Agu 2026 · Transfer</small>
+                </div>
+                <div class="transaction-amount positive">
+                    Rp 50.000
+                    <small class="status success">Lunas</small>
+                </div>
+            </div>
+            <div class="transaction-row">
+                <span class="transaction-symbol expense">◷</span>
+                <div class="transaction-info">
+                    <strong>Kas Oktober 2026</strong>
+                    <small>Belum melakukan pembayaran</small>
+                </div>
+                <div class="transaction-amount">
+                    Rp 50.000
+                    <small class="status pending">Belum bayar</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <h3>Informasi Grup</h3>
+                <p>Detail grup keanggotaanmu.</p>
+            </div>
+            <a class="text-link" href="grup.php">Detail →</a>
+        </div>
+
+        <div class="group-card">
+            <span class="group-symbol">25</span>
+            <div class="group-main">
+                <strong>Angkatan 2025</strong>
+                <small>Grup aktif</small>
+            </div>
+        </div>
+
+        <div class="transaction-list">
+            <div class="transaction-row">
+                <div class="transaction-info">
+                    <strong>Jumlah anggota</strong>
+                </div>
+                <div class="transaction-amount">32 orang</div>
+            </div>
+            <div class="transaction-row">
+                <div class="transaction-info">
+                    <strong>Bendahara</strong>
+                </div>
+                <div class="transaction-amount">Rizky Firmansyah</div>
+            </div>
+            <div class="transaction-row">
+                <div class="transaction-info">
+                    <strong>Kas bulanan</strong>
+                </div>
+                <div class="transaction-amount">Rp 50.000</div>
+            </div>
+        </div>
+    </section>
+</div>
+HTML;
+
+require '../../components/layout.php';

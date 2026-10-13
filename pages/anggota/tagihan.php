@@ -1,3 +1,60 @@
-<?php $role='anggota';$active='tagihan';$pageTitle='Kewajiban / Tagihan';$pageDescription='Cek tagihan kas yang perlu dibayar beserta tenggatnya.';$content=<<<'HTML'
-<section class="content-card"><div class="content-card-header"><div><h3>Tagihan Aktif</h3><p>Kewajiban pembayaran untuk Angkatan 2025.</p></div><span class="status pending">1 Belum Lunas</span></div><div class="table-wrap"><table><thead><tr><th>Nama Tagihan</th><th>Nominal</th><th>Terbit</th><th>Jatuh Tempo</th><th>Status</th><th>Aksi</th></tr></thead><tbody><tr><td><strong>Kas Bulanan Oktober 2026</strong></td><td>Rp 50.000</td><td>01 Okt 2026</td><td>25 Okt 2026</td><td><span class="status pending">Belum Bayar</span></td><td><a class="table-action" href="pembayaran.php">Bayar →</a></td></tr><tr><td>Kas Bulanan September 2026</td><td>Rp 50.000</td><td>01 Sep 2026</td><td>25 Sep 2026</td><td><span class="status success">Lunas</span></td><td><button class="table-action" data-demo-action="Bukti pembayaran belum tersedia pada prototype.">Lihat bukti</button></td></tr><tr><td>Iuran Kegiatan September</td><td>Rp 25.000</td><td>15 Sep 2026</td><td>30 Sep 2026</td><td><span class="status success">Lunas</span></td><td><button class="table-action" data-demo-action="Bukti pembayaran belum tersedia pada prototype.">Lihat bukti</button></td></tr></tbody></table></div></section>
-HTML; require '../../components/layout.php';
+
+<?php
+$role = 'anggota';
+$active = 'tagihan';
+$pageTitle = 'Kewajiban / Tagihan';
+$pageDescription = 'Cek tagihan kas yang perlu dibayar beserta tenggatnya.';
+$content = <<<'HTML'
+<section class="content-card">
+    <div class="content-card-header">
+        <div>
+            <h3>Tagihan Aktif</h3>
+            <p>Kewajiban pembayaran untuk Angkatan 2025.</p>
+        </div>
+        <span class="status pending">1 Belum Lunas</span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Tagihan</th>
+                    <th>Nominal</th>
+                    <th>Terbit</th>
+                    <th>Jatuh Tempo</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Kas Bulanan Oktober 2026</strong></td>
+                    <td>Rp 50.000</td>
+                    <td>01 Okt 2026</td>
+                    <td>25 Okt 2026</td>
+                    <td><span class="status pending">Belum Bayar</span></td>
+                    <td><a class="table-action" href="pembayaran.php">Bayar →</a></td>
+                </tr>
+                <tr>
+                    <td>Kas Bulanan September 2026</td>
+                    <td>Rp 50.000</td>
+                    <td>01 Sep 2026</td>
+                    <td>25 Sep 2026</td>
+                    <td><span class="status success">Lunas</span></td>
+                    <td><button class="table-action" data-demo-action="Bukti pembayaran belum tersedia pada prototype.">Lihat bukti</button></td>
+                </tr>
+                <tr>
+                    <td>Iuran Kegiatan September</td>
+                    <td>Rp 25.000</td>
+                    <td>15 Sep 2026</td>
+                    <td>30 Sep 2026</td>
+                    <td><span class="status success">Lunas</span></td>
+                    <td><button class="table-action" data-demo-action="Bukti pembayaran belum tersedia pada prototype.">Lihat bukti</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+HTML;
+
+require '../../components/layout.php';
