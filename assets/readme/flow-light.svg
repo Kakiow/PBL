@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" role="img" aria-labelledby="flowTitleL">
+  <title id="flowTitleL">Alur sistem KasKelas: login, validasi peran, lalu panel kerja sesuai hak akses</title>
+
+  <defs>
+    <style>
+      .ff { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      .title { font-size: 19px; font-weight: 700; fill: #172b4d; }
+      .caption { font-size: 13px; font-weight: 500; fill: #778399; }
+      .pillTxt { font-size: 16px; font-weight: 700; fill: #ffffff; }
+      .roleName { font-size: 14px; font-weight: 700; }
+      .roleMeta { font-size: 11px; font-weight: 500; fill: #8592a8; }
+      .rowTxt { font-size: 13px; font-weight: 500; fill: #33405a; }
+      .link { stroke: #cdd8ea; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+      .arrow { fill: #cdd8ea; }
+      @media (prefers-color-scheme: dark) { }
+    </style>
+    <clipPath id="cardClip"><rect x="0" y="0" width="300" height="252" rx="16"/></clipPath>
+  </defs>
+
+  <text class="ff title" x="600" y="44" text-anchor="middle">Login → Validasi Peran → Panel Kerja Sesuai Hak Akses</text>
+
+  <rect x="490" y="66" width="220" height="54" rx="27" fill="#3268d8"/>
+  <text class="ff pillTxt" x="600" y="100" text-anchor="middle">Masuk / Login</text>
+
+  <path class="link" d="M600 120 V152"/>
+  <path class="link" d="M210 152 H990"/>
+  <path class="link" d="M210 152 V166"/>
+  <path class="link" d="M600 152 V166"/>
+  <path class="link" d="M990 152 V166"/>
+  <polygon class="arrow" points="210,178 201,163 219,163"/>
+  <polygon class="arrow" points="600,178 591,163 609,163"/>
+  <polygon class="arrow" points="990,178 981,163 999,163"/>
+
+  <g transform="translate(60,178)">
+    <rect width="300" height="252" rx="16" fill="#ffffff" stroke="#e7ebf2" stroke-width="1.5"/>
+    <g clip-path="url(#cardClip)">
+      <rect width="300" height="46" fill="#edf3ff"/>
+    </g>
+    <circle cx="26" cy="23" r="6" fill="#3268d8"/>
+    <text class="ff roleName" x="42" y="28" fill="#2554b8">Admin / Pengelola</text>
+    <text class="ff roleMeta" x="274" y="28" text-anchor="end">5 menu</text>
+    <circle cx="26" cy="75" r="4" fill="#3268d8" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="80">Dashboard</text>
+    <circle cx="26" cy="109" r="4" fill="#3268d8" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="114">Kelola Grup</text>
+    <circle cx="26" cy="143" r="4" fill="#3268d8" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="148">Kelola Anggota</text>
+    <circle cx="26" cy="177" r="4" fill="#3268d8" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="182">Pengeluaran</text>
+    <circle cx="26" cy="211" r="4" fill="#3268d8" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="216">Laporan</text>
+  </g>
+
+  <g transform="translate(450,178)">
+    <rect width="300" height="252" rx="16" fill="#ffffff" stroke="#e7ebf2" stroke-width="1.5"/>
+    <g clip-path="url(#cardClip)">
+      <rect width="300" height="46" fill="#e8f7f0"/>
+    </g>
+    <circle cx="26" cy="23" r="6" fill="#15966a"/>
+    <text class="ff roleName" x="42" y="28" fill="#0f7a55">Bendahara</text>
+    <text class="ff roleMeta" x="274" y="28" text-anchor="end">5 menu</text>
+    <circle cx="26" cy="75" r="4" fill="#15966a" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="80">Dashboard</text>
+    <circle cx="26" cy="109" r="4" fill="#15966a" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="114">Tagihan</text>
+    <circle cx="26" cy="143" r="4" fill="#15966a" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="148">Verifikasi Pembayaran</text>
+    <circle cx="26" cy="177" r="4" fill="#15966a" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="182">Pengeluaran</text>
+    <circle cx="26" cy="211" r="4" fill="#15966a" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="216">Laporan</text>
+  </g>
+
+  <g transform="translate(840,178)">
+    <rect width="300" height="252" rx="16" fill="#ffffff" stroke="#e7ebf2" stroke-width="1.5"/>
+    <g clip-path="url(#cardClip)">
+      <rect width="300" height="46" fill="#fff3df"/>
+    </g>
+    <circle cx="26" cy="23" r="6" fill="#b66b13"/>
+    <text class="ff roleName" x="42" y="28" fill="#96580f">Anggota</text>
+    <text class="ff roleMeta" x="274" y="28" text-anchor="end">4 menu</text>
+    <circle cx="26" cy="75" r="4" fill="#b66b13" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="80">Dashboard</text>
+    <circle cx="26" cy="109" r="4" fill="#b66b13" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="114">Informasi Grup</text>
+    <circle cx="26" cy="143" r="4" fill="#b66b13" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="148">Kewajiban / Tagihan</text>
+    <circle cx="26" cy="177" r="4" fill="#b66b13" fill-opacity="0.85"/>
+    <text class="ff rowTxt" x="42" y="182">Pembayaran</text>
+  </g>
+
+  <text class="ff caption" x="600" y="456" text-anchor="middle">Setiap peran masuk ke panel yang sama, tetapi menu dan aksi yang tampil dibatasi oleh hak akses.</text>
+</svg>
