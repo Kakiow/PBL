@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/helpers.php';
 require_once __DIR__.'/../includes/auth.php';
 $page_title = 'Transaksi';
 $id_grup = (int)($_SESSION['grup_id'] ?? 0);
-$role = cek_role($pdo, $id_grup, ['Admin','Bendahara','Anggota']);
+$role = cek_role($pdo, $id_grup, akses_menu()['transaksi']);
 $stmt = $pdo->prepare("SELECT t.*,k.nama_kategori,a.nama_akun,u.nama AS nama_pengguna FROM transaksi t JOIN kategori k ON k.id=t.id_kategori JOIN akun_dana a ON a.id=t.id_akun_dana JOIN pengguna u ON u.id=t.id_pengguna WHERE t.id_grup=? ORDER BY t.tanggal_transaksi DESC,t.id DESC");
 $stmt->execute([$id_grup]);
 $data = $stmt->fetchAll();

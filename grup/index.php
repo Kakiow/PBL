@@ -152,14 +152,16 @@ include __DIR__ . '/../includes/header.php';
             <hr class="separator">
             <h2>Grup Saya</h2>
             <?php if (!$grup_saya): ?><p class="muted">Belum memiliki grup.</p><?php endif; ?>
-            <?php foreach ($grup_saya as $g): ?>
-            <form method="post"
-                class="group-item <?php echo isset($_SESSION['grup_id']) && $_SESSION['grup_id'] == $g['id'] ? 'active' : ''; ?>">
-                <input type="hidden" name="aksi" value="pilih_grup"><input type="hidden" name="id_grup"
-                    value="<?php echo $g['id']; ?>">
-                <div><strong><?php echo e($g['nama_grup']); ?></strong><span><?php echo e($g['kode_grup']); ?> ·
-                        <?php echo e($g['peran']); ?></span></div>
-                <button class="btn secondary" type="submit">Pilih</button>
+            <?php if ($grup_saya): ?><p class="form-hint">Klik kartu grup untuk menjadikannya grup aktif.</p><?php endif; ?>
+            <?php foreach ($grup_saya as $g): $grup_ini_aktif = isset($_SESSION['grup_id']) && $_SESSION['grup_id'] == $g['id']; ?>
+            <form method="post" class="group-item <?php echo $grup_ini_aktif ? 'active' : ''; ?>">
+                <input type="hidden" name="aksi" value="pilih_grup">
+                <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
+                <button type="submit" class="group-item-btn"
+                    title="<?php echo $grup_ini_aktif ? 'Grup ini sedang aktif' : 'Klik kartu untuk memilih grup ini'; ?>"<?php echo $grup_ini_aktif ? ' disabled aria-current="true"' : ''; ?>>
+                    <strong><?php echo e($g['nama_grup']); ?></strong>
+                    <span><?php echo e($g['kode_grup']); ?> · <?php echo e($g['peran']); ?><?php echo $grup_ini_aktif ? ' · Aktif' : ''; ?></span>
+                </button>
             </form>
             <?php endforeach; ?>
         </div>

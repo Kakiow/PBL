@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/helpers.php';
 require_once __DIR__.'/../includes/auth.php';
 $page_title = 'Laporan';
 $id_grup = (int)($_SESSION['grup_id'] ?? 0);
-cek_role($pdo, $id_grup, ['Admin','Bendahara','Anggota']);
+cek_role($pdo, $id_grup, akses_menu()['laporan']);
 $mulai = $_GET['mulai'] ?? date('Y-m-01');
 $selesai = $_GET['selesai'] ?? date('Y-m-d');
 $stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN jenis='Pemasukan' THEN jumlah ELSE 0 END),0) pemasukan, COALESCE(SUM(CASE WHEN jenis='Pengeluaran' THEN jumlah ELSE 0 END),0) pengeluaran FROM transaksi WHERE id_grup=? AND tanggal_transaksi BETWEEN ? AND ?");

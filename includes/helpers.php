@@ -68,3 +68,43 @@ function grup_aktif($pdo)
     $stmt->execute([$_SESSION['grup_id']]);
     return $stmt->fetch();
 }
+
+function akses_menu()
+{
+    return [
+        'kategori' => ['Admin', 'Bendahara'],
+        'kewajiban' => ['Admin', 'Bendahara', 'Anggota'],
+        'pembayaran' => ['Admin', 'Bendahara', 'Anggota'],
+        'transaksi' => ['Admin', 'Bendahara'],
+        'laporan' => ['Admin', 'Bendahara'],
+    ];
+}
+
+function menu_nav($base, $peran, $ada_grup)
+{
+    $menu = [
+        ['slug' => '', 'label' => 'Dashboard', 'href' => $base . 'index.php'],
+        ['slug' => 'grup', 'label' => 'Grup & Anggota', 'href' => $base . 'grup/index.php'],
+    ];
+
+    if (!$ada_grup) {
+        return $menu;
+    }
+
+    $akses = akses_menu();
+    $items = [
+        'kategori' => ['Kategori', 'kategori/index.php'],
+        'kewajiban' => ['Kewajiban', 'kewajiban/index.php'],
+        'pembayaran' => ['Pembayaran', 'pembayaran/index.php'],
+        'transaksi' => ['Transaksi', 'transaksi/index.php'],
+        'laporan' => ['Laporan', 'laporan/index.php'],
+    ];
+
+    foreach ($items as $slug => $info) {
+        if (in_array($peran, $akses[$slug] ?? [], true)) {
+            $menu[] = ['slug' => $slug, 'label' => $info[0], 'href' => $base . $info[1]];
+        }
+    }
+
+    return $menu;
+}

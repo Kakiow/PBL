@@ -26,20 +26,15 @@ if (isset($_SESSION['grup_id']) && isset($pdo)) {
     $grup = grup_aktif($pdo);
 }
 
+$peran_aktif = null;
+if ($grup && isset($_SESSION['user']['id'])) {
+    $peran_aktif = role_group($pdo, $grup['id'], $_SESSION['user']['id']);
+}
+
 $segmen = array_values(array_filter(explode('/', trim($script_rel, '/'))));
 $slug_aktif = count($segmen) > 1 ? $segmen[0] : '';
 
-$menu = [
-    ['slug' => '', 'label' => 'Dashboard', 'href' => $base . 'index.php'],
-    ['slug' => 'grup', 'label' => 'Grup & Anggota', 'href' => $base . 'grup/index.php'],
-];
-if ($grup) {
-    $menu[] = ['slug' => 'kategori', 'label' => 'Kategori', 'href' => $base . 'kategori/index.php'];
-    $menu[] = ['slug' => 'kewajiban', 'label' => 'Kewajiban', 'href' => $base . 'kewajiban/index.php'];
-    $menu[] = ['slug' => 'pembayaran', 'label' => 'Pembayaran', 'href' => $base . 'pembayaran/index.php'];
-    $menu[] = ['slug' => 'transaksi', 'label' => 'Transaksi', 'href' => $base . 'transaksi/index.php'];
-    $menu[] = ['slug' => 'laporan', 'label' => 'Laporan', 'href' => $base . 'laporan/index.php'];
-}
+$menu = menu_nav($base, $peran_aktif, (bool) $grup);
 
 $nama_user = trim((string) ($_SESSION['user']['nama'] ?? ''));
 $email_user = trim((string) ($_SESSION['user']['email'] ?? ''));

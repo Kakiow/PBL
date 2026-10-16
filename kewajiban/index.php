@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/helpers.php';
 require_once __DIR__.'/../includes/auth.php';
 $page_title = 'Kewajiban Pembayaran';
 $id_grup = (int)($_SESSION['grup_id'] ?? 0);
-$role = cek_role($pdo, $id_grup, ['Admin','Bendahara','Anggota']);
+$role = cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($role, ['Admin','Bendahara'])) {
     $judul = trim($_POST['judul'] ?? '');
     $jumlah = (float)($_POST['jumlah'] ?? 0);

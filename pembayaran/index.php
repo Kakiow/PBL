@@ -13,7 +13,7 @@ $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $role = cek_role(
     $pdo,
     $id_grup,
-    ['Admin', 'Bendahara', 'Anggota']
+    akses_menu()['pembayaran']
 );
 
 if (

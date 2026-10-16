@@ -150,6 +150,9 @@
 /* Daftar grup */
 .group-item {
   border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 .group-item:hover {
@@ -162,9 +165,33 @@
   border-color: #1d5b8a;
   background: #eef4fa;
   box-shadow: inset 4px 0 0 #1d5b8a;
+  cursor: default;
 }
-.group-item .btn {
-  border-radius: 8px;
+.group-item:focus-within {
+  border-color: #1d5b8a;
+  box-shadow: 0 0 0 4px rgba(29, 91, 138, 0.12);
+}
+.group-item.active:focus-within {
+  box-shadow: inset 4px 0 0 #1d5b8a, 0 0 0 4px rgba(29, 91, 138, 0.12);
+}
+/* Klik pada seluruh area kartu */
+.group-item-btn {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: inherit;
+}
+.group-item-btn:focus {
+  outline: none;
+}
+.group-item-btn:disabled {
+  cursor: default;
 }
 
 /* Badge role pada tabel */

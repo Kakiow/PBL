@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/helpers.php';
 require_once __DIR__.'/../includes/auth.php';
 $page_title = 'Kategori';
 $id_grup = (int)($_SESSION['grup_id'] ?? 0);
-cek_role($pdo, $id_grup, ['Admin','Bendahara','Anggota']);
+cek_role($pdo, $id_grup, akses_menu()['kategori']);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $aksi = $_POST['aksi'] ?? '';
     if ($aksi === 'tambah') {
