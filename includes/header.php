@@ -6,9 +6,17 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/helpers.php';
 
+$app_root = str_replace('\\', '/', dirname(__DIR__));
+$script_file = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
+
 $base = '../';
-if (basename(dirname($_SERVER['SCRIPT_FILENAME'])) === basename(__DIR__)) {
-    $base = '';
+$script_rel = $script_file;
+if ($app_root !== '' && strpos($script_file, $app_root) === 0) {
+    $script_rel = substr($script_file, strlen($app_root));
+    $sub_dir = dirname(trim($script_rel, '/'));
+    $base = ($sub_dir === '.' || $sub_dir === '')
+        ? ''
+        : str_repeat('../', count(array_filter(explode('/', $sub_dir))));
 }
 
 $page_title = $page_title ?? 'SIMKAS';
@@ -18,12 +26,6 @@ if (isset($_SESSION['grup_id']) && isset($pdo)) {
     $grup = grup_aktif($pdo);
 }
 
-$app_root = str_replace('\\', '/', dirname(__DIR__));
-$script_file = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
-$script_rel = $script_file;
-if ($app_root !== '' && strpos($script_file, $app_root) === 0) {
-    $script_rel = substr($script_file, strlen($app_root));
-}
 $segmen = array_values(array_filter(explode('/', trim($script_rel, '/'))));
 $slug_aktif = count($segmen) > 1 ? $segmen[0] : '';
 
