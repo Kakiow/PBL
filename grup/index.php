@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Grup & Anggota';
-$page_css = ['grup.css'];
+$page_css = ['grup.css', 'table.css'];
 $id_user = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -77,12 +77,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($aksi === 'ubah_role') {
         $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
         cek_role($pdo, $id_grup, ['Admin']);
-        $id_anggota = (int) ($_POST['id_anggota'] ?? 0);
-        $role = $_POST['peran'] ?? 'Anggota';
-        if (in_array($role, ['Admin', 'Bendahara', 'Anggota'])) {
-            $stmt = $pdo->prepare("UPDATE anggota_grup SET peran = ? WHERE id = ? AND id_grup = ?");
-            $stmt->execute([$role, $id_anggota, $id_grup]);
-            flash('success', 'Role anggota berhasil diubah.');
+        $peran_baru = $_POST['peran'] ?? [];
+
+        $stmt = $pdo->prepare("SELECT id, id_pengguna, peran FROM anggota_grup WHERE id_grup = ?");
+        $stmt->execute([$id_grup]);
+        $anggota_grup = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $anggota_grup[(int) $row['id']] = $row;
+        }
+
+        $jumlah_ubah = 0;
+        $pindah_admin = false;
+
+        if (is_array($peran_baru)) {
+            try {
+                $pdo->beginTransaction();
+                $upd = $pdo->prepare("UPDATE anggota_grup SET peran = ? WHERE id = ? AND id_grup = ?");
+                foreach ($peran_baru as $id_anggota => $role) {
+                    $id_anggota = (int) $id_anggota;
+                    if (!isset($anggota_grup[$id_anggota])) {
+                        continue;
+                    }
+                    if ((int) $anggota_grup[$id_anggota]['id_pengguna'] === (int) $id_user) {
+                        continue;
+                    }
+                    if (!in_array($role, ['Admin', 'Bendahara', 'Anggota'], true)) {
+                        continue;
+                    }
+                    if ($role === $anggota_grup[$id_anggota]['peran']) {
+                        continue;
+                    }
+                    if ($role === 'Admin') {
+                        $pindah_admin = true;
+                    }
+                    $upd->execute([$role, $id_anggota, $id_grup]);
+                    $jumlah_ubah++;
+                }
+                if ($pindah_admin) {
+                    $stmt = $pdo->prepare("UPDATE anggota_grup SET peran = 'Anggota' WHERE id_grup = ? AND id_pengguna = ?");
+                    $stmt->execute([$id_grup, $id_user]);
+                }
+                $pdo->commit();
+                if ($jumlah_ubah === 0) {
+                    flash('success', 'Tidak ada perubahan role.');
+                } elseif ($pindah_admin) {
+                    flash('success', 'Perubahan role disimpan. Kepemilikan admin dipindahkan; Anda kini Anggota.');
+                } else {
+                    flash('success', 'Perubahan role berhasil disimpan.');
+                }
+            } catch (PDOException $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                flash('error', 'Gagal menyimpan perubahan role.');
+            }
+        } else {
+            flash('error', 'Tidak ada perubahan role.');
         }
         redirect('index.php');
     }
@@ -94,10 +144,12 @@ $grup_saya = $grup_saya->fetchAll();
 
 $grup = grup_aktif($pdo);
 $anggota = [];
+$saya_admin = false;
 if ($grup) {
-    $stmt = $pdo->prepare("SELECT ag.id, ag.peran, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY p.nama");
+    $stmt = $pdo->prepare("SELECT ag.id, ag.id_pengguna, ag.peran, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY p.nama");
     $stmt->execute([$grup['id']]);
     $anggota = $stmt->fetchAll();
+    $saya_admin = role_group($pdo, $grup['id'], $id_user) === 'Admin';
 }
 
 include __DIR__ . '/../includes/header.php';
@@ -182,44 +234,60 @@ include __DIR__ . '/../includes/header.php';
 
 <?php if ($grup): ?>
 <section>
-    <div class="section-heading">
-        <div>
-            <h2>Anggota <?php echo e($grup['nama_grup']); ?></h2>
-            <p class="muted">Kelola role anggota grup.</p>
+    <?php if ($saya_admin): ?>
+    <form method="post" id="form-role">
+        <input type="hidden" name="aksi" value="ubah_role">
+        <?php endif; ?>
+        <div class="section-heading">
+            <div>
+                <h2>Anggota <?php echo e($grup['nama_grup']); ?></h2>
+                <p class="muted">Ubah role di kolom aksi, lalu simpan sekali untuk menerapkan semua perubahan.</p>
+            </div>
+            <?php if ($saya_admin): ?>
+            <button class="btn btn-simpan" type="submit" id="btn-simpan-role">Simpan Perubahan</button>
+            <?php endif; ?>
         </div>
-    </div>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($anggota as $a): ?>
-                <tr>
-                    <td><?php echo e($a['nama']); ?></td>
-                    <td><?php echo e($a['email']); ?></td>
-                    <td><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
-                    <td>
-                        <?php if (role_group($pdo, $grup['id'], $id_user) === 'Admin'): ?>
-                        <form method="post" class="inline-form"><input type="hidden" name="aksi"
-                                value="ubah_role"><input type="hidden" name="id_anggota"
-                                value="<?php echo $a['id']; ?>"><select name="peran">
-                                <option <?php echo $a['peran'] === 'Anggota' ? 'selected' : ''; ?>>Anggota</option>
-                                <option <?php echo $a['peran'] === 'Bendahara' ? 'selected' : ''; ?>>Bendahara</option>
-                                <option <?php echo $a['peran'] === 'Admin' ? 'selected' : ''; ?>>Admin</option>
-                            </select><button class="btn secondary" type="submit">Simpan</button></form>
-                        <?php else: ?><span class="muted">Tidak ada aksi</span><?php endif; ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+        <div class="table-responsive table-fancy-wrap">
+            <table class="table-fancy">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($anggota as $a): ?>
+                    <tr>
+                        <td><?php echo e($a['nama']); ?></td>
+                        <td><?php echo e($a['email']); ?></td>
+                        <td><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
+                        <td>
+                            <?php if ((int) $a['id_pengguna'] === (int) $id_user): ?>
+                            <span class="muted">Akun Anda</span>
+                            <?php elseif ($saya_admin): ?>
+                            <div class="role-form">
+                                <select name="peran[<?php echo (int) $a['id']; ?>]" class="role-select"
+                                    aria-label="Role untuk <?php echo e($a['nama']); ?>">
+                                    <option value="Anggota" <?php echo $a['peran'] === 'Anggota' ? 'selected' : ''; ?>>
+                                        Anggota</option>
+                                    <option value="Bendahara" <?php echo $a['peran'] === 'Bendahara' ? 'selected' : ''; ?>>
+                                        Bendahara</option>
+                                    <option value="Admin" <?php echo $a['peran'] === 'Admin' ? 'selected' : ''; ?>>Admin
+                                    </option>
+                                </select>
+                            </div>
+                            <?php else: ?><span class="muted">Tidak ada aksi</span><?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php if ($saya_admin): ?>
+    </form>
+    <?php endif; ?>
 </section>
 <?php endif; ?>
 <?php include __DIR__ . '/../includes/footer.php'; ?>

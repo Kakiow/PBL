@@ -1,16 +1,16 @@
-/* Tabel Transaksi Terbaru (Dashboard) */
-.table-transaksi-wrap {
+/* Tabel interaktif yang dipakai bersama (Dashboard, Grup, dll.) */
+.table-fancy-wrap {
   border: 1px solid #e6ebf0;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(23, 50, 77, 0.05);
 }
-.table-transaksi {
+.table-fancy {
   width: 100%;
 }
-.table-transaksi thead {
+.table-fancy thead {
   background: linear-gradient(120deg, #1d5b8a, #164869);
 }
-.table-transaksi th {
+.table-fancy th {
   padding: 13px 16px;
   border: 0;
   color: #e9f2fa;
@@ -19,41 +19,41 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.table-transaksi td {
+.table-fancy td {
   padding: 13px 16px;
   border-bottom: 1px solid #eef2f6;
   vertical-align: middle;
 }
-.table-transaksi tbody tr {
+.table-fancy tbody tr {
   transition: background 0.18s ease;
 }
-.table-transaksi tbody tr:hover {
+.table-fancy tbody tr:hover {
   background: #f4f9fd;
 }
-.table-transaksi tbody tr:last-child td {
+.table-fancy tbody tr:last-child td {
   border-bottom: 0;
 }
-.table-transaksi .num {
+.table-fancy .num {
   text-align: right;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   white-space: nowrap;
 }
-.table-transaksi .amount-in {
+.table-fancy .amount-in {
   color: #216b49;
 }
-.table-transaksi .amount-out {
+.table-fancy .amount-out {
   color: #a83a3a;
 }
-.table-transaksi .nowrap {
+.table-fancy .nowrap {
   white-space: nowrap;
   color: #5b6b78;
   font-size: 0.86rem;
 }
-.table-transaksi .desc {
+.table-fancy .desc {
   color: #4d5c68;
 }
-.table-transaksi .chip {
+.table-fancy .chip {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
@@ -62,12 +62,12 @@
   font-size: 0.8rem;
   white-space: nowrap;
 }
-.table-transaksi .badge {
+.table-fancy .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-.table-transaksi .badge::before {
+.table-fancy .badge::before {
   content: "";
   width: 7px;
   height: 7px;
@@ -75,14 +75,26 @@
   background: currentColor;
   opacity: 0.9;
 }
-.table-transaksi tr.empty td {
+.table-fancy tr.empty td {
   padding: 30px 16px;
   text-align: center;
   color: #8a97a3;
 }
+.badge.role-admin {
+  background: #e5efff;
+  color: #1d5b8a;
+}
+.badge.role-bendahara {
+  background: #fdeede;
+  color: #a8621a;
+}
+.badge.role-anggota {
+  background: #e9eef3;
+  color: #4d5c68;
+}
 @media (max-width: 600px) {
-  .table-transaksi th,
-  .table-transaksi td {
+  .table-fancy th,
+  .table-fancy td {
     padding: 11px 12px;
   }
 }

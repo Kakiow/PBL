@@ -8,7 +8,7 @@ if (!isset($_SESSION['user'])) {
 }
 
 $page_title = 'Dashboard';
-$page_css = ['dashboard.css'];
+$page_css = ['table.css'];
 $grup = grup_aktif($pdo);
 
 if (!$grup) {
@@ -71,8 +71,8 @@ include __DIR__ . '/includes/header.php';
         </div>
         <a class="btn secondary" href="transaksi/index.php">Lihat Semua</a>
     </div>
-    <div class="table-responsive table-transaksi-wrap">
-        <table class="table-transaksi">
+    <div class="table-responsive table-fancy-wrap">
+        <table class="table-fancy">
             <thead>
                 <tr>
                     <th>Tanggal</th>
