@@ -12,6 +12,7 @@ if (basename(dirname($_SERVER['SCRIPT_FILENAME'])) === basename(__DIR__)) {
 }
 
 $page_title = $page_title ?? 'SIMKAS';
+$page_css = $page_css ?? [];
 $grup = null;
 if (isset($_SESSION['grup_id']) && isset($pdo)) {
     $grup = grup_aktif($pdo);
@@ -53,6 +54,9 @@ $inisial = $nama_user !== ''
     <title><?php echo e($page_title); ?> | SIMKAS</title>
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/style.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/navbar.css">
+    <?php foreach ($page_css as $css): ?>
+    <link rel="stylesheet" href="<?php echo $base . 'assets/css/' . e($css); ?>">
+    <?php endforeach; ?>
 </head>
 
 <body>

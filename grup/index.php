@@ -5,6 +5,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Grup & Anggota';
+$page_css = ['grup.css'];
 $id_user = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -168,7 +169,7 @@ include __DIR__ . '/../includes/header.php';
                 <tr>
                     <td><?php echo e($a['nama']); ?></td>
                     <td><?php echo e($a['email']); ?></td>
-                    <td><?php echo e($a['peran']); ?></td>
+                    <td><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
                     <td>
                         <?php if (role_group($pdo, $grup['id'], $id_user) === 'Admin'): ?>
                         <form method="post" class="inline-form"><input type="hidden" name="aksi"

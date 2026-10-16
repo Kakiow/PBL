@@ -1,0 +1,171 @@
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.separator {
+  margin: 22px 0;
+  border: 0;
+  border-top: 1px solid #e6ebf0;
+}
+
+/* Kartu form */
+.form-card {
+  position: relative;
+  padding: 22px;
+  border: 1px solid #e4e9ee;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fbfdff, #f5f9fc);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  animation: grupFadeUp 0.4s ease both;
+}
+.form-card:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.form-card:hover {
+  border-color: #d5e2ee;
+  box-shadow: 0 10px 30px rgba(23, 50, 77, 0.08);
+}
+.form-card:focus-within {
+  border-color: #9fc4e0;
+  box-shadow: 0 0 0 4px rgba(29, 91, 138, 0.1);
+}
+.form-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9eef3;
+  font-size: 1.08rem;
+}
+.form-card h2::before {
+  content: "";
+  width: 4px;
+  height: 18px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #2b7bb0, #173f5f);
+}
+
+/* Field */
+.form-card form p {
+  margin-bottom: 16px;
+}
+.form-card label {
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  color: #4d5c68;
+  transition: color 0.2s ease;
+}
+.form-card p:focus-within label {
+  color: #1d5b8a;
+}
+.form-card input,
+.form-card textarea {
+  border: 1px solid #d7dee5;
+  border-radius: 9px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.form-card input:hover,
+.form-card textarea:hover {
+  border-color: #b9c6d1;
+}
+.form-card input:focus,
+.form-card textarea:focus {
+  outline: none;
+  border-color: #1d5b8a;
+  box-shadow: 0 0 0 4px rgba(29, 91, 138, 0.12);
+}
+.form-card input::placeholder,
+.form-card textarea::placeholder {
+  color: #a6b1bb;
+}
+
+/* Tombol */
+.form-card > form:not(.group-item) > .btn {
+  width: 100%;
+}
+.form-card .btn {
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.form-card .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(23, 50, 77, 0.16);
+}
+.form-card .btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Daftar grup */
+.group-item {
+  border-radius: 10px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.group-item:hover {
+  border-color: #b9cfe0;
+  background: #f7fbfe;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(23, 50, 77, 0.07);
+}
+.group-item.active {
+  border-color: #1d5b8a;
+  background: #eef4fa;
+  box-shadow: inset 4px 0 0 #1d5b8a;
+}
+.group-item .btn {
+  border-radius: 8px;
+}
+
+/* Badge role pada tabel */
+.badge.role-admin {
+  background: #e5efff;
+  color: #1d5b8a;
+}
+.badge.role-bendahara {
+  background: #fdeede;
+  color: #a8621a;
+}
+.badge.role-anggota {
+  background: #e9eef3;
+  color: #4d5c68;
+}
+
+@keyframes grupFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 850px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-card {
+    animation: none;
+  }
+  .form-card,
+  .form-card .btn,
+  .group-item,
+  .form-card input,
+  .form-card textarea {
+    transition: none !important;
+  }
+  .form-card .btn:hover,
+  .group-item:hover {
+    transform: none;
+  }
+}
