@@ -149,10 +149,22 @@ include __DIR__ . '/../includes/header.php';
                         required></p>
                 <button class="btn secondary" type="submit">Gabung</button>
             </form>
-            <hr class="separator">
-            <h2>Grup Saya</h2>
-            <?php if (!$grup_saya): ?><p class="muted">Belum memiliki grup.</p><?php endif; ?>
-            <?php if ($grup_saya): ?><p class="form-hint">Klik kartu grup untuk menjadikannya grup aktif.</p><?php endif; ?>
+        </div>
+    </div>
+
+    <div class="form-card form-card--list">
+        <h2>
+            <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 6h18M3 12h18M3 18h18" />
+                </svg>
+            </span>
+            Grup Saya
+        </h2>
+        <?php if (!$grup_saya): ?><p class="muted">Belum memiliki grup.</p><?php endif; ?>
+        <?php if ($grup_saya): ?><p class="form-hint">Klik kartu grup untuk menjadikannya grup aktif.</p><?php endif; ?>
+        <div class="grup-list">
             <?php foreach ($grup_saya as $g): $grup_ini_aktif = isset($_SESSION['grup_id']) && $_SESSION['grup_id'] == $g['id']; ?>
             <form method="post" class="group-item <?php echo $grup_ini_aktif ? 'active' : ''; ?>">
                 <input type="hidden" name="aksi" value="pilih_grup">
