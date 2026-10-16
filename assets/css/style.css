@@ -16,38 +16,6 @@ a {
 a:hover {
   text-decoration: underline;
 }
-.topbar {
-  background: #17324d;
-  color: #fff;
-  min-height: 64px;
-  padding: 0 28px;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
-.brand {
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin-right: 20px;
-}
-.topbar nav {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-}
-.topbar nav a {
-  color: #fff;
-  font-size: 0.92rem;
-}
-.nav-user {
-  margin-left: auto;
-  color: #d9e4ee;
-  font-size: 0.9rem;
-}
-.nav-toggle {
-  display: none;
-}
 main {
   max-width: 1180px;
   margin: 30px auto;
@@ -364,32 +332,6 @@ footer {
   font-size: 0.9rem;
 }
 @media (max-width: 850px) {
-  .topbar {
-    flex-wrap: wrap;
-    padding: 14px 20px;
-  }
-  .nav-toggle {
-    display: block;
-    margin-left: auto;
-    background: none;
-    border: 0;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  .topbar nav {
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding-bottom: 8px;
-  }
-  .topbar nav.show {
-    display: flex;
-  }
-  .nav-user {
-    margin-left: 0;
-  }
   .stats {
     grid-template-columns: repeat(2, 1fr);
   }
