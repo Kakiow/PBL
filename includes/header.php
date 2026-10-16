@@ -52,6 +52,7 @@ $inisial = $nama_user !== ''
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo e($page_title); ?> | SIMKAS</title>
+    <link rel="icon" type="image/svg+xml" href="<?php echo $base; ?>assets/img/logo.svg">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/style.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/navbar.css">
     <?php foreach ($page_css as $css): ?>
