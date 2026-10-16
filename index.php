@@ -8,6 +8,7 @@ if (!isset($_SESSION['user'])) {
 }
 
 $page_title = 'Dashboard';
+$page_css = ['dashboard.css'];
 $grup = grup_aktif($pdo);
 
 if (!$grup) {
@@ -70,30 +71,32 @@ include __DIR__ . '/includes/header.php';
         </div>
         <a class="btn secondary" href="transaksi/index.php">Lihat Semua</a>
     </div>
-    <div class="table-responsive">
-        <table>
+    <div class="table-responsive table-transaksi-wrap">
+        <table class="table-transaksi">
             <thead>
                 <tr>
                     <th>Tanggal</th>
                     <th>Kategori</th>
                     <th>Jenis</th>
-                    <th>Jumlah</th>
+                    <th class="num">Jumlah</th>
                     <th>Deskripsi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if (!$transaksi): ?><tr>
+                <?php if (!$transaksi): ?><tr class="empty">
                     <td colspan="5">Belum ada transaksi.</td>
                 </tr><?php endif; ?>
                 <?php foreach ($transaksi as $row): ?>
                 <tr>
-                    <td><?php echo e($row['tanggal_transaksi']); ?></td>
-                    <td><?php echo e($row['nama_kategori']); ?></td>
+                    <td class="nowrap"><?php echo e($row['tanggal_transaksi']); ?></td>
+                    <td><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
                     <td><span
                             class="badge <?php echo $row['jenis'] === 'Pemasukan' ? 'success' : 'danger'; ?>"><?php echo e($row['jenis']); ?></span>
                     </td>
-                    <td><?php echo rupiah($row['jumlah']); ?></td>
-                    <td><?php echo e($row['deskripsi']); ?></td>
+                    <td class="num <?php echo $row['jenis'] === 'Pemasukan' ? 'amount-in' : 'amount-out'; ?>">
+                        <?php echo $row['jenis'] === 'Pemasukan' ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
+                    </td>
+                    <td class="desc"><?php echo e($row['deskripsi']); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
