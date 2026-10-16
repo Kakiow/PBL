@@ -31,6 +31,24 @@
   border-color: #9fc4e0;
   box-shadow: 0 0 0 4px rgba(29, 91, 138, 0.1);
 }
+.form-card--create {
+  --card-accent: #2b7bb0;
+  --card-accent-strong: #1d5b8a;
+  --card-tint: #e6f1f9;
+}
+.form-card--join {
+  --card-accent: #2f8f62;
+  --card-accent-strong: #1f7a52;
+  --card-tint: #e4f4ec;
+}
+.form-card--create,
+.form-card--join {
+  border-top: 3px solid var(--card-accent);
+}
+.form-card--join:focus-within {
+  border-color: #9fd8bd;
+  box-shadow: 0 0 0 4px rgba(47, 143, 98, 0.12);
+}
 .form-card h2 {
   display: flex;
   align-items: center;
@@ -42,10 +60,30 @@
 }
 .form-card h2::before {
   content: "";
+  flex: 0 0 auto;
   width: 4px;
   height: 18px;
   border-radius: 3px;
-  background: linear-gradient(180deg, #2b7bb0, #173f5f);
+  background: linear-gradient(180deg, var(--card-accent, #2b7bb0), var(--card-accent-strong, #173f5f));
+}
+.form-card h2 .card-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--card-tint, #eef4fa);
+  color: var(--card-accent, #1d5b8a);
+}
+.form-card h2 .card-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.form-hint {
+  margin: -8px 0 18px;
+  font-size: 0.84rem;
+  color: #71808d;
 }
 
 /* Field */
@@ -86,6 +124,13 @@
 /* Tombol */
 .form-card > form:not(.group-item) > .btn {
   width: 100%;
+}
+.form-card--join > form:not(.group-item) > .btn {
+  background: var(--card-accent-strong);
+  color: #fff;
+}
+.form-card--join > form:not(.group-item) > .btn:hover {
+  background: #186143;
 }
 .form-card .btn {
   border-radius: 9px;

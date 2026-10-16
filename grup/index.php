@@ -110,8 +110,17 @@ include __DIR__ . '/../includes/header.php';
         </div>
     </div>
     <div class="grid-2">
-        <div class="form-card">
-            <h2>Buat Grup Baru</h2>
+        <div class="form-card form-card--create">
+            <h2>
+                <span class="card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                </span>
+                Buat Grup Baru
+            </h2>
+            <p class="form-hint">Belum punya grup? Buat grup baru di sini &mdash; kamu otomatis menjadi Admin.</p>
             <form method="post">
                 <input type="hidden" name="aksi" value="buat_grup">
                 <p><label>Nama Grup</label><input type="text" name="nama_grup" required></p>
@@ -121,8 +130,19 @@ include __DIR__ . '/../includes/header.php';
                 <button class="btn primary" type="submit">Buat Grup</button>
             </form>
         </div>
-        <div class="form-card">
-            <h2>Gabung Grup</h2>
+        <div class="form-card form-card--join">
+            <h2>
+                <span class="card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <path d="M10 17l5-5-5-5" />
+                        <path d="M15 12H3" />
+                    </svg>
+                </span>
+                Gabung Grup
+            </h2>
+            <p class="form-hint">Punya kode dari teman? Masukkan kodenya untuk bergabung ke grup.</p>
             <form method="post">
                 <input type="hidden" name="aksi" value="gabung_grup">
                 <p><label>Kode Grup</label><input type="text" name="kode_grup" placeholder="Masukkan kode grup"

@@ -1,14 +1,14 @@
 <?php
 
 $config = [
-    'host' => 'localhost',
+    'host' => 'aws-0-ap-south-1.pooler.supabase.com',
     'port' => '5432',
-    'database' => 'sistem_kas_grup',
-    'username' => 'basis_data',
-    'password' => 'Ibennn'
+    'database' => 'postgres',
+    'username' => 'postgres.wnkfkdemomeefciksgbj',
+    'password' => 'SIMKAS123##'
 ];
 
-$dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+$dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']};sslmode=require";
 
 try {
     $pdo = new PDO($dsn, $config['username'], $config['password']);
