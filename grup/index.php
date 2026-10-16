@@ -1,0 +1,190 @@
+<?php
+session_start();
+require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/auth.php';
+
+$page_title = 'Grup & Anggota';
+$id_user = $_SESSION['user']['id'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $aksi = $_POST['aksi'] ?? '';
+
+    if ($aksi === 'buat_grup') {
+        $nama = trim($_POST['nama_grup'] ?? '');
+        $kode = trim($_POST['kode_grup'] ?? '');
+        $deskripsi = trim($_POST['deskripsi'] ?? '');
+
+        if ($nama === '' || $kode === '') {
+            flash('error', 'Nama grup dan kode grup wajib diisi.');
+        } else {
+            try {
+                $pdo->beginTransaction();
+                $stmt = $pdo->prepare("INSERT INTO grup (nama_grup, kode_grup, deskripsi, dibuat_oleh) VALUES (?, ?, ?, ?) RETURNING id");
+                $stmt->execute([$nama, $kode, $deskripsi, $id_user]);
+                $id_grup = $stmt->fetchColumn();
+                $stmt = $pdo->prepare("INSERT INTO anggota_grup (id_grup, id_pengguna, peran) VALUES (?, ?, 'Admin')");
+                $stmt->execute([$id_grup, $id_user]);
+                $stmt = $pdo->prepare("INSERT INTO kategori (id_grup, nama_kategori, jenis) VALUES (?, 'Iuran Kas', 'Pemasukan'), (?, 'Lain-lain', 'Pemasukan'), (?, 'Kebutuhan Kelas', 'Pengeluaran')");
+                $stmt->execute([$id_grup, $id_grup, $id_grup]);
+                $stmt = $pdo->prepare("INSERT INTO akun_dana (id_grup, nama_akun, jenis_akun) VALUES (?, 'Kas Tunai', 'Kas_Tunai')");
+                $stmt->execute([$id_grup]);
+                $pdo->commit();
+                $_SESSION['grup_id'] = $id_grup;
+                flash('success', 'Grup berhasil dibuat.');
+            } catch (PDOException $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                flash('error', 'Gagal membuat grup. Pastikan kode grup belum digunakan.');
+            }
+        }
+        redirect('index.php');
+    }
+
+    if ($aksi === 'gabung_grup') {
+        $kode = trim($_POST['kode_grup'] ?? '');
+        $stmt = $pdo->prepare("SELECT id FROM grup WHERE kode_grup = ?");
+        $stmt->execute([$kode]);
+        $id_grup = $stmt->fetchColumn();
+        if (!$id_grup) {
+            flash('error', 'Kode grup tidak ditemukan.');
+        } else {
+            $stmt = $pdo->prepare("SELECT id FROM anggota_grup WHERE id_grup = ? AND id_pengguna = ?");
+            $stmt->execute([$id_grup, $id_user]);
+            if ($stmt->fetch()) {
+                flash('error', 'Anda sudah menjadi anggota grup tersebut.');
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO anggota_grup (id_grup, id_pengguna, peran) VALUES (?, ?, 'Anggota')");
+                $stmt->execute([$id_grup, $id_user]);
+                $_SESSION['grup_id'] = $id_grup;
+                flash('success', 'Berhasil bergabung dengan grup.');
+            }
+        }
+        redirect('index.php');
+    }
+
+    if ($aksi === 'pilih_grup') {
+        $id_grup = (int) ($_POST['id_grup'] ?? 0);
+        if (role_group($pdo, $id_grup, $id_user)) {
+            $_SESSION['grup_id'] = $id_grup;
+            flash('success', 'Grup aktif berhasil diubah.');
+        }
+        redirect('index.php');
+    }
+
+    if ($aksi === 'ubah_role') {
+        $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
+        cek_role($pdo, $id_grup, ['Admin']);
+        $id_anggota = (int) ($_POST['id_anggota'] ?? 0);
+        $role = $_POST['peran'] ?? 'Anggota';
+        if (in_array($role, ['Admin', 'Bendahara', 'Anggota'])) {
+            $stmt = $pdo->prepare("UPDATE anggota_grup SET peran = ? WHERE id = ? AND id_grup = ?");
+            $stmt->execute([$role, $id_anggota, $id_grup]);
+            flash('success', 'Role anggota berhasil diubah.');
+        }
+        redirect('index.php');
+    }
+}
+
+$grup_saya = $pdo->prepare("SELECT g.*, ag.peran FROM grup g JOIN anggota_grup ag ON ag.id_grup = g.id WHERE ag.id_pengguna = ? ORDER BY g.nama_grup");
+$grup_saya->execute([$id_user]);
+$grup_saya = $grup_saya->fetchAll();
+
+$grup = grup_aktif($pdo);
+$anggota = [];
+if ($grup) {
+    $stmt = $pdo->prepare("SELECT ag.id, ag.peran, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY p.nama");
+    $stmt->execute([$grup['id']]);
+    $anggota = $stmt->fetchAll();
+}
+
+include __DIR__ . '/../includes/header.php';
+?>
+<section>
+    <div class="section-heading">
+        <div>
+            <h1>Grup & Anggota</h1>
+            <p class="muted">Pilih grup yang ingin dikelola atau buat grup baru.</p>
+        </div>
+    </div>
+    <div class="grid-2">
+        <div class="form-card">
+            <h2>Buat Grup Baru</h2>
+            <form method="post">
+                <input type="hidden" name="aksi" value="buat_grup">
+                <p><label>Nama Grup</label><input type="text" name="nama_grup" required></p>
+                <p><label>Kode Grup</label><input type="text" name="kode_grup" required placeholder="Contoh: KELAS2G25">
+                </p>
+                <p><label>Deskripsi</label><textarea name="deskripsi" rows="3"></textarea></p>
+                <button class="btn primary" type="submit">Buat Grup</button>
+            </form>
+        </div>
+        <div class="form-card">
+            <h2>Gabung Grup</h2>
+            <form method="post">
+                <input type="hidden" name="aksi" value="gabung_grup">
+                <p><label>Kode Grup</label><input type="text" name="kode_grup" placeholder="Masukkan kode grup"
+                        required></p>
+                <button class="btn secondary" type="submit">Gabung</button>
+            </form>
+            <hr class="separator">
+            <h2>Grup Saya</h2>
+            <?php if (!$grup_saya): ?><p class="muted">Belum memiliki grup.</p><?php endif; ?>
+            <?php foreach ($grup_saya as $g): ?>
+            <form method="post"
+                class="group-item <?php echo isset($_SESSION['grup_id']) && $_SESSION['grup_id'] == $g['id'] ? 'active' : ''; ?>">
+                <input type="hidden" name="aksi" value="pilih_grup"><input type="hidden" name="id_grup"
+                    value="<?php echo $g['id']; ?>">
+                <div><strong><?php echo e($g['nama_grup']); ?></strong><span><?php echo e($g['kode_grup']); ?> ·
+                        <?php echo e($g['peran']); ?></span></div>
+                <button class="btn secondary" type="submit">Pilih</button>
+            </form>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<?php if ($grup): ?>
+<section>
+    <div class="section-heading">
+        <div>
+            <h2>Anggota <?php echo e($grup['nama_grup']); ?></h2>
+            <p class="muted">Kelola role anggota grup.</p>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($anggota as $a): ?>
+                <tr>
+                    <td><?php echo e($a['nama']); ?></td>
+                    <td><?php echo e($a['email']); ?></td>
+                    <td><?php echo e($a['peran']); ?></td>
+                    <td>
+                        <?php if (role_group($pdo, $grup['id'], $id_user) === 'Admin'): ?>
+                        <form method="post" class="inline-form"><input type="hidden" name="aksi"
+                                value="ubah_role"><input type="hidden" name="id_anggota"
+                                value="<?php echo $a['id']; ?>"><select name="peran">
+                                <option <?php echo $a['peran'] === 'Anggota' ? 'selected' : ''; ?>>Anggota</option>
+                                <option <?php echo $a['peran'] === 'Bendahara' ? 'selected' : ''; ?>>Bendahara</option>
+                                <option <?php echo $a['peran'] === 'Admin' ? 'selected' : ''; ?>>Admin</option>
+                            </select><button class="btn secondary" type="submit">Simpan</button></form>
+                        <?php else: ?><span class="muted">Tidak ada aksi</span><?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
+<?php endif; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

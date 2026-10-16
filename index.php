@@ -1,68 +1,117 @@
-
 <?php
-// Prototype frontend KasKelas. Autentikasi backend belum dihubungkan.
+session_start();
+require_once __DIR__ . '/config/koneksi.php';
+require_once __DIR__ . '/includes/helpers.php';
+
+if (!isset($_SESSION['user'])) {
+    redirect('auth/login.php');
+}
+
+$page_title = 'Dashboard';
+$grup = grup_aktif($pdo);
+
+if (!$grup) {
+    include __DIR__ . '/includes/header.php';
+    ?>
+<section class="hero">
+    <h1>Halo, <?php echo e($_SESSION['user']['nama']); ?>!</h1>
+    <p>Selamat datang di SIMKAS. Buat atau pilih grup terlebih dahulu untuk mulai mengelola kas.</p>
+    <a class="btn primary" href="grup/index.php">Kelola Grup</a>
+</section>
+<?php
+    include __DIR__ . '/includes/footer.php';
+    exit;
+}
+
+$id_grup = $grup['id'];
+
+$stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN jenis = 'Pemasukan' THEN jumlah ELSE 0 END),0) AS pemasukan, COALESCE(SUM(CASE WHEN jenis = 'Pengeluaran' THEN jumlah ELSE 0 END),0) AS pengeluaran FROM transaksi WHERE id_grup = ?");
+$stmt->execute([$id_grup]);
+$saldo = $stmt->fetch();
+$saldo_akhir = $saldo['pemasukan'] - $saldo['pengeluaran'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ?");
+$stmt->execute([$id_grup]);
+$total_anggota = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?");
+$stmt->execute([$id_grup]);
+$total_kewajiban = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT t.*, k.nama_kategori FROM transaksi t JOIN kategori k ON k.id = t.id_kategori WHERE t.id_grup = ? ORDER BY t.tanggal_transaksi DESC, t.id DESC LIMIT 5");
+$stmt->execute([$id_grup]);
+$transaksi = $stmt->fetchAll();
+
+include __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
+<section class="hero">
+    <div>
+        <p class="eyebrow">GRUP AKTIF</p>
+        <h1><?php echo e($grup['nama_grup']); ?></h1>
+        <p><?php echo e($grup['deskripsi'] ?: 'Kelola pemasukan, pengeluaran, dan pembayaran kas.'); ?></p>
+    </div>
+    <a class="btn primary" href="grup/index.php">Kelola Grup</a>
+</section>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk | KasKelas</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+<section class="stats">
+    <article class="stat-card"><span>Saldo Kas</span><strong><?php echo rupiah($saldo_akhir); ?></strong></article>
+    <article class="stat-card"><span>Total Pemasukan</span><strong><?php echo rupiah($saldo['pemasukan']); ?></strong>
+    </article>
+    <article class="stat-card"><span>Total
+            Pengeluaran</span><strong><?php echo rupiah($saldo['pengeluaran']); ?></strong></article>
+    <article class="stat-card"><span>Anggota</span><strong><?php echo $total_anggota; ?></strong></article>
+</section>
 
-<body class="login-body">
-    <main class="login-shell">
-        <section class="login-intro">
-            <div class="brand brand-light"><span>KasKelas</span></div>
-            <div class="intro-copy">
-                <h1>Titik awal alur untuk Admin, Bendahara, dan Anggota.</h1>
-                <div class="login-role-description">
-                    <p>Admin: mulai dari Dashboard, lalu atur Grup, Anggota, Role, Kategori, dan Pengeluaran.</p>
-                    <p>Bendahara: pilih grup aktif, verifikasi pembayaran, catat pengeluaran, lalu lihat laporan.</p>
-                    <p>Anggota: lihat informasi grup, bayar tagihan, cek status, dan unduh bukti pembayaran.</p>
-                </div>
-            </div>
-        </section>
+<section>
+    <div class="section-heading">
+        <div>
+            <h2>Transaksi Terbaru</h2>
+            <p class="muted">Lima transaksi terakhir pada grup ini.</p>
+        </div>
+        <a class="btn secondary" href="transaksi/index.php">Lihat Semua</a>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Kategori</th>
+                    <th>Jenis</th>
+                    <th>Jumlah</th>
+                    <th>Deskripsi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!$transaksi): ?><tr>
+                    <td colspan="5">Belum ada transaksi.</td>
+                </tr><?php endif; ?>
+                <?php foreach ($transaksi as $row): ?>
+                <tr>
+                    <td><?php echo e($row['tanggal_transaksi']); ?></td>
+                    <td><?php echo e($row['nama_kategori']); ?></td>
+                    <td><span
+                            class="badge <?php echo $row['jenis'] === 'Pemasukan' ? 'success' : 'danger'; ?>"><?php echo e($row['jenis']); ?></span>
+                    </td>
+                    <td><?php echo rupiah($row['jumlah']); ?></td>
+                    <td><?php echo e($row['deskripsi']); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
 
-        <section class="login-panel">
-            <div class="login-content">
-                <div class="mobile-brand brand"><span>KasKelas</span></div>
-                <h2>Masuk</h2>
-                <p class="muted">Gunakan akun yang terdaftar pada sistem.</p>
-
-                <form id="login-form">
-                    <label for="username">Email / Username</label>
-                    <input id="username" name="username" type="text" placeholder="Email atau username"
-                        autocomplete="username" required>
-
-                    <label for="password">Password</label>
-                    <div class="password-wrap">
-                        <input id="password" name="password" type="password" placeholder="Password"
-                            autocomplete="current-password" required>
-                        <button class="show-password" type="button" id="toggle-password"
-                            aria-label="Tampilkan password">Lihat</button>
-                    </div>
-
-                    <button class="btn btn-primary btn-full login-submit" type="submit">Login</button>
-                </form>
-
-                <p class="login-validation-note">Validasi kredensial → role &amp; membership grup → dashboard.</p>
-
-                <div class="demo-area">
-                    <div class="demo-heading"><strong>Demo Role</strong></div>
-                    <p class="muted small">Pilih role untuk langsung melihat alur prototype.</p>
-                    <div class="demo-roles" role="group" aria-label="Pilih role demo">
-                        <button type="button" class="role-button" data-role="admin">Admin / Pengelola</button>
-                        <button type="button" class="role-button" data-role="bendahara">Bendahara</button>
-                        <button type="button" class="role-button" data-role="anggota">Anggota</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <script src="assets/js/script.js"></script>
-</body>
-
-</html>
+<section>
+    <div class="section-heading">
+        <div>
+            <h2>Menu Cepat</h2>
+            <p class="muted">Akses fitur pengelolaan kas.</p>
+        </div>
+    </div>
+    <div class="quick-menu">
+        <a href="kewajiban/index.php"><strong>Kewajiban</strong><span><?php echo $total_kewajiban; ?> data</span></a>
+        <a href="pembayaran/index.php"><strong>Pembayaran</strong><span>Kelola pembayaran anggota</span></a>
+        <a href="transaksi/tambah.php"><strong>Tambah Transaksi</strong><span>Catat pemasukan/pengeluaran</span></a>
+    </div>
+</section>
+<?php include __DIR__ . '/includes/footer.php'; ?>

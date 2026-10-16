@@ -1,0 +1,2 @@
+-- Jalankan setelah membuat grup jika ingin menambahkan kategori manual.
+-- Grup baru pada aplikasi otomatis mendapatkan kategori dasar dan akun Kas Tunai.
