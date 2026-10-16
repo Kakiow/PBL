@@ -5,6 +5,8 @@
   --nav-fg-strong: #ffffff;
   --nav-accent: #5bc8f0;
   --nav-border: rgba(255, 255, 255, 0.12);
+  --nav-glow-x: 50%;
+  --nav-glow-y: 0%;
 
   position: sticky;
   top: 0;
@@ -14,12 +16,50 @@
   gap: 28px;
   min-height: 64px;
   padding: 0 28px;
-  background: linear-gradient(120deg, var(--nav-bg-top), var(--nav-bg-bottom));
+  background:
+    radial-gradient(130% 190% at 8% -60%, rgba(91, 200, 240, 0.16), transparent 55%),
+    radial-gradient(90% 160% at 100% -30%, rgba(43, 123, 176, 0.24), transparent 60%),
+    linear-gradient(120deg, var(--nav-bg-top), #142c44 55%, var(--nav-bg-bottom));
   color: var(--nav-fg-strong);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
   transition: box-shadow 0.3s ease;
+  isolation: isolate;
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 130% at 0% 50%, rgba(91, 200, 240, 0.16), transparent 70%),
+    radial-gradient(45% 130% at 100% 50%, rgba(122, 92, 240, 0.12), transparent 70%);
+  background-size: 200% 100%;
+  animation: navAurora 16s ease-in-out infinite alternate;
+}
+.topbar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(240px circle at var(--nav-glow-x) var(--nav-glow-y), rgba(91, 200, 240, 0.22), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.topbar:hover::after {
+  opacity: 1;
 }
 .topbar.is-scrolled {
-  box-shadow: 0 8px 24px rgba(8, 22, 36, 0.28);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 10px 30px rgba(8, 22, 36, 0.32);
+}
+@keyframes navAurora {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 0%;
+  }
 }
 .brand {
   display: inline-flex;
@@ -350,6 +390,12 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .topbar::before {
+    animation: none;
+  }
+  .topbar::after {
+    transition: none;
+  }
   .topbar,
   .brand-mark,
   .nav-link,

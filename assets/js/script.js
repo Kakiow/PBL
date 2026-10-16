@@ -52,6 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     saatGulir();
     window.addEventListener("scroll", saatGulir, { passive: true });
+
+    topbar.addEventListener("mousemove", function (event) {
+      const kotak = topbar.getBoundingClientRect();
+      topbar.style.setProperty("--nav-glow-x", Math.round(event.clientX - kotak.left) + "px");
+      topbar.style.setProperty("--nav-glow-y", Math.round(event.clientY - kotak.top) + "px");
+    });
   }
 
   const formRole = document.getElementById("form-role");

@@ -1,0 +1,94 @@
+/* Ringkasan langsung transaksi */
+.trx-preview {
+  position: sticky;
+  top: 82px;
+  padding: 20px;
+  border: 1px solid #e1e8ee;
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(23, 50, 77, 0.06);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.trx-preview.is-ready {
+  border-color: var(--trx-accent, #1d5b8a);
+  box-shadow: 0 12px 30px var(--trx-accent-ring, rgba(29, 91, 138, 0.12));
+}
+.trx-preview-badge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef4fa;
+  color: #4d5c68;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.trx-preview.is-ready .trx-preview-badge {
+  background: var(--trx-accent-soft, #e6f1f9);
+  color: var(--trx-accent-strong, #1d5b8a);
+}
+.trx-preview-amount {
+  display: block;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed #e2e8ee;
+}
+.trx-preview-amount small {
+  display: block;
+  margin-bottom: 4px;
+  color: #7b8794;
+  font-size: 0.78rem;
+}
+.trx-preview-amount strong {
+  display: block;
+  color: #17324d;
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.25s ease;
+}
+.trx-preview.is-ready .trx-preview-amount strong {
+  color: var(--trx-accent-strong, #17324d);
+}
+.trx-preview-list {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+}
+.trx-preview-list > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.trx-preview-list dt {
+  flex: 0 0 auto;
+  color: #7b8794;
+  font-size: 0.8rem;
+}
+.trx-preview-list dd {
+  margin: 0;
+  color: #2f3d49;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+.trx-preview-list dd.is-empty {
+  color: #a6b1bb;
+  font-weight: 500;
+}
+@media (max-width: 900px) {
+  .trx-preview {
+    position: static;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trx-preview,
+  .trx-preview-badge,
+  .trx-preview-amount strong {
+    transition: none !important;
+  }
+}
