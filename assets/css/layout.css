@@ -103,6 +103,48 @@
   flex-wrap: wrap;
 }
 
+/* Daftar keterangan (mis. Data Grup) ------------------------------------- */
+.detail-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+.detail-list > div {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.detail-list dt {
+  flex: 0 0 120px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.detail-list dd {
+  margin: 0;
+  color: var(--text-soft);
+  font-weight: 600;
+  word-break: break-word;
+}
+.detail-list code {
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: #eef1f5;
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 600px) {
+  .detail-list > div {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .detail-list dt {
+    flex: 0 0 auto;
+  }
+}
+
 /* Kartu sambutan (belum punya grup) -------------------------------------- */
 .welcome-card {
   background: var(--surface);

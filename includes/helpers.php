@@ -95,6 +95,39 @@ function label_peran($peran)
     return $label[(string) $peran] ?? 'Belum ada grup';
 }
 
+function jumlah_anggota_grup($pdo, $id_grup)
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ?");
+    $stmt->execute([$id_grup]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function jumlah_admin_grup($pdo, $id_grup)
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ? AND peran = 'Admin'");
+    $stmt->execute([$id_grup]);
+
+    return (int) $stmt->fetchColumn();
+}
+
+function grup_aktif_berikutnya($pdo, $id_pengguna, $id_grup_ditinggalkan)
+{
+    if ((int) ($_SESSION['grup_id'] ?? 0) !== (int) $id_grup_ditinggalkan) {
+        return;
+    }
+
+    $stmt = $pdo->prepare("SELECT id_grup FROM anggota_grup WHERE id_pengguna = ? ORDER BY id LIMIT 1");
+    $stmt->execute([$id_pengguna]);
+    $berikutnya = $stmt->fetchColumn();
+
+    if ($berikutnya) {
+        $_SESSION['grup_id'] = $berikutnya;
+    } else {
+        unset($_SESSION['grup_id']);
+    }
+}
+
 function kategori_id_untuk($pdo, $id_grup, $nama, $jenis)
 {
     $nama = trim($nama);

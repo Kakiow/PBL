@@ -136,20 +136,29 @@ include __DIR__ . '/../includes/header.php';
     <div class="card-head">
         <div>
             <h2>Grup Saya</h2>
-            <p><?php echo $grup_saya ? 'Klik kartu grup untuk menjadikannya grup aktif.' : 'Belum memiliki grup.'; ?></p>
+            <p><?php echo $grup_saya
+                    ? 'Klik badan kartu untuk menjadikannya grup aktif, atau buka Detail untuk mengelola grup.'
+                    : 'Belum memiliki grup.'; ?></p>
         </div>
     </div>
     <div class="grup-list">
         <?php foreach ($grup_saya as $g): $aktif = $id_aktif === (int) $g['id']; ?>
-        <form method="post" class="group-item<?php echo $aktif ? ' active' : ''; ?>">
-            <input type="hidden" name="aksi" value="pilih_grup">
-            <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
-            <button type="submit" class="group-item-btn"
-                title="<?php echo $aktif ? 'Grup ini sedang aktif' : 'Klik kartu untuk memilih grup ini'; ?>"<?php echo $aktif ? ' disabled aria-current="true"' : ''; ?>>
-                <strong><?php echo e($g['nama_grup']); ?></strong>
-                <span><?php echo e($g['kode_grup']); ?> · <?php echo e($g['peran']); ?><?php echo $aktif ? ' · Aktif' : ''; ?></span>
-            </button>
-        </form>
+        <div class="group-item<?php echo $aktif ? ' active' : ''; ?>">
+            <form method="post" class="group-item-form">
+                <input type="hidden" name="aksi" value="pilih_grup">
+                <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
+                <button type="submit" class="group-item-btn"
+                    title="<?php echo $aktif ? 'Grup ini sedang aktif' : 'Klik untuk menjadikan grup ini aktif'; ?>"<?php echo $aktif ? ' disabled aria-current="true"' : ''; ?>>
+                    <strong><?php echo e($g['nama_grup']); ?></strong>
+                    <span class="group-item-meta"><?php echo e($g['kode_grup']); ?> &middot;
+                        <?php echo e($g['peran']); ?></span>
+                </button>
+            </form>
+            <div class="group-item-foot">
+                <span class="badge<?php echo $aktif ? ' success' : ''; ?>"><?php echo $aktif ? 'Aktif' : 'Tidak aktif'; ?></span>
+                <a class="btn secondary small" href="detail.php?id=<?php echo (int) $g['id']; ?>">Detail</a>
+            </div>
+        </div>
         <?php endforeach; ?>
     </div>
 </section>
