@@ -1,0 +1,157 @@
+/* ==========================================================================
+   KasKelas — mode rail: sidebar dipadatkan jadi bar ikon (desktop lebar).
+   Digerakkan class `sidebar-rail` pada <body> (assets/js/sidebar.js).
+   ========================================================================== */
+
+@media (min-width: 1000px) {
+  /* Tombol toggle rail */
+  .rail-toggle {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--sidebar-muted);
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+  .rail-toggle:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .rail-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  .rail-icon {
+    width: 15px;
+    height: 15px;
+  }
+  .rail-icon--col {
+    display: none;
+  }
+  body.sidebar-rail .rail-icon--val {
+    display: none;
+  }
+  body.sidebar-rail .rail-icon--col {
+    display: block;
+  }
+
+  /* Kerangka sidebar */
+  body.sidebar-rail .sidebar {
+    width: var(--rail-w);
+    padding: 18px 10px 14px;
+    overflow: visible;
+  }
+  body.sidebar-rail .sidebar-head {
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+  }
+  body.sidebar-rail .brand {
+    justify-content: center;
+  }
+  body.sidebar-rail .brand-mark {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+  body.sidebar-rail .brand-text {
+    display: none;
+  }
+  body.sidebar-rail .app-main {
+    margin-left: var(--rail-w);
+  }
+  body.sidebar-rail .sidebar-foot {
+    padding: 12px 0 0;
+  }
+  body.sidebar-rail .user-card {
+    display: none;
+  }
+  body.sidebar-rail .logout-btn {
+    justify-content: center;
+    gap: 0;
+    padding: 9px;
+  }
+  body.sidebar-rail .logout-icon svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  /* Item navigasi */
+  body.sidebar-rail .nav-group,
+  body.sidebar-rail .nav-label,
+  body.sidebar-rail .nav-chevron {
+    display: none;
+  }
+  body.sidebar-rail .nav-item {
+    justify-content: center;
+    height: 40px;
+    padding: 0;
+  }
+  body.sidebar-rail .nav-item:hover {
+    transform: scale(1.04);
+  }
+  body.sidebar-rail .nav-icon {
+    width: 32px;
+    height: 32px;
+  }
+  body.sidebar-rail .nav-item.is-active {
+    background: var(--primary-soft);
+    box-shadow: none;
+  }
+  body.sidebar-rail .nav-badge {
+    position: absolute;
+    top: -3px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 0.65rem;
+    margin: 0;
+  }
+
+  /* Tooltip dari data-label supaya ikon tetap terbaca saat rail */
+  body.sidebar-rail .nav-item::after,
+  body.sidebar-rail .logout-btn::after {
+    content: attr(data-label);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--text);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 60;
+  }
+  body.sidebar-rail .nav-item:hover::after,
+  body.sidebar-rail .nav-item:focus-visible::after,
+  body.sidebar-rail .logout-btn:hover::after,
+  body.sidebar-rail .logout-btn:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-toggle,
+  body.sidebar-rail .nav-item,
+  body.sidebar-rail .nav-item::after {
+    transition: none !important;
+  }
+  body.sidebar-rail .nav-item:hover {
+    transform: none;
+  }
+}

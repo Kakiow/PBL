@@ -1,44 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const toggle = document.getElementById("nav-toggle-btn");
-  const sidebar = document.getElementById("sidebar");
-  const backdrop = document.getElementById("sidebar-backdrop");
-
-  function tutupSidebar() {
-    document.body.classList.remove("sidebar-open");
-    if (toggle) toggle.setAttribute("aria-expanded", "false");
-    if (backdrop) backdrop.hidden = true;
-  }
-
-  function bukaSidebar() {
-    document.body.classList.add("sidebar-open");
-    if (toggle) toggle.setAttribute("aria-expanded", "true");
-    if (backdrop) backdrop.hidden = false;
-  }
-
-  if (toggle && sidebar) {
-    toggle.addEventListener("click", function () {
-      if (document.body.classList.contains("sidebar-open")) {
-        tutupSidebar();
-      } else {
-        bukaSidebar();
-      }
-    });
-
-    if (backdrop) backdrop.addEventListener("click", tutupSidebar);
-
-    sidebar.querySelectorAll("a").forEach(function (link) {
-      link.addEventListener("click", tutupSidebar);
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") tutupSidebar();
-    });
-
-    window.addEventListener("resize", function () {
-      if (window.innerWidth > 900) tutupSidebar();
-    });
-  }
-
   const formRole = document.getElementById("form-role");
   const tombolRole = document.getElementById("btn-simpan-role");
   if (formRole && tombolRole) {

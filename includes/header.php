@@ -36,6 +36,22 @@ $slug_aktif = count($segmen) > 1 ? $segmen[0] : '';
 
 $menu = menu_nav($base, $peran_aktif, (bool) $grup);
 
+// Angka hidup di sidebar: hanya yang punya aksi, bukan sekadar counter.
+$badge_nav = [];
+if ($grup && $peran_aktif) {
+    if (in_array($peran_aktif, ['Admin', 'Bendahara'], true)) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM pembayaran p JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE k.id_grup = ? AND p.status = 'Menunggu'");
+        $stmt->execute([$grup['id']]);
+        $badge_nav['pembayaran'] = (int) $stmt->fetchColumn();
+    }
+
+    if (isset($_SESSION['user']['id'])) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_kewajiban ak JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE ak.id_pengguna = ? AND k.id_grup = ? AND ak.status IN ('Belum_Bayar','Ditolak')");
+        $stmt->execute([$_SESSION['user']['id'], $grup['id']]);
+        $badge_nav['kewajiban'] = (int) $stmt->fetchColumn();
+    }
+}
+
 $nama_user = trim((string) ($_SESSION['user']['nama'] ?? ''));
 $email_user = trim((string) ($_SESSION['user']['email'] ?? ''));
 $inisial = $nama_user !== ''
@@ -58,6 +74,8 @@ $label_peran = label_peran($peran_aktif);
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/style.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/layout.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/sidebar.css">
+    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/nav.css">
+    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/rail.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/inputs.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/form.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/print.css">
@@ -69,41 +87,7 @@ $label_peran = label_peran($peran_aktif);
 <body>
     <div class="app-shell">
         <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-head">
-                <a class="brand" href="<?php echo $base; ?>index.php">
-                    <span class="brand-name">KasKelas</span>
-                    <span class="brand-role"><?php echo e($label_peran); ?></span>
-                </a>
-            </div>
-            <nav class="sidebar-nav" aria-label="Navigasi utama">
-                <ul class="nav-list">
-                    <?php foreach ($menu as $item): $aktif = $item['slug'] === $slug_aktif; ?>
-                    <li>
-                        <a class="nav-item<?php echo $aktif ? ' is-active' : ''; ?>" href="<?php echo $item['href']; ?>"
-                            <?php echo $aktif ? 'aria-current="page"' : ''; ?>><?php echo e($item['label']); ?></a>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
-            </nav>
-            <div class="sidebar-foot">
-                <div class="user-card">
-                    <span class="avatar" aria-hidden="true"><?php echo e($inisial); ?></span>
-                    <span class="user-meta">
-                        <span class="user-name"><?php echo e($nama_user); ?></span>
-                        <span class="user-email"><?php echo e($email_user); ?></span>
-                    </span>
-                </div>
-                <a class="logout-btn" href="<?php echo $base; ?>auth/logout.php">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" aria-hidden="true">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <path d="M16 17l5-5-5-5M21 12H9" />
-                    </svg>
-                    Logout
-                </a>
-            </div>
-        </aside>
+<?php include __DIR__ . '/sidebar.php'; ?>
         <div class="app-main">
             <header class="topbar">
                 <button type="button" class="nav-toggle" id="nav-toggle-btn" aria-label="Buka menu navigasi"

@@ -1,6 +1,11 @@
 /* ==========================================================================
-   KasKelas — kerangka aplikasi: sidebar kiri, topbar mobile, area konten
+   KasKelas — kerangka aplikasi: sidebar kiri, toggle rail, topbar, konten
    ========================================================================== */
+
+:root {
+  --sidebar-w: 264px;
+  --rail-w: 76px;
+}
 
 .app-shell {
   min-height: 100vh;
@@ -15,77 +20,63 @@
   z-index: 50;
   display: flex;
   flex-direction: column;
-  width: 264px;
-  padding: 24px 16px 18px;
+  width: var(--sidebar-w);
+  padding: 20px 14px 16px;
   background: var(--sidebar);
   border-right: 1px solid var(--sidebar-border);
   overflow-y: auto;
 }
 
 .sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   padding: 0 6px;
 }
 .brand {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 .brand:hover {
   text-decoration: none;
 }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(140deg, #4a6ea8, var(--primary));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(47, 74, 122, 0.26);
+}
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 .brand-name {
   display: block;
   color: var(--text);
-  font-size: 1.28rem;
+  font-size: 1.24rem;
   font-weight: 800;
   letter-spacing: -0.025em;
 }
 .brand-role {
   display: block;
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--sidebar-muted);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
-.sidebar-nav {
-  margin-top: 22px;
-}
-.nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.nav-item {
-  display: block;
-  padding: 11px 14px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-sm);
-  background: var(--surface);
-  color: var(--text-soft);
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
-}
-.nav-item:hover {
-  border-color: var(--border-strong);
-  background: #f7f8fa;
-  color: var(--text);
-  text-decoration: none;
-  transform: translateX(2px);
-}
-.nav-item.is-active {
-  border-color: #b9cde6;
-  background: #dfe8f5;
-  color: var(--primary);
-  font-weight: 700;
-}
-.nav-item:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
+/* Kotak pengguna --------------------------------------------------------- */
 .sidebar-foot {
   display: flex;
   flex-direction: column;
@@ -144,16 +135,21 @@
   color: var(--danger);
   font-size: 0.85rem;
   font-weight: 600;
-  transition: background 0.18s ease, border-color 0.18s ease;
-}
-.logout-btn svg {
-  width: 15px;
-  height: 15px;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 .logout-btn:hover {
   border-color: #efd4d2;
   background: var(--danger-soft);
   text-decoration: none;
+}
+.logout-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.logout-icon svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* Area utama ------------------------------------------------------------- */
@@ -161,7 +157,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin-left: 264px;
+  margin-left: var(--sidebar-w);
 }
 .topbar {
   display: none;
@@ -187,7 +183,7 @@
   padding: 34px 40px 20px;
 }
 
-/* Tombol menu mobile ----------------------------------------------------- */
+/* Toggle drawer mobile --------------------------------------------------- */
 .nav-toggle {
   display: none;
   place-items: center;
@@ -265,6 +261,9 @@
   .nav-toggle {
     display: inline-grid;
   }
+  .rail-toggle {
+    display: none;
+  }
   .sidebar {
     z-index: 55;
     box-shadow: var(--shadow-md);
@@ -281,13 +280,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar,
-  .nav-item,
   .logout-btn,
   .nav-toggle,
   .nav-toggle-box span {
     transition: none !important;
   }
-  .nav-item:hover {
-    transform: none;
-  }
 }
+
