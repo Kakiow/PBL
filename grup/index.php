@@ -13,14 +13,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($aksi === 'buat_grup') {
         $nama = trim($_POST['nama_grup'] ?? '');
-        $kode = trim($_POST['kode_grup'] ?? '');
         $deskripsi = trim($_POST['deskripsi'] ?? '');
 
-        if ($nama === '' || $kode === '') {
-            flash('error', 'Nama grup dan kode grup wajib diisi.');
+        if ($nama === '') {
+            flash('error', 'Nama grup wajib diisi.');
         } else {
             try {
                 $pdo->beginTransaction();
+
+                $kode = kode_grup_baru($pdo);
+
+                if ($kode === null) {
+                    throw new Exception('kode gagal dibuat');
+                }
+
                 $stmt = $pdo->prepare("INSERT INTO grup (nama_grup, kode_grup, deskripsi, dibuat_oleh) VALUES (?, ?, ?, ?) RETURNING id");
                 $stmt->execute([$nama, $kode, $deskripsi, $id_user]);
                 $id_grup = $stmt->fetchColumn();
@@ -32,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$id_grup]);
                 $pdo->commit();
                 $_SESSION['grup_id'] = $id_grup;
-                flash('success', 'Grup berhasil dibuat.');
-            } catch (PDOException $e) {
+                flash('success', 'Grup berhasil dibuat. Kode grup: ' . $kode);
+            } catch (Exception $e) {
                 if ($pdo->inTransaction()) {
                     $pdo->rollBack();
                 }
-                flash('error', 'Gagal membuat grup. Pastikan kode grup belum digunakan.');
+                flash('error', 'Gagal membuat grup. Silakan coba lagi.');
             }
         }
         redirect('index.php');
@@ -101,11 +107,11 @@ include __DIR__ . '/../includes/header.php';
             </span>
             Buat Grup Baru
         </h2>
-        <p class="form-hint">Belum punya grup? Buat grup baru di sini — kamu otomatis menjadi Admin.</p>
+        <p class="form-hint">Belum punya grup? Buat grup baru di sini — kamu otomatis menjadi Admin. Kode grup dibuat
+            otomatis, lalu bisa kamu bagikan ke anggota dari halaman Detail grup.</p>
         <form method="post">
             <input type="hidden" name="aksi" value="buat_grup">
             <p><label>Nama Grup</label><input type="text" name="nama_grup" required></p>
-            <p><label>Kode Grup</label><input type="text" name="kode_grup" required placeholder="Contoh: KELAS2G25"></p>
             <p><label>Deskripsi</label><textarea name="deskripsi" rows="3"></textarea></p>
             <button class="btn primary full" type="submit">Buat Grup</button>
         </form>

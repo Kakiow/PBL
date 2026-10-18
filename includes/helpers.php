@@ -129,6 +129,30 @@ function grup_aktif_berikutnya($pdo, $id_pengguna, $id_grup_ditinggalkan)
     }
 }
 
+function kode_grup_baru($pdo)
+{
+    // Buang huruf/angka yang mudah tertukar saat dibagikan: I, O, 0, 1.
+    $abjad = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    $panjang = 8;
+
+    for ($percobaan = 0; $percobaan < 12; $percobaan++) {
+        $kode = '';
+
+        for ($i = 0; $i < $panjang; $i++) {
+            $kode .= $abjad[random_int(0, strlen($abjad) - 1)];
+        }
+
+        $stmt = $pdo->prepare("SELECT 1 FROM grup WHERE kode_grup = ?");
+        $stmt->execute([$kode]);
+
+        if (!$stmt->fetchColumn()) {
+            return $kode;
+        }
+    }
+
+    return null;
+}
+
 function kategori_id_untuk($pdo, $id_grup, $nama, $jenis)
 {
     $nama = trim($nama);
