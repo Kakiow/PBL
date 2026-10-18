@@ -12,7 +12,7 @@ $grup = grup_aktif($pdo);
 
 if (!$grup) {
     flash('error', 'Pilih atau buat grup terlebih dahulu untuk melihat daftar anggota.');
-    redirect('grup/index.php');
+    redirect('../grup/index.php');
 }
 
 $id_grup = (int) $grup['id'];

@@ -14,8 +14,11 @@ $ikon_nav = [
     'laporan' => '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>',
 ];
 
-$nav_navigasi = array_slice($menu, 0, 3);
-$nav_kas = array_slice($menu, 3);
+$seksi = [];
+foreach ($menu as $item) {
+    $seksi[$item['seksi'] ?? 'Menu'][] = $item;
+}
+$tampil_label_seksi = count($seksi) > 1;
 
 $tulis_item = function (array $item) use ($ikon_nav, $badge_nav, $base, $slug_aktif) {
     $aktif = $item['slug'] === $slug_aktif;
@@ -63,12 +66,10 @@ $tulis_item = function (array $item) use ($ikon_nav, $badge_nav, $base, $slug_ak
     </div>
     <nav class="sidebar-nav" id="sidebar-nav" aria-label="Navigasi utama">
         <div class="nav-list">
-            <?php if ($nav_kas): ?><span class="nav-group">Menu</span><?php endif; ?>
-            <?php foreach ($nav_navigasi as $item) { $tulis_item($item); } ?>
-            <?php if ($nav_kas): ?>
-            <span class="nav-group">Kas</span>
-            <?php foreach ($nav_kas as $item) { $tulis_item($item); } ?>
-            <?php endif; ?>
+            <?php foreach ($seksi as $nama_seksi => $items_seksi): ?>
+            <?php if ($tampil_label_seksi): ?><span class="nav-group"><?php echo e($nama_seksi); ?></span><?php endif; ?>
+            <?php foreach ($items_seksi as $item) { $tulis_item($item); } ?>
+            <?php endforeach; ?>
         </div>
     </nav>
     <div class="sidebar-foot">

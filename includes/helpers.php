@@ -72,6 +72,7 @@ function grup_aktif($pdo)
 function akses_menu()
 {
     return [
+        'anggota' => ['Admin', 'Bendahara', 'Anggota'],
         'kewajiban' => ['Admin', 'Bendahara', 'Anggota'],
         'pembayaran' => ['Admin', 'Bendahara', 'Anggota'],
         'transaksi' => ['Admin', 'Bendahara', 'Anggota'],
@@ -149,9 +150,8 @@ function kategori_id_untuk($pdo, $id_grup, $nama, $jenis)
 function menu_nav($base, $peran, $ada_grup)
 {
     $menu = [
-        ['slug' => '', 'label' => 'Dashboard', 'href' => $base . 'index.php'],
-        ['slug' => 'grup', 'label' => 'Grup', 'href' => $base . 'grup/index.php'],
-        ['slug' => 'anggota', 'label' => 'Anggota', 'href' => $base . 'anggota/index.php'],
+        ['seksi' => 'Menu', 'slug' => '', 'label' => 'Dashboard', 'href' => $base . 'index.php'],
+        ['seksi' => 'Menu', 'slug' => 'grup', 'label' => 'Grup', 'href' => $base . 'grup/index.php'],
     ];
 
     if (!$ada_grup) {
@@ -160,15 +160,16 @@ function menu_nav($base, $peran, $ada_grup)
 
     $akses = akses_menu();
     $items = [
-        'kewajiban' => ['Tagihan', 'kewajiban/index.php'],
-        'pembayaran' => ['Verifikasi', 'pembayaran/index.php'],
-        'transaksi' => ['Transaksi', 'transaksi/index.php'],
-        'laporan' => ['Laporan', 'laporan/index.php'],
+        'anggota' => ['Anggota', 'anggota/index.php', 'Menu'],
+        'kewajiban' => ['Tagihan', 'kewajiban/index.php', 'Kas'],
+        'pembayaran' => ['Verifikasi', 'pembayaran/index.php', 'Kas'],
+        'transaksi' => ['Transaksi', 'transaksi/index.php', 'Kas'],
+        'laporan' => ['Laporan', 'laporan/index.php', 'Kas'],
     ];
 
     foreach ($items as $slug => $info) {
         if (in_array($peran, $akses[$slug] ?? [], true)) {
-            $menu[] = ['slug' => $slug, 'label' => $info[0], 'href' => $base . $info[1]];
+            $menu[] = ['seksi' => $info[2], 'slug' => $slug, 'label' => $info[0], 'href' => $base . $info[1]];
         }
     }
 
