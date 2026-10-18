@@ -46,6 +46,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  document.querySelectorAll("form[data-autosubmit]").forEach(function (form) {
+    form.querySelectorAll("input, select").forEach(function (input) {
+      input.addEventListener("change", function () {
+        form.submit();
+      });
+    });
+  });
+
   document.querySelectorAll("form[data-konfirmasi]").forEach(function (form) {
     form.addEventListener("submit", function (event) {
       if (!window.confirm(form.dataset.konfirmasi)) {

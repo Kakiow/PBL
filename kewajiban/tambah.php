@@ -22,6 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($judul === '' || $jumlah <= 0 || $tenggat === '') {
         flash('error', 'Judul, jumlah, dan tenggat wajib diisi.');
+    } elseif ($tenggat < date('Y-m-d')) {
+        flash('error', 'Tenggat tidak boleh sebelum hari ini.');
     } else {
         try {
             $pdo->beginTransaction();
@@ -98,8 +100,8 @@ include __DIR__ . '/../includes/header.php';
             </p>
             <p class="field">
                 <label for="tenggat_waktu">Tenggat</label>
-                <input id="tenggat_waktu" name="tenggat_waktu" type="date" required
-                    data-error="Tenggat pembayaran wajib dipilih.">
+                <input id="tenggat_waktu" name="tenggat_waktu" type="date" min="<?php echo date('Y-m-d'); ?>" required
+                    data-error="Tenggat tidak boleh sebelum hari ini.">
                 <span class="chip-row">
                     <button type="button" class="chip-btn" data-tenggat="0">Hari ini</button>
                     <button type="button" class="chip-btn" data-tenggat="7">+7 hari</button>

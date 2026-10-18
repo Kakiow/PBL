@@ -40,14 +40,14 @@ include __DIR__ . '/../includes/header.php';
     <div class="card-head">
         <div>
             <h2>Periode Laporan</h2>
-            <p>Pilih rentang tanggal, lalu tampilkan atau export laporan.</p>
+            <p>Pilih rentang tanggal — laporan langsung diperbarui.</p>
         </div>
     </div>
-    <form method="get" class="filter-form">
+    <form method="get" class="filter-form" data-autosubmit>
         <p><label>Mulai</label><input type="date" name="mulai" value="<?php echo e($mulai); ?>"></p>
         <p><label>Selesai</label><input type="date" name="selesai" value="<?php echo e($selesai); ?>"></p>
-        <button class="btn primary">Tampilkan</button>
         <button class="btn secondary" type="button" data-print>Export to PDF</button>
+        <noscript><button class="btn primary" type="submit">Tampilkan</button></noscript>
     </form>
 </section>
 

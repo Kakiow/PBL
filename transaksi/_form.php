@@ -93,14 +93,14 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                     <p class="field">
                         <label for="kategori">Kategori</label>
                         <input id="kategori" name="kategori" type="text" list="daftar-kategori" maxlength="100"
-                            value="<?php echo e($val_kategori); ?>" placeholder="Contoh: Acara PSHT" required
+                            value="<?php echo e($val_kategori); ?>" placeholder="Contoh: Acara Sportif" required
                             data-error="Kategori wajib diisi.">
                         <datalist id="daftar-kategori">
                             <?php foreach ($kategori as $k): ?>
                             <option value="<?php echo e($k['nama_kategori']); ?>"></option>
                             <?php endforeach; ?>
                         </datalist>
-                        <span class="field-hint">Tulis tujuan transaksi, mis. "Acara PSHT" atau "Iuran Kas".</span>
+                        <span class="field-hint">Tulis tujuan transaksi, mis. "Study Tour" atau "Iuran Kas".</span>
                     </p>
                     <p class="field">
                         <label for="id_akun_dana">Akun Dana</label>
