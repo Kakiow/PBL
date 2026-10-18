@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk | KasKelas</title>
+    <title>Masuk | SIMKAS</title>
     <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body class="auth-page">
     <div class="auth-box">
-        <div class="auth-logo">KasKelas</div>
+        <div class="auth-logo">SIMKAS</div>
         <h1>Masuk</h1>
         <p class="muted">Masuk untuk mengelola kas kelasmu.</p>
         <?php tampil_flash(); ?>

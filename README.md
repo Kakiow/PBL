@@ -1,4 +1,4 @@
-# KasKelas - SIMKAS
+# SIMKAS
 
 Aplikasi pengelolaan kas kelas menggunakan **PHP Native, PostgreSQL, CSS Native, dan JavaScript Native**.
 
@@ -7,7 +7,7 @@ Project ini dibuat dengan gaya coding sederhana seperti jobsheet: setiap fitur m
 ## Struktur
 
 ```text
-KasKelas/
+SIMKAS/
 ├── auth/            login.php, register.php, logout.php
 ├── config/          koneksi.php
 ├── database/        01_schema.sql, 02_seed_kategori.sql
@@ -31,7 +31,7 @@ KasKelas/
 1. Buat database PostgreSQL, misalnya `simkas`.
 2. Jalankan `database/01_schema.sql` pada database tersebut.
 3. Buka `config/koneksi.php`, lalu sesuaikan username dan password PostgreSQL.
-4. Jalankan project dari folder `SIMKAS_KasKelas` dengan Apache/XAMPP/Laragon atau PHP built-in server.
+4. Jalankan project dari folder `SIMKAS` dengan Apache/XAMPP/Laragon atau PHP built-in server.
 5. Buka `auth/register.php` untuk membuat akun.
 6. Login melalui `auth/login.php`.
 7. Buat grup baru. Pembuat grup otomatis menjadi Admin.

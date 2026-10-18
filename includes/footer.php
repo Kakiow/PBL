@@ -1,6 +1,6 @@
             </main>
             <footer class="app-footer">
-                <p>KasKelas &copy; <?php echo date('Y'); ?></p>
+                <p>SIMKAS &copy; <?php echo date('Y'); ?></p>
             </footer>
         </div>
     </div>

@@ -19,7 +19,7 @@ if (!$grup) {
 <div class="page-head">
     <span class="eyebrow">Belum ada grup</span>
     <h1>Halo, <?php echo e($_SESSION['user']['nama']); ?></h1>
-    <p>Selamat datang di KasKelas. Buat atau pilih grup terlebih dahulu untuk mulai mengelola kas.</p>
+    <p>Selamat datang di SIMKAS. Buat atau pilih grup terlebih dahulu untuk mulai mengelola kas.</p>
 </div>
 <div class="welcome-card">
     <h2>Belum ada grup aktif</h2>

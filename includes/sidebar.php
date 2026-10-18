@@ -46,9 +46,9 @@ $tulis_item = function (array $item) use ($ikon_nav, $badge_nav, $base, $slug_ak
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-head">
         <a class="brand" href="<?php echo $base; ?>index.php">
-            <span class="brand-mark" aria-hidden="true">K</span>
+            <span class="brand-mark" aria-hidden="true">S</span>
             <span class="brand-text">
-                <span class="brand-name">KasKelas</span>
+                <span class="brand-name">SIMKAS</span>
                 <span class="brand-role"><?php echo e($label_peran); ?></span>
             </span>
         </a>

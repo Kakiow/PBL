@@ -19,7 +19,7 @@ if ($app_root !== '' && strpos($script_file, $app_root) === 0) {
         : str_repeat('../', count(array_filter(explode('/', $sub_dir))));
 }
 
-$page_title = $page_title ?? 'KasKelas';
+$page_title = $page_title ?? 'SIMKAS';
 $page_css = $page_css ?? [];
 $grup = null;
 if (isset($_SESSION['grup_id']) && isset($pdo)) {
@@ -65,7 +65,7 @@ $label_peran = label_peran($peran_aktif);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo e($page_title); ?> | KasKelas</title>
+    <title><?php echo e($page_title); ?> | SIMKAS</title>
     <link rel="icon" type="image/svg+xml" href="<?php echo $base; ?>assets/img/logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
