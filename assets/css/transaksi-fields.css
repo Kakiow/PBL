@@ -1,4 +1,7 @@
-/* Form transaksi: kolom input, prefix, pintasan, dan validasi */
+/* ==========================================================================
+   KasKelas — form transaksi: kolom input, prefix, pintasan, validasi
+   ========================================================================== */
+
 .trx-fields .field {
   margin-bottom: 17px;
 }
@@ -7,216 +10,46 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 18px;
 }
-.trx-fields label {
-  margin-bottom: 6px;
-  font-size: 0.82rem;
-  color: #4d5c68;
-  transition: color 0.2s ease;
-}
-.trx-fields .field:focus-within label {
-  color: var(--trx-accent-strong);
-}
-.trx-fields .label-optional {
-  font-weight: 500;
-  color: #93a0ac;
-}
-@media (max-width: 600px) {
-  .trx-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Kolom input */
 .form-transaksi input,
 .form-transaksi select,
 .form-transaksi textarea {
-  border: 1px solid #d7dee5;
-  border-radius: 9px;
-  background-color: #fff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 .form-transaksi input:hover,
 .form-transaksi select:hover,
 .form-transaksi textarea:hover {
-  border-color: #b9c6d1;
+  border-color: #c4cad2;
 }
 .form-transaksi input:focus,
 .form-transaksi select:focus,
 .form-transaksi textarea:focus {
   outline: none;
   border-color: var(--trx-accent-strong);
-  box-shadow: 0 0 0 4px var(--trx-accent-ring);
+  box-shadow: 0 0 0 3px var(--trx-accent-ring);
 }
-.form-transaksi input::placeholder,
-.form-transaksi textarea::placeholder {
-  color: #a6b1bb;
-}
-.form-transaksi textarea {
-  line-height: 1.55;
-}
-.form-transaksi select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 34px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 11px center;
-  background-size: 14px;
-  cursor: pointer;
-}
-.form-transaksi input[type="date"] {
-  cursor: pointer;
-}
-.form-transaksi input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-.form-transaksi input[type="number"]::-webkit-outer-spin-button,
-.form-transaksi input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Prefix mata uang */
-.input-affix {
-  display: flex;
-  align-items: stretch;
-  border: 1px solid #d7dee5;
-  border-radius: 9px;
-  background: #fff;
-  overflow: hidden;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.input-affix:hover {
-  border-color: #b9c6d1;
-}
-.input-affix:focus-within {
+.form-transaksi .input-affix:focus-within {
   border-color: var(--trx-accent-strong);
-  box-shadow: 0 0 0 4px var(--trx-accent-ring);
+  box-shadow: 0 0 0 3px var(--trx-accent-ring);
 }
-.input-affix-label {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  padding: 0 12px;
-  border-right: 1px solid #e1e8ee;
-  background: #eef4fa;
-  color: #27465e;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-.form-transaksi .input-affix input,
-.form-transaksi .input-affix input:hover,
-.form-transaksi .input-affix input:focus {
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: transparent;
-}
-
-/* Pintasan cepat */
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 9px;
-}
-.chip-btn {
-  border: 1px solid #dbe3ea;
-  border-radius: 999px;
-  padding: 6px 12px;
-  background: #fff;
-  color: #4d5c68;
-  font: inherit;
-  font-size: 0.82rem;
-  line-height: 1.2;
-  cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.18s ease,
-    box-shadow 0.18s ease;
-}
-.chip-btn:hover {
-  border-color: #9fc4e0;
-  background: #f2f8fc;
-  color: #1d5b8a;
-  transform: translateY(-1px);
-}
-.chip-btn:active {
-  transform: translateY(0);
-}
-.chip-btn:focus-visible {
-  outline: none;
-  border-color: #1d5b8a;
-  box-shadow: 0 0 0 3px rgba(29, 91, 138, 0.18);
-}
-.chip-btn.is-active {
-  border-color: var(--trx-accent, #1d5b8a);
-  background: var(--trx-accent-soft, #e6f1f9);
-  color: var(--trx-accent-strong, #16486a);
-  font-weight: 600;
-}
-
-/* Keterangan & pesan */
-.field-hint {
-  display: block;
-  margin-top: 7px;
-  font-size: 0.8rem;
-  color: #7b8794;
-  transition: color 0.2s ease;
-}
-.field-hint.is-filled {
-  color: var(--trx-accent-strong, #216b49);
-  font-weight: 600;
-}
-.field-hint--counter {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.field.is-invalid label {
-  color: #a83a3a;
-}
-.field.is-invalid input,
-.field.is-invalid select,
-.field.is-invalid textarea {
-  border-color: #d98b8b;
-  background-color: #fffafa;
-}
-.field.is-invalid .input-affix {
-  border-color: #d98b8b;
-  background: #fffafa;
+.form-transaksi .chip-btn.is-active {
+  border-color: var(--trx-accent-strong);
+  background: var(--trx-accent-soft);
+  color: var(--trx-accent-strong);
 }
 .field.is-invalid .jenis-body {
-  border-color: #d98b8b;
+  border-color: #dda6a2;
 }
-.field-error {
-  display: block;
-  margin-top: 7px;
-  color: #a83a3a;
-  font-size: 0.8rem;
-  animation: trxFadeIn 0.2s ease both;
-}
-@keyframes trxFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+@media (max-width: 600px) {
+  .trx-row {
+    grid-template-columns: 1fr;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .field-error {
-    animation: none;
-  }
   .form-transaksi input,
   .form-transaksi select,
-  .form-transaksi textarea,
-  .input-affix,
-  .chip-btn,
-  .field-hint {
+  .form-transaksi textarea {
     transition: none !important;
-  }
-  .chip-btn:hover {
-    transform: none;
   }
 }

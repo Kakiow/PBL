@@ -1,62 +1,41 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const topbar = document.getElementById("topbar");
   const toggle = document.getElementById("nav-toggle-btn");
-  const nav = document.getElementById("main-nav");
-  const userMenu = document.getElementById("nav-user");
-  const userBtn = document.getElementById("user-menu-btn");
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
 
-  if (toggle && nav) {
+  function tutupSidebar() {
+    document.body.classList.remove("sidebar-open");
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
+    if (backdrop) backdrop.hidden = true;
+  }
+
+  function bukaSidebar() {
+    document.body.classList.add("sidebar-open");
+    if (toggle) toggle.setAttribute("aria-expanded", "true");
+    if (backdrop) backdrop.hidden = false;
+  }
+
+  if (toggle && sidebar) {
     toggle.addEventListener("click", function () {
-      const terbuka = nav.classList.toggle("show");
-      toggle.setAttribute("aria-expanded", terbuka ? "true" : "false");
-      toggle.setAttribute("aria-label", terbuka ? "Tutup menu navigasi" : "Buka menu navigasi");
-    });
-  }
-
-  if (nav) {
-    nav.querySelectorAll("a").forEach(function (link) {
-      link.addEventListener("click", function () {
-        nav.classList.remove("show");
-        if (toggle) {
-          toggle.setAttribute("aria-expanded", "false");
-          toggle.setAttribute("aria-label", "Buka menu navigasi");
-        }
-      });
-    });
-  }
-
-  function tutupMenuPengguna() {
-    if (userMenu) userMenu.classList.remove("open");
-    if (userBtn) userBtn.setAttribute("aria-expanded", "false");
-  }
-
-  if (userMenu && userBtn) {
-    userBtn.addEventListener("click", function (event) {
-      event.stopPropagation();
-      const terbuka = userMenu.classList.toggle("open");
-      userBtn.setAttribute("aria-expanded", terbuka ? "true" : "false");
+      if (document.body.classList.contains("sidebar-open")) {
+        tutupSidebar();
+      } else {
+        bukaSidebar();
+      }
     });
 
-    document.addEventListener("click", function (event) {
-      if (!userMenu.contains(event.target)) tutupMenuPengguna();
+    if (backdrop) backdrop.addEventListener("click", tutupSidebar);
+
+    sidebar.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", tutupSidebar);
     });
 
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") tutupMenuPengguna();
+      if (event.key === "Escape") tutupSidebar();
     });
-  }
 
-  if (topbar) {
-    const saatGulir = function () {
-      topbar.classList.toggle("is-scrolled", window.scrollY > 4);
-    };
-    saatGulir();
-    window.addEventListener("scroll", saatGulir, { passive: true });
-
-    topbar.addEventListener("mousemove", function (event) {
-      const kotak = topbar.getBoundingClientRect();
-      topbar.style.setProperty("--nav-glow-x", Math.round(event.clientX - kotak.left) + "px");
-      topbar.style.setProperty("--nav-glow-y", Math.round(event.clientY - kotak.top) + "px");
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 900) tutupSidebar();
     });
   }
 
@@ -78,6 +57,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     perbarui();
   }
+
+  const formBayar = document.getElementById("form-bayar");
+  if (formBayar) {
+    const selectMetode = formBayar.querySelector("#metode_pembayaran");
+    const fieldBukti = formBayar.querySelector("#field-bukti");
+    const inputBukti = formBayar.querySelector("#berkas_bukti");
+
+    const perbaruiBukti = function () {
+      const tunai = Boolean(selectMetode) && selectMetode.value === "Tunai";
+
+      if (fieldBukti) fieldBukti.hidden = tunai;
+      if (inputBukti) {
+        inputBukti.required = !tunai;
+        if (tunai) inputBukti.value = "";
+      }
+    };
+
+    if (selectMetode) {
+      selectMetode.addEventListener("change", perbaruiBukti);
+      perbaruiBukti();
+    }
+  }
+
+  document.querySelectorAll("[data-print]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      window.print();
+    });
+  });
 
   const formKewajiban = document.querySelector(".form-kewajiban");
 

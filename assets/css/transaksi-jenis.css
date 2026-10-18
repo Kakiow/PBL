@@ -1,4 +1,7 @@
-/* Pemilih jenis transaksi */
+/* ==========================================================================
+   KasKelas — pemilih jenis transaksi (segmented Pemasukan / Pengeluaran)
+   ========================================================================== */
+
 .jenis-toggle {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -22,15 +25,15 @@
   align-items: center;
   gap: 11px;
   padding: 13px 14px;
-  border: 1px solid #dbe3ea;
-  border-radius: 12px;
-  background: #fff;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .jenis-body:hover {
-  border-color: #b9cfe0;
+  border-color: #b6c8dd;
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(23, 50, 77, 0.07);
+  box-shadow: var(--shadow-sm);
 }
 .jenis-icon {
   display: grid;
@@ -39,8 +42,8 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #eef4fa;
-  color: #5b6b78;
+  background: #eef1f5;
+  color: var(--muted);
   transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 .jenis-icon svg {
@@ -49,14 +52,14 @@
 }
 .jenis-text strong {
   display: block;
+  color: var(--text);
   font-size: 0.9rem;
-  color: #2f3d49;
 }
 .jenis-text small {
   display: block;
+  color: var(--muted);
   font-size: 0.75rem;
   font-weight: 500;
-  color: #8b98a4;
 }
 .jenis-check {
   position: absolute;
@@ -78,19 +81,18 @@
   height: 11px;
 }
 .jenis-option--in {
-  --opt-accent: #2f8f62;
-  --opt-soft: #eaf7f0;
-  --opt-ring: rgba(47, 143, 98, 0.16);
+  --opt-accent: var(--success);
+  --opt-soft: var(--success-soft);
+  --opt-ring: rgba(47, 125, 93, 0.16);
 }
 .jenis-option--out {
-  --opt-accent: #d0644a;
-  --opt-soft: #fdeeeb;
-  --opt-ring: rgba(192, 74, 52, 0.16);
+  --opt-accent: var(--danger);
+  --opt-soft: var(--danger-soft);
+  --opt-ring: rgba(180, 69, 62, 0.16);
 }
 .jenis-option input:checked + .jenis-body {
   border-color: var(--opt-accent);
   background: var(--opt-soft);
-  box-shadow: 0 8px 20px var(--opt-ring);
 }
 .jenis-option input:checked + .jenis-body .jenis-icon {
   background: var(--opt-accent);
@@ -103,8 +105,9 @@
 }
 .jenis-option input:focus-visible + .jenis-body {
   border-color: var(--opt-accent);
-  box-shadow: 0 0 0 4px var(--opt-ring);
+  box-shadow: 0 0 0 3px var(--opt-ring);
 }
+
 @media (max-width: 600px) {
   .jenis-toggle {
     grid-template-columns: 1fr;

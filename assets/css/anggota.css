@@ -1,0 +1,47 @@
+/* ==========================================================================
+   KasKelas — halaman Anggota: daftar anggota grup & pengaturan role
+   ========================================================================== */
+
+.role-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.role-form .role-select {
+  width: auto;
+  min-width: 132px;
+  padding: 8px 34px 8px 12px;
+  font-size: 0.85rem;
+}
+.btn-simpan {
+  display: none;
+}
+.btn-simpan.is-visible {
+  display: inline-flex;
+  animation: rolePop 0.18s ease;
+}
+@keyframes rolePop {
+  from {
+    opacity: 0;
+    transform: translateY(3px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .role-form {
+    width: 100%;
+  }
+  .role-form .role-select {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-simpan.is-visible {
+    animation: none;
+  }
+}

@@ -1,0 +1,137 @@
+/* ==========================================================================
+   KasKelas — tata letak bersama: judul halaman, kartu konten, tautan, footer
+   ========================================================================== */
+
+.page-head {
+  margin-bottom: 26px;
+}
+.page-head .eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.page-head h1 {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.page-head p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.section-heading h1,
+.section-heading h2 {
+  margin-bottom: 3px;
+}
+
+/* Tautan kembali --------------------------------------------------------- */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 6px 13px 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.back-link svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.18s ease;
+}
+.back-link:hover {
+  border-color: #b6c8dd;
+  background: #f4f7fb;
+  color: var(--primary);
+  text-decoration: none;
+  transform: translateX(-2px);
+}
+.back-link:hover svg {
+  transform: translateX(-2px);
+}
+
+/* Kartu konten ----------------------------------------------------------- */
+.content-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.content-card > h2:last-child,
+.content-card > p:last-child {
+  margin-bottom: 0;
+}
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.card-head h2,
+.card-head h3 {
+  margin-bottom: 3px;
+}
+.card-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Kartu sambutan (belum punya grup) -------------------------------------- */
+.welcome-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.welcome-card h1 {
+  margin-bottom: 8px;
+}
+.welcome-card p {
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* Footer ----------------------------------------------------------------- */
+.app-footer {
+  padding: 6px 40px 30px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .app-footer {
+    padding: 6px 20px 26px;
+  }
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

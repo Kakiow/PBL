@@ -7,39 +7,22 @@ Project ini dibuat dengan gaya coding sederhana seperti jobsheet: setiap fitur m
 ## Struktur
 
 ```text
-SIMKAS_KasKelas/
-├── auth/
-│   ├── login.php
-│   ├── register.php
-│   └── logout.php
-├── config/
-│   └── koneksi.php
-├── database/
-│   ├── 01_schema.sql
-│   └── 02_seed_kategori.sql
-├── includes/
-│   ├── auth.php
-│   ├── footer.php
-│   ├── header.php
-│   └── helpers.php
-├── grup/
-│   └── index.php
-├── kategori/
-│   └── index.php
-├── kewajiban/
-│   ├── index.php
-│   └── detail.php
-├── pembayaran/
-│   └── index.php
-├── transaksi/
-│   ├── index.php
-│   └── tambah.php
-├── laporan/
-│   └── index.php
+KasKelas/
+├── auth/            login.php, register.php, logout.php
+├── config/          koneksi.php
+├── database/        01_schema.sql, 02_seed_kategori.sql
+├── includes/        auth.php, footer.php, header.php, helpers.php
+├── grup/            index.php            (buat / gabung / pilih grup)
+├── anggota/         index.php            (daftar anggota + ubah role)
+├── kewajiban/       index.php, detail.php  (Tagihan)
+├── pembayaran/      index.php            (Verifikasi)
+├── transaksi/       index.php, _form.php, tambah.php, edit.php
+├── laporan/         index.php
 ├── assets/
-│   ├── css/style.css
-│   └── js/script.js
-├── index.php
+│   ├── css/         style, sidebar, form, dashboard, table, grup,
+│   │                anggota, kewajiban, transaksi*
+│   └── js/          script.js, transaksi.js
+├── index.php        (Dashboard)
 └── storage/uploads/
 ```
 

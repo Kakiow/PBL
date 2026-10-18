@@ -72,19 +72,53 @@ function grup_aktif($pdo)
 function akses_menu()
 {
     return [
-        'kategori' => ['Admin', 'Bendahara'],
         'kewajiban' => ['Admin', 'Bendahara', 'Anggota'],
         'pembayaran' => ['Admin', 'Bendahara', 'Anggota'],
-        'transaksi' => ['Admin', 'Bendahara'],
+        'transaksi' => ['Admin', 'Bendahara', 'Anggota'],
         'laporan' => ['Admin', 'Bendahara'],
     ];
+}
+
+function boleh_kelola_transaksi($peran)
+{
+    return in_array($peran, ['Admin', 'Bendahara'], true);
+}
+
+function label_peran($peran)
+{
+    $label = [
+        'Admin' => 'Admin / Pengelola',
+        'Bendahara' => 'Bendahara',
+        'Anggota' => 'Anggota',
+    ];
+
+    return $label[(string) $peran] ?? 'Belum ada grup';
+}
+
+function kategori_id_untuk($pdo, $id_grup, $nama, $jenis)
+{
+    $nama = trim($nama);
+
+    $stmt = $pdo->prepare("SELECT id FROM kategori WHERE id_grup = ? AND LOWER(nama_kategori) = LOWER(?) ORDER BY id LIMIT 1");
+    $stmt->execute([$id_grup, $nama]);
+    $id = $stmt->fetchColumn();
+
+    if ($id) {
+        return $id;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO kategori (id_grup, nama_kategori, jenis) VALUES (?, ?, ?) RETURNING id");
+    $stmt->execute([$id_grup, $nama, $jenis]);
+
+    return $stmt->fetchColumn();
 }
 
 function menu_nav($base, $peran, $ada_grup)
 {
     $menu = [
         ['slug' => '', 'label' => 'Dashboard', 'href' => $base . 'index.php'],
-        ['slug' => 'grup', 'label' => 'Grup & Anggota', 'href' => $base . 'grup/index.php'],
+        ['slug' => 'grup', 'label' => 'Grup', 'href' => $base . 'grup/index.php'],
+        ['slug' => 'anggota', 'label' => 'Anggota', 'href' => $base . 'anggota/index.php'],
     ];
 
     if (!$ada_grup) {
@@ -93,9 +127,8 @@ function menu_nav($base, $peran, $ada_grup)
 
     $akses = akses_menu();
     $items = [
-        'kategori' => ['Kategori', 'kategori/index.php'],
-        'kewajiban' => ['Kewajiban', 'kewajiban/index.php'],
-        'pembayaran' => ['Pembayaran', 'pembayaran/index.php'],
+        'kewajiban' => ['Tagihan', 'kewajiban/index.php'],
+        'pembayaran' => ['Verifikasi', 'pembayaran/index.php'],
         'transaksi' => ['Transaksi', 'transaksi/index.php'],
         'laporan' => ['Laporan', 'laporan/index.php'],
     ];

@@ -1,56 +1,9 @@
-/* Halaman transaksi: kerangka, kartu, dan aksi */
-.trx-heading {
-  align-items: flex-start;
-}
-.trx-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
-  padding: 6px 13px 6px 10px;
-  border: 1px solid #dbe3ea;
-  border-radius: 999px;
-  background: #fff;
-  color: #4d5c68;
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease,
-    box-shadow 0.18s ease;
-}
-.trx-back svg {
-  width: 14px;
-  height: 14px;
-  transition: transform 0.18s ease;
-}
-.trx-back:hover {
-  border-color: #9fc4e0;
-  background: #f2f8fc;
-  color: #1d5b8a;
-  text-decoration: none;
-  transform: translateX(-2px);
-  box-shadow: 0 6px 16px rgba(23, 50, 77, 0.07);
-}
-.trx-back:hover svg {
-  transform: translateX(-2px);
-}
+/* ==========================================================================
+   KasKelas — halaman transaksi: kerangka, kartu, dan aksi
+   ========================================================================== */
+
 .trx-card {
-  position: relative;
-  padding: 24px;
-  border: 1px solid #e4e9ee;
-  border-top: 3px solid #2b7bb0;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #fbfdff, #f4f8fc);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  animation: trxFadeUp 0.4s ease both;
-}
-.trx-card:hover {
-  border-color: #d5e2ee;
-  box-shadow: 0 12px 34px rgba(23, 50, 77, 0.08);
-}
-.trx-card:focus-within {
-  border-color: #9fc4e0;
-  box-shadow: 0 0 0 4px rgba(29, 91, 138, 0.1);
+  border-top: 3px solid var(--primary);
 }
 .trx-card-head {
   display: flex;
@@ -58,11 +11,11 @@
   gap: 10px;
   margin-bottom: 16px;
   padding-bottom: 13px;
-  border-bottom: 1px solid #e9eef3;
+  border-bottom: 1px solid var(--border);
 }
 .trx-card-head h2 {
   margin: 0;
-  font-size: 1.06rem;
+  font-size: 1.05rem;
 }
 .trx-card-icon {
   display: inline-grid;
@@ -71,8 +24,8 @@
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: #e6f1f9;
-  color: #1d5b8a;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 .trx-card-icon svg {
   width: 17px;
@@ -81,22 +34,22 @@
 
 /* Token warna mengikuti jenis transaksi */
 .form-transaksi {
-  --trx-accent: #2b7bb0;
-  --trx-accent-strong: #1d5b8a;
-  --trx-accent-soft: #e6f1f9;
-  --trx-accent-ring: rgba(29, 91, 138, 0.12);
+  --trx-accent: var(--primary);
+  --trx-accent-strong: var(--primary);
+  --trx-accent-soft: var(--primary-soft);
+  --trx-accent-ring: var(--primary-ring);
 }
 .form-transaksi[data-jenis="pemasukan"] {
-  --trx-accent: #2f8f62;
-  --trx-accent-strong: #1f7a52;
-  --trx-accent-soft: #e4f4ec;
-  --trx-accent-ring: rgba(47, 143, 98, 0.14);
+  --trx-accent: var(--success);
+  --trx-accent-strong: #276a4f;
+  --trx-accent-soft: var(--success-soft);
+  --trx-accent-ring: rgba(47, 125, 93, 0.16);
 }
 .form-transaksi[data-jenis="pengeluaran"] {
-  --trx-accent: #d0644a;
-  --trx-accent-strong: #b8432c;
-  --trx-accent-soft: #fdeeea;
-  --trx-accent-ring: rgba(192, 74, 52, 0.14);
+  --trx-accent: var(--danger);
+  --trx-accent-strong: #9d3b35;
+  --trx-accent-soft: var(--danger-soft);
+  --trx-accent-ring: rgba(180, 69, 62, 0.16);
 }
 .trx-layout {
   display: grid;
@@ -112,25 +65,13 @@
   gap: 14px;
   margin-top: 22px;
   padding-top: 17px;
-  border-top: 1px solid #e9eef3;
-}
-.form-transaksi .btn {
-  border-radius: 10px;
-  padding: 11px 20px;
-  font-weight: 600;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  border-top: 1px solid var(--border);
 }
 .form-transaksi .btn.primary {
-  background: var(--trx-accent-strong, #1d5b8a);
-  box-shadow: 0 6px 16px var(--trx-accent-ring, rgba(29, 91, 138, 0.18));
+  background: var(--trx-accent-strong);
 }
 .form-transaksi .btn.primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px var(--trx-accent-ring, rgba(29, 91, 138, 0.24));
-}
-.form-transaksi .btn.primary:active {
-  transform: translateY(0);
-  box-shadow: none;
+  background: var(--trx-accent);
 }
 .form-transaksi .btn.primary.is-loading {
   pointer-events: none;
@@ -148,25 +89,12 @@
   vertical-align: -1px;
   animation: trxSpin 0.7s linear infinite;
 }
-.form-status {
-  font-size: 0.85rem;
-  color: #71808d;
-}
-@keyframes trxFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 @keyframes trxSpin {
   to {
     transform: rotate(360deg);
   }
 }
+
 @media (max-width: 900px) {
   .trx-layout {
     grid-template-columns: 1fr;
@@ -185,17 +113,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .trx-card {
-    animation: none;
-  }
-  .trx-card,
-  .trx-back,
-  .trx-back svg,
   .form-transaksi .btn {
     transition: none !important;
   }
-  .form-transaksi .btn.primary:hover,
-  .trx-back:hover {
+  .form-transaksi .btn.primary:hover {
     transform: none;
   }
 }

@@ -50,14 +50,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Masuk | KasKelas</title>
     <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/inputs.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
 
 <body class="auth-page">
     <div class="auth-box">
-        <div class="auth-logo">SIMKAS</div>
+        <div class="auth-logo">KasKelas</div>
         <h1>Masuk</h1>
-        <p class="muted">Masuk untuk mengelola kasmu.</p>
+        <p class="muted">Masuk untuk mengelola kas kelasmu.</p>
         <?php tampil_flash(); ?>
         <form method="post">
             <p>

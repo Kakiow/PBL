@@ -1,37 +1,55 @@
-/* Tabel interaktif yang dipakai bersama (Dashboard, Grup, dll.) */
-.table-fancy-wrap {
-  border: 1px solid #e6ebf0;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(23, 50, 77, 0.05);
+/* ==========================================================================
+   KasKelas — tabel: gaya dasar + tabel bersama `.table-fancy`
+   ========================================================================== */
+
+.table-responsive {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
 }
-.table-fancy {
+table {
   width: 100%;
+  border-collapse: collapse;
 }
-.table-fancy thead {
-  background: linear-gradient(120deg, #1d5b8a, #164869);
+th,
+td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
 }
-.table-fancy th {
-  padding: 13px 16px;
-  border: 0;
-  color: #e9f2fa;
+th {
+  background: var(--surface-muted);
+  color: var(--muted);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.table-fancy td {
-  padding: 13px 16px;
-  border-bottom: 1px solid #eef2f6;
-  vertical-align: middle;
+tbody tr {
+  transition: background 0.16s ease;
 }
-.table-fancy tbody tr {
-  transition: background 0.18s ease;
-}
-.table-fancy tbody tr:hover {
-  background: #f4f9fd;
-}
-.table-fancy tbody tr:last-child td {
+tbody tr:last-child td {
   border-bottom: 0;
+}
+tbody tr:hover {
+  background: var(--surface-muted);
+}
+tr.empty td {
+  padding: 26px 14px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Tabel bersama (Dashboard, Transaksi, Anggota, dll.) -------------------- */
+.table-fancy-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.table-fancy {
+  width: 100%;
 }
 .table-fancy .num {
   text-align: right;
@@ -40,61 +58,26 @@
   white-space: nowrap;
 }
 .table-fancy .amount-in {
-  color: #216b49;
+  color: var(--success);
 }
 .table-fancy .amount-out {
-  color: #a83a3a;
+  color: var(--danger);
 }
 .table-fancy .nowrap {
   white-space: nowrap;
-  color: #5b6b78;
+  color: var(--muted);
   font-size: 0.86rem;
 }
 .table-fancy .desc {
-  color: #4d5c68;
+  color: var(--text-soft);
 }
-.table-fancy .chip {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #eef4fa;
-  color: #27465e;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-.table-fancy .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.table-fancy .badge::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.9;
+.table-fancy .row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 .table-fancy tr.empty td {
-  padding: 30px 16px;
+  padding: 26px 16px;
   text-align: center;
-  color: #8a97a3;
-}
-.badge.role-admin {
-  background: #e5efff;
-  color: #1d5b8a;
-}
-.badge.role-bendahara {
-  background: #fdeede;
-  color: #a8621a;
-}
-.badge.role-anggota {
-  background: #e9eef3;
-  color: #4d5c68;
-}
-@media (max-width: 600px) {
-  .table-fancy th,
-  .table-fancy td {
-    padding: 11px 12px;
-  }
+  color: var(--muted);
 }

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const previewTanggal = form.querySelector("#tanggal-preview");
   const inputDeskripsi = form.querySelector("#deskripsi");
   const counterDeskripsi = form.querySelector("#deskripsi-counter");
-  const selectKategori = form.querySelector("#id_kategori");
+  const inputKategori = form.querySelector("#kategori");
   const selectAkun = form.querySelector("#id_akun_dana");
   const tombolKirim = form.querySelector("button[type='submit']");
   const statusForm = form.querySelector(".form-status");
@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!select || !select.value) return "";
     const opsi = select.options[select.selectedIndex];
     return opsi ? opsi.textContent.trim() : "";
+  }
+
+  function nilaiKategori() {
+    return inputKategori ? inputKategori.value.trim() : "";
   }
 
   function setTeks(el, nilai) {
@@ -128,10 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function perbaruiRingkasan() {
-    setTeks(teksKategori, labelTerpilih(selectKategori));
+    setTeks(teksKategori, nilaiKategori());
     setTeks(teksAkun, labelTerpilih(selectAkun));
 
-    const lengkap = Boolean(jenisTerpilih() && selectKategori && selectKategori.value && selectAkun && selectAkun.value && nilaiJumlah() > 0);
+    const lengkap = Boolean(
+      jenisTerpilih() && nilaiKategori() && selectAkun && selectAkun.value && nilaiJumlah() > 0
+    );
     if (panel) panel.classList.toggle("is-ready", lengkap);
   }
 
@@ -242,9 +248,13 @@ document.addEventListener("DOMContentLoaded", function () {
     inputDeskripsi.addEventListener("input", perbaruiCounter);
   }
 
-  [selectKategori, selectAkun].forEach(function (select) {
-    if (select) select.addEventListener("change", perbaruiRingkasan);
-  });
+  if (inputKategori) {
+    inputKategori.addEventListener("input", perbaruiRingkasan);
+  }
+
+  if (selectAkun) {
+    selectAkun.addEventListener("change", perbaruiRingkasan);
+  }
 
   form.addEventListener("submit", function (event) {
     if (!jenisTerpilih() && radiosJenis.length) {

@@ -1,0 +1,293 @@
+/* ==========================================================================
+   KasKelas — kerangka aplikasi: sidebar kiri, topbar mobile, area konten
+   ========================================================================== */
+
+.app-shell {
+  min-height: 100vh;
+}
+
+/* Sidebar ---------------------------------------------------------------- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: 264px;
+  padding: 24px 16px 18px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--sidebar-border);
+  overflow-y: auto;
+}
+
+.sidebar-head {
+  padding: 0 6px;
+}
+.brand {
+  display: block;
+}
+.brand:hover {
+  text-decoration: none;
+}
+.brand-name {
+  display: block;
+  color: var(--text);
+  font-size: 1.28rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+.brand-role {
+  display: block;
+  margin-top: 3px;
+  color: var(--sidebar-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  margin-top: 22px;
+}
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nav-item {
+  display: block;
+  padding: 11px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.nav-item:hover {
+  border-color: var(--border-strong);
+  background: #f7f8fa;
+  color: var(--text);
+  text-decoration: none;
+  transform: translateX(2px);
+}
+.nav-item.is-active {
+  border-color: #b9cde6;
+  background: #dfe8f5;
+  color: var(--primary);
+  font-weight: 700;
+}
+.nav-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.sidebar-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding: 16px 6px 0;
+  border-top: 1px solid var(--border-strong);
+}
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #4a6ea8, var(--primary));
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+.user-name,
+.user-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-name {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.user-email {
+  color: var(--sidebar-muted);
+  font-size: 0.74rem;
+}
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--danger);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.logout-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.logout-btn:hover {
+  border-color: #efd4d2;
+  background: var(--danger-soft);
+  text-decoration: none;
+}
+
+/* Area utama ------------------------------------------------------------- */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin-left: 264px;
+}
+.topbar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(244, 245, 247, 0.88);
+  backdrop-filter: blur(8px);
+}
+.topbar-title {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.page-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1160px;
+  padding: 34px 40px 20px;
+}
+
+/* Tombol menu mobile ----------------------------------------------------- */
+.nav-toggle {
+  display: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.nav-toggle:hover {
+  border-color: var(--border-strong);
+  background: #fbfbfc;
+}
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.nav-toggle-box {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 14px;
+}
+.nav-toggle-box span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+}
+.nav-toggle-box span:nth-child(1) {
+  top: 0;
+}
+.nav-toggle-box span:nth-child(2) {
+  top: 6px;
+}
+.nav-toggle-box span:nth-child(3) {
+  top: 12px;
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-box span:nth-child(1) {
+  top: 6px;
+  transform: rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-box span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-box span:nth-child(3) {
+  top: 6px;
+  transform: rotate(-45deg);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: rgba(16, 24, 40, 0.38);
+}
+.sidebar-backdrop[hidden] {
+  display: none;
+}
+
+/* Mobile ----------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .app-main {
+    margin-left: 0;
+  }
+  .topbar {
+    display: flex;
+  }
+  .nav-toggle {
+    display: inline-grid;
+  }
+  .sidebar {
+    z-index: 55;
+    box-shadow: var(--shadow-md);
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body.sidebar-open .sidebar {
+    transform: none;
+  }
+  .page-content {
+    padding: 24px 20px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .nav-item,
+  .logout-btn,
+  .nav-toggle,
+  .nav-toggle-box span {
+    transition: none !important;
+  }
+  .nav-item:hover {
+    transform: none;
+  }
+}
