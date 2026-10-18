@@ -161,7 +161,15 @@ include __DIR__ . '/../includes/header.php';
                 </button>
             </form>
             <div class="group-item-foot">
-                <span class="badge<?php echo $aktif ? ' success' : ''; ?>"><?php echo $aktif ? 'Aktif' : 'Tidak aktif'; ?></span>
+                <button type="button" class="btn secondary small" data-copy="<?php echo e($g['kode_grup']); ?>"
+                    title="Salin kode grup <?php echo e($g['kode_grup']); ?>">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <rect x="9" y="9" width="11" height="11" rx="2" />
+                        <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+                    </svg>
+                    Salin kode
+                </button>
                 <a class="btn secondary small" href="detail.php?id=<?php echo (int) $g['id']; ?>">Detail</a>
             </div>
         </div>

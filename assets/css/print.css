@@ -28,6 +28,8 @@
   .app-footer,
   .page-head,
   .no-print,
+  .toast-area,
+  .flash,
   .btn {
     display: none !important;
   }

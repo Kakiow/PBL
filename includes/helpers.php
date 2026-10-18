@@ -26,11 +26,18 @@ function flash($type, $pesan)
 
 function tampil_flash()
 {
-    if (isset($_SESSION['flash'])) {
-        $flash = $_SESSION['flash'];
-        unset($_SESSION['flash']);
-        echo '<div class="flash ' . e($flash['type']) . '">' . e($flash['pesan']) . '</div>';
+    if (!isset($_SESSION['flash'])) {
+        return;
     }
+
+    $flash = $_SESSION['flash'];
+    unset($_SESSION['flash']);
+
+    echo '<div class="flash ' . e($flash['type']) . '" data-flash role="'
+        . ($flash['type'] === 'error' ? 'alert' : 'status') . '">'
+        . '<span class="flash-text">' . e($flash['pesan']) . '</span>'
+        . '<button type="button" class="flash-close" aria-label="Tutup notifikasi">&times;</button>'
+        . '</div>';
 }
 
 function user_login()

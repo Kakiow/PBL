@@ -170,6 +170,11 @@ p:last-child {
 .btn.full {
   width: 100%;
 }
+.btn > svg {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+}
 .btn:disabled {
   cursor: default;
   opacity: 0.7;
@@ -225,26 +230,6 @@ p:last-child {
   font-size: 0.78rem;
   font-weight: 500;
   white-space: nowrap;
-}
-
-/* Flash ------------------------------------------------------------------ */
-.flash {
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: var(--r-md);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-.flash.success {
-  background: var(--success-soft);
-  border-color: #cbe6d8;
-  color: var(--success);
-}
-.flash.error {
-  background: var(--danger-soft);
-  border-color: #f2d4d1;
-  color: var(--danger);
 }
 
 @media (prefers-reduced-motion: reduce) {

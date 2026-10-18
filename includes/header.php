@@ -78,6 +78,7 @@ $label_peran = label_peran($peran_aktif);
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/rail.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/inputs.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/form.css">
+    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/toast.css">
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/print.css">
     <?php foreach ($page_css as $css): ?>
     <link rel="stylesheet" href="<?php echo $base . 'assets/css/' . e($css); ?>">

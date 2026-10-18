@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/inputs.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
+    <link rel="stylesheet" href="../assets/css/toast.css">
 </head>
 
 <body class="auth-page">
@@ -78,6 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <p class="auth-link">Belum punya akun? <a href="register.php">Daftar sekarang</a></p>
     </div>
+    <div class="toast-area" id="toast-area"></div>
+    <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/script.js"></script>
 </body>
 
