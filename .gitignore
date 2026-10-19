@@ -27,3 +27,11 @@ storage/uploads/.pembersihan_terakhir
 
 # Log
 *.log
+
+#Other
+/Laporan
+AGENTS.md
+.commandcode
+.dist
+
+.gitignore
