@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
             <button type="submit" class="btn primary full">Masuk</button>
         </form>
+        <p class="auth-link"><a href="lupa_password.php">Lupa password?</a></p>
         <p class="auth-link">Belum punya akun? <a href="register.php">Daftar sekarang</a></p>
     </div>
     <div class="toast-area" id="toast-area"></div>

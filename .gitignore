@@ -6,6 +6,9 @@ config/koneksi.php
 .env.*
 *.local.php
 
+# Kecuali konfigurasi email: sengaja ikut di-commit agar langsung jalan di VPS.
+!config/mail.local.php
+
 # Upload & data runtime (isi storage, bukan foldernya)
 # Bukti pembayaran hanya disimpan di VPS, jangan pernah masuk GitHub.
 storage/uploads/*

@@ -15,6 +15,16 @@ CREATE TABLE pengguna (
     dibuat_pada TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE reset_password (
+    id BIGSERIAL PRIMARY KEY,
+    id_pengguna BIGINT NOT NULL,
+    token_hash VARCHAR(64) NOT NULL UNIQUE,
+    kedaluwarsa_pada TIMESTAMP NOT NULL,
+    digunakan_pada TIMESTAMP,
+    dibuat_pada TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_reset_password_pengguna FOREIGN KEY (id_pengguna) REFERENCES pengguna(id) ON DELETE CASCADE
+);
+
 CREATE TABLE grup (
     id BIGSERIAL PRIMARY KEY,
     nama_grup VARCHAR(255) NOT NULL,
@@ -117,3 +127,5 @@ CREATE INDEX idx_anggota_grup_pengguna ON anggota_grup(id_pengguna);
 CREATE INDEX idx_kewajiban_grup ON kewajiban_pembayaran(id_grup);
 CREATE INDEX idx_transaksi_grup ON transaksi(id_grup);
 CREATE INDEX idx_transaksi_tanggal ON transaksi(tanggal_transaksi);
+CREATE INDEX idx_reset_password_pengguna ON reset_password(id_pengguna);
+CREATE INDEX idx_reset_password_kedaluwarsa ON reset_password(kedaluwarsa_pada);

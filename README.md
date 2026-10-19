@@ -8,9 +8,10 @@ Project ini dibuat dengan gaya coding sederhana seperti jobsheet: setiap fitur m
 
 ```text
 SIMKAS/
-├── auth/            login.php, register.php, logout.php
-├── config/          koneksi.php
-├── database/        01_schema.sql, 02_seed_kategori.sql
+├── auth/            login.php, register.php, lupa_password.php,
+│                    reset_password.php, logout.php
+├── config/          koneksi.php, mail.php, mail.local.example.php
+├── database/        01_schema.sql, 02_seed_kategori.sql, 03_reset_password.sql
 ├── includes/        auth.php, footer.php, header.php, helpers.php
 ├── grup/            index.php            (buat / gabung / pilih grup)
 ├── anggota/         index.php            (daftar anggota + ubah role)
@@ -29,7 +30,7 @@ SIMKAS/
 ## Cara menjalankan
 
 1. Buat database PostgreSQL, misalnya `simkas`.
-2. Jalankan `database/01_schema.sql` pada database tersebut.
+2. Jalankan `database/01_schema.sql` pada database tersebut. Jika database sudah ada, jalankan juga `database/03_reset_password.sql`.
 3. Buka `config/koneksi.php`, lalu sesuaikan username dan password PostgreSQL.
 4. Jalankan project dari folder `SIMKAS` dengan Apache/XAMPP/Laragon atau PHP built-in server.
 5. Buka `auth/register.php` untuk membuat akun.
@@ -42,8 +43,21 @@ SIMKAS/
 - **Admin**: membuat grup dan mengatur role anggota.
 - **Bendahara**: membuat kewajiban, memverifikasi pembayaran, dan mencatat transaksi.
 - **Anggota**: melihat kewajiban dan mengirim pembayaran.
+- **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
 - **Dashboard**: menampilkan saldo, pemasukan, pengeluaran, jumlah anggota, dan transaksi terbaru.
 - **Laporan**: menampilkan transaksi berdasarkan rentang tanggal.
+
+## Konfigurasi email reset password
+
+Fitur lupa password memakai API transaksional Brevo. Tanpa konfigurasi email, token reset tetap dibuat tetapi email tidak terkirim dan kegagalannya dicatat ke log PHP.
+
+1. Salin `config/mail.local.example.php` menjadi `config/mail.local.php`.
+2. Isi `brevo_api_key` dari dashboard Brevo (SMTP & API → API Keys).
+3. Isi `from_email` dengan alamat pengirim yang sudah diverifikasi di Brevo.
+4. Sesuaikan `app_url`, misalnya `https://domainkamu.com` tanpa trailing slash.
+5. Pastikan API key memiliki akses mengirim email transaksional.
+
+`config/mail.local.php` diabaikan Git melalui pola `*.local.php`, jadi API key tidak ikut ter-push.
 
 ## Penyimpanan bukti pembayaran
 
