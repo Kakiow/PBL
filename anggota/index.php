@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Anggota';
@@ -31,32 +28,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $saya_admin) {
             $anggota_grup[(int) $row['id']] = $row;
         }
 
-        $jumlah_ubah = 0;
-        $pindah_admin = false;
-
+        // Kumpulkan perubahan yang valid dulu, baru tulis ke DB.
+        $perubahan = [];
         if (is_array($peran_baru)) {
+            foreach ($peran_baru as $id_anggota => $role) {
+                $id_anggota = (int) $id_anggota;
+                if (!isset($anggota_grup[$id_anggota])) {
+                    continue;
+                }
+                if ((int) $anggota_grup[$id_anggota]['id_pengguna'] === (int) $id_user) {
+                    continue;
+                }
+                if (!in_array($role, ['Admin', 'Bendahara', 'Anggota'], true)) {
+                    continue;
+                }
+                if ($role === $anggota_grup[$id_anggota]['peran']) {
+                    continue;
+                }
+                $perubahan[$id_anggota] = $role;
+            }
+        }
+
+        $jumlah_ubah = count($perubahan);
+        $jumlah_admin_baru = count(array_keys($perubahan, 'Admin', true));
+        $pindah_admin = $jumlah_admin_baru === 1;
+
+        // Grup harus selalu punya tepat 1 Admin: kepemilikan hanya bisa dipindah ke satu orang.
+        if (!is_array($peran_baru)) {
+            flash('error', 'Tidak ada perubahan role.');
+        } elseif ($jumlah_admin_baru > 1) {
+            flash('error', 'Hanya satu anggota yang dapat dijadikan Admin. Tidak ada perubahan yang disimpan.');
+        } else {
             try {
                 $pdo->beginTransaction();
                 $upd = $pdo->prepare("UPDATE anggota_grup SET peran = ? WHERE id = ? AND id_grup = ?");
-                foreach ($peran_baru as $id_anggota => $role) {
-                    $id_anggota = (int) $id_anggota;
-                    if (!isset($anggota_grup[$id_anggota])) {
-                        continue;
-                    }
-                    if ((int) $anggota_grup[$id_anggota]['id_pengguna'] === (int) $id_user) {
-                        continue;
-                    }
-                    if (!in_array($role, ['Admin', 'Bendahara', 'Anggota'], true)) {
-                        continue;
-                    }
-                    if ($role === $anggota_grup[$id_anggota]['peran']) {
-                        continue;
-                    }
-                    if ($role === 'Admin') {
-                        $pindah_admin = true;
-                    }
+                foreach ($perubahan as $id_anggota => $role) {
                     $upd->execute([$role, $id_anggota, $id_grup]);
-                    $jumlah_ubah++;
                 }
                 if ($pindah_admin) {
                     $stmt = $pdo->prepare("UPDATE anggota_grup SET peran = 'Anggota' WHERE id_grup = ? AND id_pengguna = ?");
@@ -76,8 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $saya_admin) {
                 }
                 flash('error', 'Gagal menyimpan perubahan role.');
             }
-        } else {
-            flash('error', 'Tidak ada perubahan role.');
         }
         redirect('index.php');
     }

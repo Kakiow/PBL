@@ -41,28 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     redirect('../index.php');
 }
+
+$page_title = 'Masuk';
+include __DIR__ . '/../includes/auth_head.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk | SIMKAS</title>
-    <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/inputs.css">
-    <link rel="stylesheet" href="../assets/css/auth.css">
-    <link rel="stylesheet" href="../assets/css/toast.css">
-</head>
-
-<body class="auth-page">
-    <div class="auth-box">
-        <div class="auth-logo">SIMKAS</div>
         <h1>Masuk</h1>
         <p class="muted">Masuk untuk mengelola kas kelasmu.</p>
         <?php tampil_flash(); ?>
@@ -79,10 +61,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <p class="auth-link"><a href="lupa_password.php">Lupa password?</a></p>
         <p class="auth-link">Belum punya akun? <a href="register.php">Daftar sekarang</a></p>
-    </div>
-    <div class="toast-area" id="toast-area"></div>
-    <script src="../assets/js/toast.js"></script>
-    <script src="../assets/js/script.js"></script>
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/auth_foot.php'; ?>

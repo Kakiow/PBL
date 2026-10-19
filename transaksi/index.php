@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Transaksi';
@@ -86,7 +83,7 @@ include __DIR__ . '/../includes/header.php';
                     <td>
                         <div class="row-actions">
                             <a class="btn secondary small" href="edit.php?id=<?php echo (int) $row['id']; ?>">Edit</a>
-                            <form method="post" class="inline-form" onsubmit="return konfirmasiHapus();">
+                            <form method="post" class="inline-form" data-konfirmasi="Apakah Anda yakin ingin menghapus data ini?">
                                 <input type="hidden" name="aksi" value="hapus">
                                 <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
                                 <button class="btn danger small" type="submit">Hapus</button>

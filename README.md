@@ -11,18 +11,28 @@ SIMKAS/
 ├── auth/            login.php, register.php, lupa_password.php,
 │                    reset_password.php, logout.php
 ├── config/          koneksi.php, mail.php, mail.local.example.php
-├── database/        01_schema.sql, 02_seed_kategori.sql, 03_reset_password.sql
-├── includes/        auth.php, footer.php, header.php, helpers.php
-├── grup/            index.php            (buat / gabung / pilih grup)
+├── cron/            bersihkan_bukti.php     (CLI saja)
+├── database/        01_schema.sql, 02_seed_kategori.sql,
+│                    03_reset_password.sql, 04_indeks.sql
+├── includes/        auth.php        (bootstrap: sesi + koneksi + helper + guard login)
+│                    header.php, sidebar.php, footer.php   (kerangka halaman)
+│                    auth_head.php, auth_foot.php          (kerangka halaman auth)
+│                    helpers.php     (fungsi umum, peran, grup, menu)
+│                    bukti.php       (upload & pembersihan bukti pembayaran)
+│                    reset_password.php (token reset + email Brevo)
+├── grup/            index.php, detail.php, edit.php, hapus.php
 ├── anggota/         index.php            (daftar anggota + ubah role)
-├── kewajiban/       index.php, detail.php  (Tagihan)
+├── kewajiban/       index.php, tambah.php, edit.php, hapus.php,
+│                    bayar.php, detail.php, _form.php  (Tagihan)
 ├── pembayaran/      index.php            (Verifikasi)
-├── transaksi/       index.php, _form.php, tambah.php, edit.php
+├── transaksi/       index.php, tambah.php, edit.php, _form.php, _data.php
 ├── laporan/         index.php
 ├── assets/
-│   ├── css/         style, sidebar, form, dashboard, table, grup,
-│   │                anggota, kewajiban, transaksi*
-│   └── js/          script.js, transaksi.js
+│   ├── css/         style, layout, sidebar, nav, rail, inputs, form, toast,
+│   │                print, auth, dashboard, table, grup, anggota, kewajiban,
+│   │                transaksi*
+│   └── js/          toast.js, sidebar.js, script.js (semua halaman)
+│                    form.js + kewajiban.js / transaksi.js (khusus form)
 ├── index.php        (Dashboard)
 └── storage/uploads/
 ```
@@ -30,7 +40,7 @@ SIMKAS/
 ## Cara menjalankan
 
 1. Buat database PostgreSQL, misalnya `simkas`.
-2. Jalankan `database/01_schema.sql` pada database tersebut. Jika database sudah ada, jalankan juga `database/03_reset_password.sql`.
+2. Jalankan `database/01_schema.sql` pada database tersebut. Jika database sudah ada, jalankan juga `database/03_reset_password.sql` dan `database/04_indeks.sql` (indeks tambahan, aman dijalankan ulang).
 3. Buka `config/koneksi.php`, lalu sesuaikan username dan password PostgreSQL.
 4. Jalankan project dari folder `SIMKAS` dengan Apache/XAMPP/Laragon atau PHP built-in server.
 5. Buka `auth/register.php` untuk membuat akun.
@@ -42,7 +52,8 @@ SIMKAS/
 
 - **Admin**: membuat grup dan mengatur role anggota.
 - **Bendahara**: membuat kewajiban, memverifikasi pembayaran, dan mencatat transaksi.
-- **Anggota**: melihat kewajiban dan mengirim pembayaran.
+- **Anggota**: melihat kewajiban dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih untuk tagihan yang tenggatnya belum lewat.
+- **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus.
 - **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
 - **Dashboard**: menampilkan saldo, pemasukan, pengeluaran, jumlah anggota, dan transaksi terbaru.
 - **Laporan**: menampilkan transaksi berdasarkan rentang tanggal.
@@ -57,7 +68,7 @@ Fitur lupa password memakai API transaksional Brevo. Tanpa konfigurasi email, to
 4. Sesuaikan `app_url`, misalnya `https://domainkamu.com` tanpa trailing slash.
 5. Pastikan API key memiliki akses mengirim email transaksional.
 
-`config/mail.local.php` diabaikan Git melalui pola `*.local.php`, jadi API key tidak ikut ter-push.
+Catatan: `.gitignore` sengaja mengecualikan `config/mail.local.php` (`!config/mail.local.php`) supaya ikut ter-deploy, jadi **jangan isi API key asli di file itu sebelum di-commit** — isi langsung di server atau lewat environment variable `BREVO_API_KEY`.
 
 ## Penyimpanan bukti pembayaran
 

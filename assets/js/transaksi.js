@@ -1,14 +1,14 @@
+// Interaksi form transaksi (tambah & edit): ringkasan live, chip nominal/tanggal, validasi. Butuh form.js.
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.querySelector(".form-transaksi");
 
-  if (!form) return;
+  if (!form || !window.FormKas) return;
 
+  const F = window.FormKas;
   const inputJumlah = form.querySelector("#jumlah");
   const previewJumlah = form.querySelector("#jumlah-preview");
   const inputTanggal = form.querySelector("#tanggal_transaksi");
   const previewTanggal = form.querySelector("#tanggal-preview");
-  const inputDeskripsi = form.querySelector("#deskripsi");
-  const counterDeskripsi = form.querySelector("#deskripsi-counter");
   const inputKategori = form.querySelector("#kategori");
   const selectAkun = form.querySelector("#id_akun_dana");
   const tombolKirim = form.querySelector("button[type='submit']");
@@ -21,45 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const teksTotal = form.querySelector("#trx-preview-amount");
   const radiosJenis = Array.from(form.querySelectorAll("input[name='jenis']"));
 
-  function duaAngka(angka) {
-    return angka < 10 ? "0" + angka : String(angka);
-  }
-
-  function tanggalKeInput(tanggal) {
-    return tanggal.getFullYear() + "-" + duaAngka(tanggal.getMonth() + 1) + "-" + duaAngka(tanggal.getDate());
-  }
-
-  function formatRupiah(nilai) {
-    return "Rp " + Math.round(nilai).toLocaleString("id-ID");
-  }
-
-  function nilaiChipTanggal(pintasan) {
-    const sekarang = new Date();
-    const dasar =
-      pintasan === "akhir-bulan"
-        ? new Date(sekarang.getFullYear(), sekarang.getMonth() + 1, 0)
-        : new Date(sekarang.getFullYear(), sekarang.getMonth(), sekarang.getDate() + parseInt(pintasan, 10));
-    return tanggalKeInput(dasar);
-  }
-
   function jenisTerpilih() {
     const radio = radiosJenis.find(function (item) {
       return item.checked;
     });
     return radio ? radio.value : "";
-  }
-
-  function tandaiChip(chip) {
-    const baris = chip.closest(".chip-row");
-    if (!baris) return;
-    baris.querySelectorAll(".chip-btn").forEach(function (lain) {
-      lain.classList.toggle("is-active", lain === chip);
-    });
-  }
-
-  function chipAktif(input) {
-    const field = input.closest(".field");
-    return field ? field.querySelector(".chip-btn.is-active") : null;
   }
 
   function labelTerpilih(select) {
@@ -93,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (previewJumlah) {
       if (nilai > 0) {
-        previewJumlah.textContent = "Nilai tercatat: " + formatRupiah(nilai);
+        previewJumlah.textContent = "Nilai tercatat: " + F.formatRupiah(nilai);
         previewJumlah.classList.add("is-filled");
       } else {
         previewJumlah.textContent = "Pilih nominal cepat atau isi manual.";
@@ -101,31 +67,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    if (teksTotal) teksTotal.textContent = formatRupiah(nilai);
+    if (teksTotal) teksTotal.textContent = F.formatRupiah(nilai);
 
-    const aktif = chipAktif(inputJumlah);
+    const aktif = F.chipAktif(inputJumlah);
     if (aktif && parseFloat(aktif.dataset.nominal) !== nilai) aktif.classList.remove("is-active");
   }
 
   function perbaruiTanggal() {
-    if (!previewTanggal) return;
+    const panjang = F.tanggalPanjang(inputTanggal ? inputTanggal.value : "");
 
-    const nilai = inputTanggal ? inputTanggal.value : "";
-    let panjang = "";
-
-    if (nilai) {
-      const bagian = nilai.split("-");
-      panjang = new Date(Number(bagian[0]), Number(bagian[1]) - 1, Number(bagian[2])).toLocaleDateString("id-ID", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      });
-      previewTanggal.textContent = panjang;
-      previewTanggal.classList.add("is-filled");
-    } else {
-      previewTanggal.textContent = "Tanggal pencatatan transaksi.";
-      previewTanggal.classList.remove("is-filled");
+    if (previewTanggal) {
+      previewTanggal.textContent = panjang || "Tanggal pencatatan transaksi.";
+      previewTanggal.classList.toggle("is-filled", Boolean(panjang));
     }
 
     setTeks(teksTanggal, panjang);
@@ -141,66 +94,21 @@ document.addEventListener("DOMContentLoaded", function () {
     if (panel) panel.classList.toggle("is-ready", lengkap);
   }
 
-  function perbaruiCounter() {
-    if (!inputDeskripsi || !counterDeskripsi) return;
-    const maks = parseInt(inputDeskripsi.getAttribute("maxlength"), 10) || 200;
-    counterDeskripsi.textContent = inputDeskripsi.value.length + "/" + maks;
-  }
-
   function sinkronChip() {
     form.querySelectorAll(".chip-btn[data-nominal]").forEach(function (chip) {
       chip.classList.toggle("is-active", parseFloat(chip.dataset.nominal) === nilaiJumlah());
     });
     form.querySelectorAll(".chip-btn[data-tanggal]").forEach(function (chip) {
-      chip.classList.toggle("is-active", Boolean(inputTanggal) && nilaiChipTanggal(chip.dataset.tanggal) === inputTanggal.value);
+      chip.classList.toggle("is-active", Boolean(inputTanggal) && F.tanggalPintasan(chip.dataset.tanggal) === inputTanggal.value);
     });
   }
 
-  function aturPesanError(input, pesan) {
-    const field = input.closest(".field");
-    if (!field) return;
-
-    let pesanError = field.querySelector(".field-error");
-
-    if (pesan) {
-      if (!pesanError) {
-        pesanError = document.createElement("span");
-        pesanError.className = "field-error";
-        pesanError.setAttribute("role", "alert");
-        field.appendChild(pesanError);
-      }
-      pesanError.textContent = pesan;
-      field.classList.add("is-invalid");
-      input.setAttribute("aria-invalid", "true");
-    } else {
-      if (pesanError) pesanError.remove();
-      field.classList.remove("is-invalid");
-      input.removeAttribute("aria-invalid");
-    }
-  }
-
-  form.querySelectorAll("[data-error]").forEach(function (input) {
-    if (input.type === "radio") return;
-
-    input.addEventListener("blur", function () {
-      aturPesanError(input, input.checkValidity() ? null : input.dataset.error);
-    });
-    input.addEventListener("input", function () {
-      const field = input.closest(".field");
-      if (input.checkValidity()) {
-        aturPesanError(input, null);
-      } else if (field && field.classList.contains("is-invalid")) {
-        aturPesanError(input, input.dataset.error);
-      }
-    });
-    input.addEventListener("change", function () {
-      if (input.checkValidity()) aturPesanError(input, null);
-    });
-  });
+  F.pasangValidasi(form);
+  F.pasangCounter(form.querySelector("#deskripsi"), form.querySelector("#deskripsi-counter"));
 
   radiosJenis.forEach(function (radio) {
     radio.addEventListener("change", function () {
-      aturPesanError(radio, null);
+      F.aturPesanError(radio, null);
       perbaruiJenis();
       perbaruiJumlah();
       perbaruiRingkasan();
@@ -211,10 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
     chip.addEventListener("click", function () {
       if (!inputJumlah) return;
       inputJumlah.value = chip.dataset.nominal;
-      tandaiChip(chip);
+      F.tandaiChip(chip);
       perbaruiJumlah();
       perbaruiRingkasan();
-      aturPesanError(inputJumlah, null);
+      F.aturPesanError(inputJumlah, null);
     });
   });
 
@@ -222,10 +130,10 @@ document.addEventListener("DOMContentLoaded", function () {
     chip.addEventListener("click", function () {
       if (!inputTanggal) return;
 
-      inputTanggal.value = nilaiChipTanggal(chip.dataset.tanggal);
-      tandaiChip(chip);
+      inputTanggal.value = F.tanggalPintasan(chip.dataset.tanggal);
+      F.tandaiChip(chip);
       perbaruiTanggal();
-      aturPesanError(inputTanggal, null);
+      F.aturPesanError(inputTanggal, null);
     });
   });
 
@@ -238,14 +146,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (inputTanggal) {
     inputTanggal.addEventListener("input", function () {
-      const aktif = chipAktif(inputTanggal);
+      const aktif = F.chipAktif(inputTanggal);
       if (aktif) aktif.classList.remove("is-active");
       perbaruiTanggal();
     });
-  }
-
-  if (inputDeskripsi) {
-    inputDeskripsi.addEventListener("input", perbaruiCounter);
   }
 
   if (inputKategori) {
@@ -258,30 +162,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   form.addEventListener("submit", function (event) {
     if (!jenisTerpilih() && radiosJenis.length) {
-      aturPesanError(radiosJenis[0], radiosJenis[0].dataset.error);
+      F.aturPesanError(radiosJenis[0], radiosJenis[0].dataset.error);
     }
 
     if (!form.checkValidity()) {
       form.querySelectorAll("[data-error]").forEach(function (input) {
-        if (input.type !== "radio" && !input.checkValidity()) aturPesanError(input, input.dataset.error);
+        if (input.type !== "radio" && !input.checkValidity()) F.aturPesanError(input, input.dataset.error);
       });
       event.preventDefault();
       return;
     }
 
-    if (tombolKirim) {
-      tombolKirim.classList.add("is-loading");
-      tombolKirim.setAttribute("aria-busy", "true");
-      tombolKirim.textContent = tombolKirim.dataset.loadingText || "Menyimpan…";
-    }
-
-    if (statusForm) statusForm.textContent = "Menyimpan transaksi…";
+    F.tandaiMenyimpan(tombolKirim, statusForm, "Menyimpan transaksi…");
   });
 
   perbaruiJenis();
   sinkronChip();
   perbaruiJumlah();
   perbaruiTanggal();
-  perbaruiCounter();
   perbaruiRingkasan();
 });

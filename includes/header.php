@@ -42,18 +42,24 @@ $slug_aktif = count($segmen) > 1 ? $segmen[0] : '';
 $menu = menu_nav($base, $peran_aktif, (bool) $grup);
 
 // Angka hidup di sidebar: hanya yang punya aksi, bukan sekadar counter.
+// Satu query untuk kedua badge; Verifikasi hanya dihitung untuk Admin/Bendahara.
 $badge_nav = [];
 if ($grup && $peran_aktif) {
-    if (in_array($peran_aktif, ['Admin', 'Bendahara'], true)) {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM pembayaran p JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE k.id_grup = ? AND p.status = 'Menunggu'");
-        $stmt->execute([$grup['id']]);
-        $badge_nav['pembayaran'] = (int) $stmt->fetchColumn();
-    }
+    $stmt = $pdo->prepare("
+        SELECT
+            COUNT(DISTINCT ak.id) FILTER (WHERE ak.id_pengguna = ? AND ak.status IN ('Belum_Bayar', 'Ditolak')) AS kewajiban,
+            COUNT(p.id) AS pembayaran
+        FROM kewajiban_pembayaran k
+        JOIN anggota_kewajiban ak ON ak.id_kewajiban = k.id
+        LEFT JOIN pembayaran p ON p.id_anggota_kewajiban = ak.id AND p.status = 'Menunggu'
+        WHERE k.id_grup = ?
+    ");
+    $stmt->execute([$_SESSION['user']['id'], $grup['id']]);
+    $hitung = $stmt->fetch();
 
-    if (isset($_SESSION['user']['id'])) {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_kewajiban ak JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE ak.id_pengguna = ? AND k.id_grup = ? AND ak.status IN ('Belum_Bayar','Ditolak')");
-        $stmt->execute([$_SESSION['user']['id'], $grup['id']]);
-        $badge_nav['kewajiban'] = (int) $stmt->fetchColumn();
+    $badge_nav['kewajiban'] = (int) $hitung['kewajiban'];
+    if (peran_pengelola($peran_aktif)) {
+        $badge_nav['pembayaran'] = (int) $hitung['pembayaran'];
     }
 }
 

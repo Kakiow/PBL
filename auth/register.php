@@ -32,28 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$page_title = 'Daftar';
+include __DIR__ . '/../includes/auth_head.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Daftar | SIMKAS</title>
-    <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/inputs.css">
-    <link rel="stylesheet" href="../assets/css/auth.css">
-    <link rel="stylesheet" href="../assets/css/toast.css">
-</head>
-
-<body class="auth-page">
-    <div class="auth-box">
-        <div class="auth-logo">SIMKAS</div>
         <h1>Buat Akun</h1>
         <p class="muted">Daftarkan akun untuk mulai menggunakan SIMKAS.</p>
         <?php tampil_flash(); ?>
@@ -66,10 +48,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn primary full">Daftar</button>
         </form>
         <p class="auth-link">Sudah punya akun? <a href="login.php">Masuk</a></p>
-    </div>
-    <div class="toast-area" id="toast-area"></div>
-    <script src="../assets/js/toast.js"></script>
-    <script src="../assets/js/script.js"></script>
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/auth_foot.php'; ?>

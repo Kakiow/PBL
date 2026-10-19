@@ -1,4 +1,4 @@
-// Perilaku sidebar: drawer mobile, clop rail desktop, dan penyimpanan preferensi.
+// Perilaku sidebar: drawer mobile, toggle rail desktop, dan penyimpanan preferensi.
 document.addEventListener("DOMContentLoaded", function () {
   const toggle = document.getElementById("nav-toggle-btn");
   const sidebar = document.getElementById("sidebar");
@@ -43,8 +43,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const railToggle = document.getElementById("rail-toggle");
   const mediaRail = window.matchMedia("(min-width: 1000px)");
 
+  function preferensiRail() {
+    try {
+      return localStorage.getItem("sidebar-rail") === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
   function terapkanRail() {
-    const rail = Boolean(mediaRail.matches) && localStorage.getItem("sidebar-rail") === "1";
+    const rail = Boolean(mediaRail.matches) && preferensiRail();
     document.body.classList.toggle("sidebar-rail", rail);
     if (railToggle) {
       railToggle.setAttribute("aria-pressed", rail ? "true" : "false");

@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Verifikasi';
@@ -9,7 +6,7 @@ $page_css = ['table.css'];
 
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $role = cek_role($pdo, $id_grup, akses_menu()['pembayaran']);
-$boleh_verifikasi = in_array($role, ['Admin', 'Bendahara'], true);
+$boleh_verifikasi = peran_pengelola($role);
 
 // Pastikan bukti kedaluwarsa tidak tampil sebagai link yang sudah rusak.
 bersihkan_bukti_otomatis($pdo);
@@ -18,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
     $id = (int) ($_POST['id'] ?? 0);
     $status = $_POST['status'] ?? '';
 
-    if (in_array($status, ['Disetujui', 'Ditolak'])) {
+    if (in_array($status, ['Disetujui', 'Ditolak'], true)) {
         try {
             $pdo->beginTransaction();
 
@@ -52,13 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
             $stmt->execute([$status === 'Disetujui' ? 'Lunas' : 'Ditolak', $bayar['id_anggota_kewajiban']]);
 
             if ($status === 'Disetujui') {
-                $stmt = $pdo->prepare("SELECT id FROM kategori WHERE id_grup = ? AND jenis = 'Pemasukan' ORDER BY id LIMIT 1");
-                $stmt->execute([$id_grup]);
-                $kategori = $stmt->fetchColumn();
-
-                $stmt = $pdo->prepare("SELECT id FROM akun_dana WHERE id_grup = ? ORDER BY id LIMIT 1");
-                $stmt->execute([$id_grup]);
-                $akun = $stmt->fetchColumn();
+                $stmt = $pdo->prepare("
+                    SELECT
+                        (SELECT id FROM kategori WHERE id_grup = ? AND jenis = 'Pemasukan' ORDER BY id LIMIT 1) AS kategori,
+                        (SELECT id FROM akun_dana WHERE id_grup = ? ORDER BY id LIMIT 1) AS akun
+                ");
+                $stmt->execute([$id_grup, $id_grup]);
+                $tujuan = $stmt->fetch();
+                $kategori = $tujuan['kategori'];
+                $akun = $tujuan['akun'];
 
                 if (!$kategori || !$akun) {
                     throw new Exception('Kategori pemasukan dan akun dana harus tersedia.');
@@ -158,12 +157,7 @@ include __DIR__ . '/../includes/header.php';
                             Bukti</a>
                         <?php else: ?><span class="muted">-</span><?php endif; ?>
                     </td>
-                    <td>
-                        <?php
-                        $kelas = $row['status'] === 'Disetujui' ? 'success' : ($row['status'] === 'Ditolak' ? 'danger' : 'warning');
-                        ?>
-                        <span class="badge <?php echo $kelas; ?>"><?php echo e($row['status']); ?></span>
-                    </td>
+                    <td><span class="badge <?php echo kelas_status($row['status']); ?>"><?php echo e($row['status']); ?></span></td>
                     <?php if ($boleh_verifikasi): ?>
                     <td>
                         <?php if ($row['status'] === 'Menunggu'): ?>

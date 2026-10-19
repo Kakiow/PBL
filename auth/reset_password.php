@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/reset_password.php';
 
 $token = (string) ($_POST['token'] ?? $_GET['token'] ?? '');
 $reset = cari_token_reset($pdo, $token);
@@ -71,29 +72,11 @@ if (!$reset) {
         }
     }
 }
+
+$page_title = 'Reset Password';
+$noindex = true;
+include __DIR__ . '/../includes/auth_head.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reset Password | SIMKAS</title>
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/inputs.css">
-    <link rel="stylesheet" href="../assets/css/auth.css">
-    <link rel="stylesheet" href="../assets/css/toast.css">
-</head>
-
-<body class="auth-page">
-    <div class="auth-box">
-        <div class="auth-logo">SIMKAS</div>
         <h1>Reset Password</h1>
         <p class="muted">Buat password baru untuk akun Anda. Password minimal 8 karakter.</p>
 
@@ -127,10 +110,4 @@ if (!$reset) {
             <a href="lupa_password.php">Minta link reset baru</a>
             <?php endif; ?>
         </p>
-    </div>
-    <div class="toast-area" id="toast-area"></div>
-    <script src="../assets/js/toast.js"></script>
-    <script src="../assets/js/script.js"></script>
-</body>
-
-</html>
+<?php include __DIR__ . '/../includes/auth_foot.php'; ?>

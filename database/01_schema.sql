@@ -129,3 +129,8 @@ CREATE INDEX idx_transaksi_grup ON transaksi(id_grup);
 CREATE INDEX idx_transaksi_tanggal ON transaksi(tanggal_transaksi);
 CREATE INDEX idx_reset_password_pengguna ON reset_password(id_pengguna);
 CREATE INDEX idx_reset_password_kedaluwarsa ON reset_password(kedaluwarsa_pada);
+CREATE INDEX idx_pembayaran_anggota_kewajiban ON pembayaran(id_anggota_kewajiban);
+CREATE INDEX idx_pembayaran_status ON pembayaran(status);
+CREATE INDEX idx_anggota_kewajiban_pengguna ON anggota_kewajiban(id_pengguna);
+CREATE INDEX idx_kategori_grup ON kategori(id_grup);
+CREATE INDEX idx_akun_dana_grup ON akun_dana(id_grup);

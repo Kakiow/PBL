@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Grup';
@@ -62,10 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->fetch()) {
                 flash('error', 'Anda sudah menjadi anggota grup tersebut.');
             } else {
-                $stmt = $pdo->prepare("INSERT INTO anggota_grup (id_grup, id_pengguna, peran) VALUES (?, ?, 'Anggota')");
-                $stmt->execute([$id_grup, $id_user]);
-                $_SESSION['grup_id'] = $id_grup;
-                flash('success', 'Berhasil bergabung dengan grup.');
+                try {
+                    $pdo->beginTransaction();
+                    $stmt = $pdo->prepare("INSERT INTO anggota_grup (id_grup, id_pengguna, peran) VALUES (?, ?, 'Anggota')");
+                    $stmt->execute([$id_grup, $id_user]);
+                    $jumlah_tagihan = tagihkan_tagihan_berjalan($pdo, $id_grup, $id_user);
+                    $pdo->commit();
+                    $_SESSION['grup_id'] = $id_grup;
+                    flash('success', $jumlah_tagihan > 0
+                        ? 'Berhasil bergabung dengan grup. ' . $jumlah_tagihan . ' tagihan yang masih berjalan ditambahkan ke daftar tagihanmu.'
+                        : 'Berhasil bergabung dengan grup.');
+                } catch (PDOException $e) {
+                    if ($pdo->inTransaction()) {
+                        $pdo->rollBack();
+                    }
+                    flash('error', 'Gagal bergabung dengan grup. Silakan coba lagi.');
+                }
             }
         }
         redirect('index.php');

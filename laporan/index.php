@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Laporan';
@@ -10,17 +7,20 @@ $page_css = ['dashboard.css', 'table.css'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 cek_role($pdo, $id_grup, akses_menu()['laporan']);
 
-$mulai = $_GET['mulai'] ?? date('Y-m-01');
-$selesai = $_GET['selesai'] ?? date('Y-m-d');
-
-$stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN jenis='Pemasukan' THEN jumlah ELSE 0 END),0) AS pemasukan, COALESCE(SUM(CASE WHEN jenis='Pengeluaran' THEN jumlah ELSE 0 END),0) AS pengeluaran FROM transaksi WHERE id_grup = ? AND tanggal_transaksi BETWEEN ? AND ?");
-$stmt->execute([$id_grup, $mulai, $selesai]);
-$ringkasan = $stmt->fetch();
-$saldo = $ringkasan['pemasukan'] - $ringkasan['pengeluaran'];
+// Tanggal dari query string divalidasi dulu; format salah akan membuat PostgreSQL melempar error.
+$mulai = tanggal_valid($_GET['mulai'] ?? '') ? $_GET['mulai'] : date('Y-m-01');
+$selesai = tanggal_valid($_GET['selesai'] ?? '') ? $_GET['selesai'] : date('Y-m-d');
 
 $stmt = $pdo->prepare("SELECT t.tanggal_transaksi, k.nama_kategori, t.jenis, t.jumlah, t.deskripsi FROM transaksi t JOIN kategori k ON k.id = t.id_kategori WHERE t.id_grup = ? AND t.tanggal_transaksi BETWEEN ? AND ? ORDER BY t.tanggal_transaksi DESC, t.id DESC");
 $stmt->execute([$id_grup, $mulai, $selesai]);
 $data = $stmt->fetchAll();
+
+// Ringkasan dihitung dari baris yang sama, tanpa query SUM terpisah.
+$ringkasan = ['pemasukan' => 0, 'pengeluaran' => 0];
+foreach ($data as $row) {
+    $ringkasan[$row['jenis'] === 'Pemasukan' ? 'pemasukan' : 'pengeluaran'] += (float) $row['jumlah'];
+}
+$saldo = $ringkasan['pemasukan'] - $ringkasan['pengeluaran'];
 
 include __DIR__ . '/../includes/header.php';
 ?>

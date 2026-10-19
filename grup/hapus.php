@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Hapus Grup';
@@ -19,20 +16,6 @@ if (!$g || $peran !== 'Admin') {
     flash('error', 'Hanya Admin grup yang dapat menghapus grup.');
     redirect('index.php');
 }
-
-$jumlah_anggota = jumlah_anggota_grup($pdo, $id);
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?");
-$stmt->execute([$id]);
-$jumlah_tagihan = (int) $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM pembayaran p JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE k.id_grup = ?");
-$stmt->execute([$id]);
-$jumlah_pembayaran = (int) $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM transaksi WHERE id_grup = ?");
-$stmt->execute([$id]);
-$jumlah_transaksi = (int) $stmt->fetchColumn();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $konfirmasi = trim($_POST['konfirmasi'] ?? '');
@@ -71,16 +54,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('index.php');
 }
 
+// Ringkasan data yang ikut terhapus — cukup satu query, hanya saat halaman ditampilkan.
+$stmt = $pdo->prepare("
+    SELECT
+        (SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ?) AS anggota,
+        (SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?) AS tagihan,
+        (SELECT COUNT(*) FROM pembayaran p
+            JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban
+            JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+            WHERE k.id_grup = ?) AS pembayaran,
+        (SELECT COUNT(*) FROM transaksi WHERE id_grup = ?) AS transaksi
+");
+$stmt->execute([$id, $id, $id, $id]);
+$hitung = $stmt->fetch();
+$jumlah_anggota = (int) $hitung['anggota'];
+$jumlah_tagihan = (int) $hitung['tagihan'];
+$jumlah_pembayaran = (int) $hitung['pembayaran'];
+$jumlah_transaksi = (int) $hitung['transaksi'];
+
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <a class="back-link" href="detail.php?id=<?php echo $id; ?>">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Kembali ke Detail
-    </a>
+    <?php tautan_kembali('detail.php?id=' . $id, 'Kembali ke Detail'); ?>
     <span class="eyebrow">Grup</span>
     <h1>Hapus Grup</h1>
     <p>Tindakan ini permanen dan tidak dapat dibatalkan.</p>

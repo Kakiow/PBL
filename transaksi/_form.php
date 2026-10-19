@@ -14,13 +14,7 @@ $val_tanggal = (string) ($row['tanggal_transaksi'] ?? date('Y-m-d'));
 $val_deskripsi = (string) ($row['deskripsi'] ?? '');
 ?>
 <div class="page-head">
-    <a class="back-link" href="index.php">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Kembali
-    </a>
+    <?php tautan_kembali('index.php'); ?>
     <span class="eyebrow">Transaksi</span>
     <h1><?php echo e($judul); ?></h1>
     <p><?php echo e($deskripsi); ?></p>

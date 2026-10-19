@@ -1,12 +1,10 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/_data.php';
 
 $page_title = 'Edit Transaksi';
 $page_css = ['transaksi.css', 'transaksi-jenis.css', 'transaksi-fields.css', 'transaksi-preview.css'];
-$page_js = ['transaksi.js'];
+$page_js = ['form.js', 'transaksi.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $role = cek_role($pdo, $id_grup, akses_menu()['transaksi']);
 
@@ -26,32 +24,21 @@ if (!$row) {
     redirect('index.php');
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama_kategori = trim($_POST['kategori'] ?? '');
-    $akun = (int) ($_POST['id_akun_dana'] ?? 0);
-    $jenis = $_POST['jenis'] ?? '';
-    $jumlah = (float) ($_POST['jumlah'] ?? 0);
-    $tanggal = $_POST['tanggal_transaksi'] ?? '';
-    $deskripsi = trim($_POST['deskripsi'] ?? '');
+[$kategori, $akun] = opsi_form_transaksi($pdo, $id_grup);
 
-    if ($nama_kategori === '' || !$akun || !in_array($jenis, ['Pemasukan', 'Pengeluaran']) || $jumlah <= 0 || $tanggal === '') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $in = input_transaksi($akun);
+
+    if ($in === null) {
         flash('error', 'Semua data transaksi wajib diisi.');
     } else {
-        $id_kategori = kategori_id_untuk($pdo, $id_grup, $nama_kategori, $jenis);
+        $id_kategori = kategori_id_untuk($pdo, $id_grup, $in['kategori'], $in['jenis']);
         $stmt = $pdo->prepare("UPDATE transaksi SET id_kategori = ?, id_akun_dana = ?, jenis = ?, jumlah = ?, tanggal_transaksi = ?, deskripsi = ? WHERE id = ? AND id_grup = ?");
-        $stmt->execute([$id_kategori, $akun, $jenis, $jumlah, $tanggal, $deskripsi, $id, $id_grup]);
+        $stmt->execute([$id_kategori, $in['akun'], $in['jenis'], $in['jumlah'], $in['tanggal'], $in['deskripsi'], $id, $id_grup]);
         flash('success', 'Transaksi berhasil diperbarui.');
         redirect('index.php');
     }
 }
-
-$stmt = $pdo->prepare("SELECT nama_kategori FROM kategori WHERE id_grup = ? ORDER BY nama_kategori");
-$stmt->execute([$id_grup]);
-$kategori = $stmt->fetchAll();
-
-$stmt = $pdo->prepare("SELECT * FROM akun_dana WHERE id_grup = ? ORDER BY nama_akun");
-$stmt->execute([$id_grup]);
-$akun = $stmt->fetchAll();
 
 $mode = 'edit';
 $judul = 'Edit Transaksi';

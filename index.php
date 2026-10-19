@@ -33,18 +33,18 @@ if (!$grup) {
 
 $id_grup = $grup['id'];
 
-$stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN jenis = 'Pemasukan' THEN jumlah ELSE 0 END),0) AS pemasukan, COALESCE(SUM(CASE WHEN jenis = 'Pengeluaran' THEN jumlah ELSE 0 END),0) AS pengeluaran FROM transaksi WHERE id_grup = ?");
-$stmt->execute([$id_grup]);
+$stmt = $pdo->prepare("
+    SELECT
+        COALESCE(SUM(jumlah) FILTER (WHERE jenis = 'Pemasukan'), 0) AS pemasukan,
+        COALESCE(SUM(jumlah) FILTER (WHERE jenis = 'Pengeluaran'), 0) AS pengeluaran,
+        (SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ?) AS anggota
+    FROM transaksi
+    WHERE id_grup = ?
+");
+$stmt->execute([$id_grup, $id_grup]);
 $saldo = $stmt->fetch();
 $saldo_akhir = $saldo['pemasukan'] - $saldo['pengeluaran'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ?");
-$stmt->execute([$id_grup]);
-$total_anggota = $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?");
-$stmt->execute([$id_grup]);
-$total_kewajiban = $stmt->fetchColumn();
+$total_anggota = $saldo['anggota'];
 
 $stmt = $pdo->prepare("SELECT t.*, k.nama_kategori FROM transaksi t JOIN kategori k ON k.id = t.id_kategori WHERE t.id_grup = ? ORDER BY t.tanggal_transaksi DESC, t.id DESC LIMIT 5");
 $stmt->execute([$id_grup]);
@@ -63,7 +63,7 @@ $aksi = [
         'icon' => '<path d="M20 6L9 17l-5-5"/>'],
     ['href' => 'transaksi/tambah.php', 'judul' => 'Catat Transaksi', 'ket' => 'Catat pemasukan / pengeluaran', 'tampil' => $kelola,
         'icon' => '<path d="M12 5v14M5 12h14"/>'],
-    ['href' => 'laporan/index.php', 'judul' => 'Lihat Laporan', 'ket' => 'Laporan keuangan grup', 'tampil' => in_array($peran, ['Admin', 'Bendahara'], true),
+    ['href' => 'laporan/index.php', 'judul' => 'Lihat Laporan', 'ket' => 'Laporan keuangan grup', 'tampil' => in_array($peran, akses_menu()['laporan'], true),
         'icon' => '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>'],
 ];
 

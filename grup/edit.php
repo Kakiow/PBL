@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Edit Grup';
@@ -38,13 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <a class="back-link" href="detail.php?id=<?php echo $id; ?>">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Kembali ke Detail
-    </a>
+    <?php tautan_kembali('detail.php?id=' . $id, 'Kembali ke Detail'); ?>
     <span class="eyebrow">Grup</span>
     <h1>Edit Grup</h1>
     <p>Perbarui nama dan deskripsi grup. Kode grup tidak dapat diubah.</p>

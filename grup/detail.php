@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/koneksi.php';
-require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Detail Grup';
@@ -40,32 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'keluar_
     redirect('detail.php?id=' . $id);
 }
 
-$jumlah_anggota = jumlah_anggota_grup($pdo, $id);
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?");
-$stmt->execute([$id]);
-$jumlah_tagihan = (int) $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM transaksi WHERE id_grup = ?");
-$stmt->execute([$id]);
-$jumlah_transaksi = (int) $stmt->fetchColumn();
-
 $stmt = $pdo->prepare("SELECT ag.peran, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY CASE ag.peran WHEN 'Admin' THEN 1 WHEN 'Bendahara' THEN 2 ELSE 3 END, p.nama");
 $stmt->execute([$id]);
 $anggota = $stmt->fetchAll();
+$jumlah_anggota = count($anggota);
+
+$stmt = $pdo->prepare("SELECT (SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?) AS tagihan, (SELECT COUNT(*) FROM transaksi WHERE id_grup = ?) AS transaksi");
+$stmt->execute([$id, $id]);
+$hitung = $stmt->fetch();
+$jumlah_tagihan = (int) $hitung['tagihan'];
+$jumlah_transaksi = (int) $hitung['transaksi'];
 
 $grup_ini_aktif = (int) ($_SESSION['grup_id'] ?? 0) === $id;
 
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <a class="back-link" href="index.php">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Kembali ke Grup
-    </a>
+    <?php tautan_kembali('index.php', 'Kembali ke Grup'); ?>
     <span class="eyebrow">Grup</span>
     <h1><?php echo e($g['nama_grup']); ?></h1>
     <p><?php echo e($g['deskripsi'] ?: 'Grup ini belum memiliki deskripsi.'); ?></p>
