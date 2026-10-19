@@ -11,6 +11,9 @@ $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $role = cek_role($pdo, $id_grup, akses_menu()['pembayaran']);
 $boleh_verifikasi = in_array($role, ['Admin', 'Bendahara'], true);
 
+// Pastikan bukti kedaluwarsa tidak tampil sebagai link yang sudah rusak.
+bersihkan_bukti_otomatis($pdo);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
     $id = (int) ($_POST['id'] ?? 0);
     $status = $_POST['status'] ?? '';

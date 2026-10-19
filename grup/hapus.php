@@ -61,9 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     foreach ($berkas as $nama) {
-        $path = __DIR__ . '/../storage/uploads/' . basename((string) $nama);
-        if (is_file($path)) {
-            @unlink($path);
+        if (!hapus_bukti($nama)) {
+            error_log('Gagal menghapus bukti pembayaran grup ' . $id . ': ' . $nama);
         }
     }
 

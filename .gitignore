@@ -1,0 +1,26 @@
+# Konfigurasi lokal berisi kredensial database — JANGAN di-push
+config/koneksi.php
+
+# File environment / rahasia lainnya
+.env
+.env.*
+*.local.php
+
+# Upload & data runtime (isi storage, bukan foldernya)
+# Bukti pembayaran hanya disimpan di VPS, jangan pernah masuk GitHub.
+storage/uploads/*
+storage/uploads/**
+!storage/uploads/.gitkeep
+
+# Penanda pembersihan otomatis harian
+storage/uploads/.pembersihan_terakhir
+
+# Artefak tool/editor
+.freebuff/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Log
+*.log

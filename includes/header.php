@@ -6,6 +6,11 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/helpers.php';
 
+// Bersihkan bukti yang sudah lewat 5 hari dari tenggat, maksimal sekali sehari.
+if (isset($pdo) && $pdo instanceof PDO) {
+    bersihkan_bukti_otomatis($pdo);
+}
+
 $app_root = str_replace('\\', '/', dirname(__DIR__));
 $script_file = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
 

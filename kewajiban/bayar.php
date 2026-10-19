@@ -10,6 +10,12 @@ $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $id_user = (int) $_SESSION['user']['id'];
 cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
 
+// Kalau ukuran kiriman melebihi post_max_size, PHP mengosongkan $_POST dan $_FILES.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+    flash('error', 'Ukuran bukti pembayaran terlalu besar. Maksimal 5 MB.');
+    redirect('index.php');
+}
+
 $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 
 $stmt = $pdo->prepare("SELECT * FROM kewajiban_pembayaran WHERE id = ? AND id_grup = ?");
@@ -42,29 +48,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jumlah = (float) $k['jumlah'];
     $tunai = $metode === 'Tunai';
     $nama_file = '';
-    $tujuan = null;
     $gagal = null;
 
     if (!in_array($metode, ['Tunai', 'Transfer', 'E-Wallet', 'QRIS'], true)) {
         $gagal = 'Metode pembayaran tidak valid.';
     } elseif ($tunai) {
         $nama_file = '';
-    } elseif (!isset($_FILES['berkas_bukti']) || $_FILES['berkas_bukti']['error'] !== UPLOAD_ERR_OK) {
+    } elseif (!isset($_FILES['berkas_bukti']) || (int) $_FILES['berkas_bukti']['error'] === UPLOAD_ERR_NO_FILE) {
         $gagal = 'Bukti pembayaran belum dipilih.';
+    } elseif (tagihan_bukti_kedaluwarsa($k['tenggat_waktu'])) {
+        $gagal = 'Tenggat tagihan sudah lewat lebih dari ' . BUKTI_HARI_SIMPAN
+            . ' hari. Bukti pembayaran tidak dapat diunggah; silakan bayar tunai atau hubungi Bendahara/Admin.';
     } else {
-        $folder = __DIR__ . '/../storage/uploads/';
-
-        if (!is_dir($folder)) {
-            mkdir($folder, 0777, true);
-        }
-
-        $nama_file = time() . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['berkas_bukti']['name']));
-        $tujuan = $folder . $nama_file;
-
-        if (!move_uploaded_file($_FILES['berkas_bukti']['tmp_name'], $tujuan)) {
-            $tujuan = null;
-            $nama_file = '';
-            $gagal = 'Bukti pembayaran gagal diupload.';
+        try {
+            $nama_file = simpan_bukti($_FILES['berkas_bukti']);
+        } catch (Throwable $e) {
+            $gagal = $e->getMessage();
         }
     }
 
@@ -96,8 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            if ($tujuan !== null && is_file($tujuan)) {
-                unlink($tujuan);
+            if ($nama_file !== '') {
+                hapus_bukti($nama_file);
             }
             flash('error', $e->getMessage());
         }
@@ -153,7 +152,8 @@ include __DIR__ . '/../includes/header.php';
         <p id="field-bukti">
             <label for="berkas_bukti">Bukti Pembayaran</label>
             <input id="berkas_bukti" type="file" name="berkas_bukti" accept=".jpg,.jpeg,.png,.pdf" required>
-            <span class="field-hint">Format JPG, PNG, atau PDF. Wajib untuk Transfer, E-Wallet, dan QRIS.</span>
+            <span class="field-hint">Format JPG, PNG, atau PDF, maksimal 5 MB. Wajib untuk Transfer, E-Wallet, dan
+                QRIS.</span>
         </p>
         <div class="form-actions">
             <button class="btn primary" type="submit">Kirim Pembayaran</button>
