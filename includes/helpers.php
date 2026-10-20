@@ -4,6 +4,7 @@
 date_default_timezone_set('Asia/Jakarta');
 
 require_once __DIR__ . '/bukti.php';
+require_once __DIR__ . '/tagihan.php';
 
 function e($value)
 {
@@ -52,19 +53,6 @@ function tautan_kembali($href, $label = 'Kembali')
         . '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"'
         . ' stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>'
         . e($label) . '</a>';
-}
-
-// Warna badge untuk status pembayaran (Disetujui/Ditolak/Menunggu) dan status tagihan anggota.
-function kelas_status($status)
-{
-    $kelas = [
-        'Lunas' => 'success',
-        'Disetujui' => 'success',
-        'Ditolak' => 'danger',
-        'Menunggu' => 'warning',
-    ];
-
-    return $kelas[(string) $status] ?? '';
 }
 
 // Hasil di-cache per request: header.php dan halaman modul sering menanyakan peran yang sama.
@@ -232,31 +220,19 @@ function tanggal_valid($nilai)
     return $tgl !== false && $tgl->format('Y-m-d') === $nilai;
 }
 
-// Bebankan satu tagihan ke semua anggota grup yang belum tercatat. Mengembalikan jumlah anggota yang ditambahkan.
-function tagihkan_ke_anggota($pdo, $id_kewajiban, $id_grup)
+// "2026-10-24" -> "24 Okt 2026"; dengan $jam = true -> "24 Okt 2026, 14.05". Nilai kosong -> "-".
+function tanggal_id($nilai, $jam = false)
 {
-    $stmt = $pdo->prepare("
-        INSERT INTO anggota_kewajiban (id_kewajiban, id_pengguna)
-        SELECT ?, id_pengguna FROM anggota_grup WHERE id_grup = ?
-        ON CONFLICT (id_kewajiban, id_pengguna) DO NOTHING
-    ");
-    $stmt->execute([$id_kewajiban, $id_grup]);
+    $waktu = strtotime((string) $nilai);
 
-    return $stmt->rowCount();
-}
+    if ($nilai === null || $nilai === '' || $waktu === false) {
+        return '-';
+    }
 
-// Anggota yang baru gabung ikut dibebani tagihan grup yang tenggatnya belum lewat.
-// Anggota yang keluar lalu gabung lagi tetap memakai status lamanya (ON CONFLICT).
-function tagihkan_tagihan_berjalan($pdo, $id_grup, $id_pengguna)
-{
-    $stmt = $pdo->prepare("
-        INSERT INTO anggota_kewajiban (id_kewajiban, id_pengguna)
-        SELECT id, ? FROM kewajiban_pembayaran WHERE id_grup = ? AND tenggat_waktu >= CURRENT_DATE
-        ON CONFLICT (id_kewajiban, id_pengguna) DO NOTHING
-    ");
-    $stmt->execute([$id_pengguna, $id_grup]);
+    $bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    $teks = date('j', $waktu) . ' ' . $bulan[(int) date('n', $waktu) - 1] . ' ' . date('Y', $waktu);
 
-    return $stmt->rowCount();
+    return $jam ? $teks . ', ' . date('H.i', $waktu) : $teks;
 }
 
 function menu_nav($base, $peran, $ada_grup)

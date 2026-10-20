@@ -24,52 +24,67 @@ $data = $stmt->fetchAll();
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <span class="eyebrow">Tagihan</span>
-    <h1>Tagihan Kas</h1>
+    <h1>Tagihan kas</h1>
     <p>Pantau daftar tagihan kas dan status pembayaran anggota.</p>
 </div>
 
 <section class="content-card">
     <div class="card-head">
         <div>
-            <h2>Daftar Tagihan</h2>
+            <h2>Daftar tagihan</h2>
             <p>Seluruh tagihan yang pernah diterbitkan pada grup ini.</p>
         </div>
         <?php if ($boleh_buat): ?>
-        <a class="btn primary" href="tambah.php">+ Buat Tagihan</a>
+        <a class="btn primary" href="tambah.php">Buat tagihan</a>
         <?php endif; ?>
     </div>
     <div class="table-fancy-wrap">
-        <table class="table-fancy">
+        <table class="table-fancy table-stack">
             <thead>
                 <tr>
-                    <th>Judul</th>
-                    <th class="num">Jumlah</th>
-                    <th>Tenggat</th>
-                    <th>Status</th>
-                    <th class="num">Aksi</th>
+                    <th scope="col">Tagihan</th>
+                    <th scope="col" class="num">Jumlah</th>
+                    <th scope="col">Tenggat</th>
+                    <th scope="col">Progres</th>
+                    <th scope="col">Status saya</th>
+                    <th scope="col" class="num"><span class="sr-only">Aksi</span></th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$data): ?><tr class="empty">
-                    <td colspan="5">Belum ada tagihan.</td>
+                    <td colspan="6"><?php echo $boleh_buat ? 'Belum ada tagihan. Buat tagihan pertama untuk mulai menagih anggota.' : 'Belum ada tagihan di grup ini.'; ?></td>
                 </tr><?php endif; ?>
-                <?php foreach ($data as $row): ?>
+                <?php foreach ($data as $row):
+                    $tenggat = info_tenggat($row['tenggat_waktu']);
+                    $persen = $row['total'] > 0 ? round($row['lunas'] / $row['total'] * 100) : 0;
+                    $bisa_bayar = in_array($row['status_saya'], ['Belum_Bayar', 'Ditolak'], true);
+                ?>
                 <tr>
-                    <td><?php echo e($row['judul']); ?></td>
-                    <td class="num"><?php echo rupiah($row['jumlah']); ?></td>
-                    <td class="nowrap"><?php echo e($row['tenggat_waktu']); ?></td>
-                    <td><span class="chip"><?php echo $row['lunas'] . ' / ' . $row['total']; ?> lunas</span></td>
-                    <td>
+                    <td class="cell-title"><a href="detail.php?id=<?php echo (int) $row['id']; ?>"><?php echo e($row['judul']); ?></a></td>
+                    <td class="num" data-label="Jumlah"><?php echo rupiah($row['jumlah']); ?></td>
+                    <td class="nowrap" data-label="Tenggat"><span class="cell-value">
+                        <?php echo e(tanggal_id($row['tenggat_waktu'])); ?>
+                        <?php if ($row['status_saya'] !== 'Lunas' && ($tenggat['lewat'] || $bisa_bayar)): ?>
+                        <span class="cell-sub<?php echo $tenggat['lewat'] ? ' is-late' : ''; ?>"><?php echo e($tenggat['teks']); ?></span>
+                        <?php endif; ?>
+                    </span></td>
+                    <td data-label="Progres">
+                        <span class="meter">
+                            <span class="meter-text"><?php echo (int) $row['lunas'] . ' dari ' . (int) $row['total']; ?> lunas</span>
+                            <span class="meter-bar" aria-hidden="true"><span style="width: <?php echo $persen; ?>%"></span></span>
+                        </span>
+                    </td>
+                    <td data-label="Status saya">
+                        <?php if ($row['status_saya'] === null): ?>
+                        <span class="muted">Tidak ditagih</span>
+                        <?php else: ?>
+                        <span class="badge <?php echo kelas_status($row['status_saya']); ?>"><?php echo e(label_status($row['status_saya'])); ?></span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="cell-actions">
                         <div class="row-actions">
-                            <?php if ($row['status_saya'] === null): ?>
-                            <span class="muted">—</span>
-                            <?php elseif ($row['status_saya'] === 'Lunas'): ?>
-                            <button class="btn success small" type="button" disabled>Lunas</button>
-                            <?php elseif ($row['status_saya'] === 'Menunggu'): ?>
-                            <button class="btn secondary small" type="button" disabled>Menunggu verifikasi</button>
-                            <?php else: ?>
-                            <a class="btn primary small" href="bayar.php?id=<?php echo (int) $row['id']; ?>">Bayar</a>
+                            <?php if ($bisa_bayar): ?>
+                            <a class="btn primary small" href="bayar.php?id=<?php echo (int) $row['id']; ?>"><?php echo $row['status_saya'] === 'Ditolak' ? 'Bayar ulang' : 'Bayar'; ?></a>
                             <?php endif; ?>
                             <a class="btn secondary small" href="detail.php?id=<?php echo (int) $row['id']; ?>">Detail</a>
                         </div>

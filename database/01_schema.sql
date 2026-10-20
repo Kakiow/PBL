@@ -30,6 +30,7 @@ CREATE TABLE grup (
     nama_grup VARCHAR(255) NOT NULL,
     kode_grup VARCHAR(50) NOT NULL UNIQUE,
     deskripsi TEXT,
+    info_pembayaran TEXT,
     dibuat_oleh BIGINT NOT NULL,
     dibuat_pada TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_grup_dibuat_oleh FOREIGN KEY (dibuat_oleh) REFERENCES pengguna(id) ON DELETE RESTRICT

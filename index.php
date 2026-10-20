@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/config/koneksi.php';
 require_once __DIR__ . '/includes/helpers.php';
 
@@ -17,7 +19,6 @@ if (!$grup) {
     include __DIR__ . '/includes/header.php';
     ?>
 <div class="page-head">
-    <span class="eyebrow">Belum ada grup</span>
     <h1>Halo, <?php echo e($_SESSION['user']['nama']); ?></h1>
     <p>Selamat datang di SIMKAS. Buat atau pilih grup terlebih dahulu untuk mulai mengelola kas.</p>
 </div>
@@ -50,91 +51,162 @@ $stmt = $pdo->prepare("SELECT t.*, k.nama_kategori FROM transaksi t JOIN kategor
 $stmt->execute([$id_grup]);
 $transaksi = $stmt->fetchAll();
 
-$kelola = boleh_kelola_transaksi($peran);
+// Tagihan milik user ini + status & alasan pembayaran terakhirnya (bila ditolak).
+$stmt = $pdo->prepare("
+    SELECT k.id, k.judul, k.jumlah, k.tenggat_waktu, ak.status, bayar.catatan
+    FROM anggota_kewajiban ak
+    JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+    LEFT JOIN LATERAL (
+        SELECT catatan FROM pembayaran WHERE id_anggota_kewajiban = ak.id ORDER BY id DESC LIMIT 1
+    ) bayar ON TRUE
+    WHERE ak.id_pengguna = ? AND k.id_grup = ?
+    ORDER BY k.tenggat_waktu
+");
+$stmt->execute([$_SESSION['user']['id'], $id_grup]);
 
-$aksi = [
-    ['href' => 'grup/index.php', 'judul' => 'Kelola Grup', 'ket' => 'Buat, gabung, dan pilih grup', 'tampil' => true,
-        'icon' => '<path d="M4 6h16M4 12h16M4 18h10"/>'],
-    ['href' => 'anggota/index.php', 'judul' => 'Kelola Anggota', 'ket' => 'Anggota dan role grup', 'tampil' => true,
-        'icon' => '<path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>'],
-    ['href' => 'kewajiban/index.php', 'judul' => 'Tagihan', 'ket' => 'Buat dan pantau tagihan kas', 'tampil' => true,
-        'icon' => '<path d="M4 4h16v16l-3-2-2 2-3-2-3 2-2-2-3 2z"/><path d="M8 9h8M8 13h5"/>'],
-    ['href' => 'pembayaran/index.php', 'judul' => 'Verifikasi', 'ket' => 'Verifikasi pembayaran anggota', 'tampil' => true,
-        'icon' => '<path d="M20 6L9 17l-5-5"/>'],
-    ['href' => 'transaksi/tambah.php', 'judul' => 'Catat Transaksi', 'ket' => 'Catat pemasukan / pengeluaran', 'tampil' => $kelola,
-        'icon' => '<path d="M12 5v14M5 12h14"/>'],
-    ['href' => 'laporan/index.php', 'judul' => 'Lihat Laporan', 'ket' => 'Laporan keuangan grup', 'tampil' => in_array($peran, akses_menu()['laporan'], true),
-        'icon' => '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>'],
-];
+$tagihan_terbuka = [];
+$total_tagihan = 0;
+$belum_dibayar = 0;
+$jumlah_menunggu = 0;
+foreach ($stmt->fetchAll() as $row) {
+    $total_tagihan++;
+    if ($row['status'] === 'Lunas') {
+        continue;
+    }
+    if ($row['status'] === 'Menunggu') {
+        $jumlah_menunggu++;
+    } else {
+        $belum_dibayar += (float) $row['jumlah'];
+    }
+    $tagihan_terbuka[] = $row;
+}
+$jumlah_harus_bayar = count($tagihan_terbuka) - $jumlah_menunggu;
+$tampil_tagihan = array_slice($tagihan_terbuka, 0, 4);
+
+$kelola = peran_pengelola($peran);
+$menunggu_verifikasi = 0;
+if ($kelola) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM pembayaran p JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE k.id_grup = ? AND p.status = 'Menunggu'");
+    $stmt->execute([$id_grup]);
+    $menunggu_verifikasi = (int) $stmt->fetchColumn();
+}
 
 include __DIR__ . '/includes/header.php';
 ?>
 <div class="page-head">
-    <span class="eyebrow"><?php echo e(label_peran($peran)); ?></span>
     <h1><?php echo e($grup['nama_grup']); ?></h1>
     <p><?php echo e($grup['deskripsi'] ?: 'Kelola pemasukan, pengeluaran, dan pembayaran kas.'); ?></p>
 </div>
 
-<section class="stats">
-    <article class="stat-card is-primary"><span>Saldo Kas</span><strong><?php echo rupiah($saldo_akhir); ?></strong></article>
-    <article class="stat-card"><span>Total Pemasukan</span><strong><?php echo rupiah($saldo['pemasukan']); ?></strong></article>
-    <article class="stat-card"><span>Total Pengeluaran</span><strong><?php echo rupiah($saldo['pengeluaran']); ?></strong></article>
+<div class="dash-grid<?php echo $kelola ? ' has-side' : ''; ?>">
+    <section class="content-card" aria-labelledby="judul-tagihan-kamu">
+        <div class="card-head">
+            <div>
+                <h2 id="judul-tagihan-kamu">Tagihan kamu</h2>
+                <p class="dash-summary">
+                    <?php if ($jumlah_harus_bayar > 0): ?>
+                    <strong><?php echo rupiah($belum_dibayar); ?></strong> belum dibayar dari
+                    <?php echo $jumlah_harus_bayar; ?> tagihan<?php echo $jumlah_menunggu > 0 ? ' &middot; ' . $jumlah_menunggu . ' menunggu verifikasi' : ''; ?>.
+                    <?php elseif ($jumlah_menunggu > 0): ?>
+                    Semua sudah kamu bayar. <?php echo $jumlah_menunggu; ?> pembayaran sedang menunggu verifikasi.
+                    <?php elseif ($total_tagihan > 0): ?>
+                    Semua tagihan kamu sudah lunas.
+                    <?php else: ?>
+                    Belum ada tagihan untukmu di grup ini.
+                    <?php endif; ?>
+                </p>
+            </div>
+            <a class="text-link" href="kewajiban/index.php">Semua tagihan →</a>
+        </div>
+
+        <?php if ($tampil_tagihan): ?>
+        <ul class="bill-list">
+            <?php foreach ($tampil_tagihan as $t): $tenggat = info_tenggat($t['tenggat_waktu']); ?>
+            <li class="bill-item">
+                <div>
+                    <a class="bill-title" href="kewajiban/detail.php?id=<?php echo (int) $t['id']; ?>"><?php echo e($t['judul']); ?></a>
+                    <span class="bill-meta">
+                        <span>Tenggat <?php echo e(tanggal_id($t['tenggat_waktu'])); ?></span>
+                        <span class="<?php echo $tenggat['lewat'] ? 'is-late' : ''; ?>"><?php echo e($tenggat['teks']); ?></span>
+                    </span>
+                </div>
+                <span class="bill-amount"><?php echo rupiah($t['jumlah']); ?></span>
+                <span class="bill-action">
+                    <?php if ($t['status'] === 'Menunggu'): ?>
+                    <span class="badge warning"><?php echo e(label_status('Menunggu')); ?></span>
+                    <?php else: ?>
+                    <a class="btn primary small" href="kewajiban/bayar.php?id=<?php echo (int) $t['id']; ?>"><?php echo $t['status'] === 'Ditolak' ? 'Bayar ulang' : 'Bayar'; ?></a>
+                    <?php endif; ?>
+                </span>
+                <?php if ($t['status'] === 'Ditolak'): ?>
+                <p class="bill-reason">Ditolak<?php echo trim((string) $t['catatan']) !== '' ? ': ' . e($t['catatan']) : '. Hubungi Bendahara untuk detailnya.'; ?></p>
+                <?php endif; ?>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php if (count($tagihan_terbuka) > count($tampil_tagihan)): ?>
+        <p class="bill-more"><a href="kewajiban/index.php">dan <?php echo count($tagihan_terbuka) - count($tampil_tagihan); ?> tagihan lainnya</a></p>
+        <?php endif; ?>
+        <?php endif; ?>
+    </section>
+
+    <?php if ($kelola): ?>
+    <section class="content-card" aria-labelledby="judul-perlu-tindakan">
+        <div class="card-head">
+            <div>
+                <h2 id="judul-perlu-tindakan">Perlu tindakan</h2>
+                <p>Pekerjaan bendahara untuk grup ini.</p>
+            </div>
+        </div>
+        <ul class="todo-list">
+            <li><a href="pembayaran/index.php">Verifikasi pembayaran
+                <?php if ($menunggu_verifikasi > 0): ?><span class="todo-count"><?php echo $menunggu_verifikasi; ?></span>
+                <?php else: ?><span class="todo-go">Tidak ada antrean</span><?php endif; ?></a></li>
+            <li><a href="kewajiban/tambah.php">Buat tagihan <span class="todo-go">→</span></a></li>
+            <li><a href="transaksi/tambah.php">Catat transaksi <span class="todo-go">→</span></a></li>
+            <li><a href="laporan/index.php">Lihat laporan <span class="todo-go">→</span></a></li>
+        </ul>
+    </section>
+    <?php endif; ?>
+</div>
+
+<section class="stats" aria-label="Ringkasan kas grup">
+    <article class="stat-card is-primary"><span>Saldo kas</span><strong><?php echo rupiah($saldo_akhir); ?></strong></article>
+    <article class="stat-card is-in"><span>Total pemasukan</span><strong><?php echo rupiah($saldo['pemasukan']); ?></strong></article>
+    <article class="stat-card is-out"><span>Total pengeluaran</span><strong><?php echo rupiah($saldo['pengeluaran']); ?></strong></article>
     <article class="stat-card"><span>Anggota</span><strong><?php echo (int) $total_anggota; ?></strong></article>
 </section>
 
 <section class="content-card">
     <div class="card-head">
         <div>
-            <h2>Aksi Cepat</h2>
-            <p>Pilih menu untuk melanjutkan pengelolaan kas.</p>
-        </div>
-    </div>
-    <div class="quick-grid">
-        <?php foreach ($aksi as $item): if (!$item['tampil']) { continue; } ?>
-        <a class="quick-card" href="<?php echo $item['href']; ?>">
-            <span class="quick-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round"><?php echo $item['icon']; ?></svg>
-            </span>
-            <strong><?php echo e($item['judul']); ?></strong>
-            <span><?php echo e($item['ket']); ?></span>
-        </a>
-        <?php endforeach; ?>
-    </div>
-</section>
-
-<section class="content-card">
-    <div class="card-head">
-        <div>
-            <h2>Transaksi Terbaru</h2>
+            <h2>Transaksi terbaru</h2>
             <p>Lima transaksi terakhir pada grup ini.</p>
         </div>
         <a class="text-link" href="transaksi/index.php">Lihat semua →</a>
     </div>
     <div class="table-fancy-wrap">
-        <table class="table-fancy">
+        <table class="table-fancy table-stack">
             <thead>
                 <tr>
-                    <th>Tanggal</th>
-                    <th>Kategori</th>
-                    <th>Jenis</th>
-                    <th class="num">Jumlah</th>
-                    <th>Deskripsi</th>
+                    <th scope="col">Deskripsi</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col" class="num">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$transaksi): ?><tr class="empty">
-                    <td colspan="5">Belum ada transaksi.</td>
+                    <td colspan="4">Belum ada transaksi.</td>
                 </tr><?php endif; ?>
-                <?php foreach ($transaksi as $row): ?>
+                <?php foreach ($transaksi as $row): $masuk = $row['jenis'] === 'Pemasukan'; ?>
                 <tr>
-                    <td class="nowrap"><?php echo e($row['tanggal_transaksi']); ?></td>
-                    <td><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
-                    <td><span class="badge <?php echo $row['jenis'] === 'Pemasukan' ? 'success' : 'danger'; ?>"><?php echo e($row['jenis']); ?></span></td>
-                    <td class="num <?php echo $row['jenis'] === 'Pemasukan' ? 'amount-in' : 'amount-out'; ?>">
-                        <?php echo $row['jenis'] === 'Pemasukan' ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
+                    <td class="cell-title"><?php echo e($row['deskripsi'] ?: $row['nama_kategori']); ?></td>
+                    <td class="nowrap" data-label="Tanggal"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
+                    <td data-label="Kategori"><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
+                    <td class="num <?php echo $masuk ? 'amount-in' : 'amount-out'; ?>" data-label="<?php echo e($row['jenis']); ?>">
+                        <?php echo $masuk ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
                     </td>
-                    <td class="desc"><?php echo e($row['deskripsi']); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

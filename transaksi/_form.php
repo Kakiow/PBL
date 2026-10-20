@@ -15,7 +15,6 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
 ?>
 <div class="page-head">
     <?php tautan_kembali('index.php'); ?>
-    <span class="eyebrow">Transaksi</span>
     <h1><?php echo e($judul); ?></h1>
     <p><?php echo e($deskripsi); ?></p>
 </div>
@@ -29,13 +28,13 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                 <path d="M8 9h8M8 13h5" />
             </svg>
         </span>
-        <h2>Detail Transaksi</h2>
+        <h2>Detail transaksi</h2>
     </div>
     <form method="post" class="form-transaksi" data-jenis="<?php echo e(strtolower($val_jenis)); ?>">
         <div class="trx-layout">
             <div class="trx-fields">
                 <p class="field">
-                    <label>Jenis Transaksi</label>
+                    <label>Jenis transaksi</label>
                     <span class="jenis-toggle" role="radiogroup" aria-label="Jenis transaksi">
                         <label class="jenis-option jenis-option--in">
                             <input type="radio" name="jenis" value="Pemasukan" required
@@ -97,7 +96,7 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                         <span class="field-hint">Tulis tujuan transaksi, mis. "Study Tour" atau "Iuran Kas".</span>
                     </p>
                     <p class="field">
-                        <label for="id_akun_dana">Akun Dana</label>
+                        <label for="id_akun_dana">Akun dana</label>
                         <select id="id_akun_dana" name="id_akun_dana" required data-error="Akun dana wajib dipilih.">
                             <option value="">Pilih akun</option>
                             <?php foreach ($akun as $a): ?>
@@ -159,7 +158,7 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                         <dd class="is-empty" id="trx-preview-kategori">—</dd>
                     </div>
                     <div>
-                        <dt>Akun Dana</dt>
+                        <dt>Akun dana</dt>
                         <dd class="is-empty" id="trx-preview-akun">—</dd>
                     </div>
                     <div>

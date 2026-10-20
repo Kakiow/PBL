@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $saya_admin) {
 
         // Grup harus selalu punya tepat 1 Admin: kepemilikan hanya bisa dipindah ke satu orang.
         if (!is_array($peran_baru)) {
-            flash('error', 'Tidak ada perubahan role.');
+            flash('error', 'Tidak ada perubahan peran.');
         } elseif ($jumlah_admin_baru > 1) {
             flash('error', 'Hanya satu anggota yang dapat dijadikan Admin. Tidak ada perubahan yang disimpan.');
         } else {
@@ -71,17 +71,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $saya_admin) {
                 }
                 $pdo->commit();
                 if ($jumlah_ubah === 0) {
-                    flash('success', 'Tidak ada perubahan role.');
+                    flash('success', 'Tidak ada perubahan peran.');
                 } elseif ($pindah_admin) {
-                    flash('success', 'Perubahan role disimpan. Kepemilikan admin dipindahkan; Anda kini Anggota.');
+                    flash('success', 'Perubahan peran disimpan. Peran Admin sudah dipindahkan; Anda kini Anggota.');
                 } else {
-                    flash('success', 'Perubahan role berhasil disimpan.');
+                    flash('success', 'Perubahan peran berhasil disimpan.');
                 }
             } catch (PDOException $e) {
                 if ($pdo->inTransaction()) {
                     $pdo->rollBack();
                 }
-                flash('error', 'Gagal menyimpan perubahan role.');
+                flash('error', 'Gagal menyimpan perubahan peran.');
             }
         }
         redirect('index.php');
@@ -95,7 +95,6 @@ $anggota = $stmt->fetchAll();
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <span class="eyebrow">Anggota</span>
     <h1>Anggota <?php echo e($grup['nama_grup']); ?></h1>
     <p><?php echo count($anggota); ?> orang bergabung pada grup ini.</p>
 </div>
@@ -103,14 +102,13 @@ include __DIR__ . '/../includes/header.php';
 <section class="content-card">
     <div class="card-head">
         <div>
-            <h2>Daftar Anggota</h2>
+            <h2>Daftar anggota</h2>
             <p><?php echo $saya_admin
-                    ? 'Ubah role pada kolom aksi, lalu simpan sekali untuk menerapkan semua perubahan.'
-                    : 'Hanya Admin yang dapat mengubah role anggota.'; ?></p>
+                    ? 'Ubah peran di kolom terakhir, lalu simpan sekali untuk menerapkan semua perubahan. Admin hanya boleh satu orang.'
+                    : 'Hanya Admin yang dapat mengubah peran anggota.'; ?></p>
         </div>
         <?php if ($saya_admin): ?>
-        <button class="btn success btn-simpan" type="submit" form="form-role" id="btn-simpan-role">Simpan
-            Perubahan</button>
+        <button class="btn success" type="submit" form="form-role" id="btn-simpan-role">Simpan perubahan</button>
         <?php endif; ?>
     </div>
 
@@ -118,14 +116,14 @@ include __DIR__ . '/../includes/header.php';
     <form method="post"<?php echo $form_id; ?>>
         <?php if ($saya_admin): ?><input type="hidden" name="aksi" value="ubah_role"><?php endif; ?>
         <div class="table-responsive table-fancy-wrap">
-            <table class="table-fancy">
+            <table class="table-fancy table-stack">
                 <thead>
                     <tr>
-                        <th>Nama</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Bergabung</th>
-                        <th>Aksi</th>
+                        <th scope="col">Nama</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Peran</th>
+                        <th scope="col">Bergabung</th>
+                        <th scope="col">Ubah peran</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -134,23 +132,23 @@ include __DIR__ . '/../includes/header.php';
                     </tr><?php endif; ?>
                     <?php foreach ($anggota as $a): ?>
                     <tr>
-                        <td><?php echo e($a['nama']); ?></td>
-                        <td class="desc"><?php echo e($a['email']); ?></td>
-                        <td><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
-                        <td class="nowrap"><?php echo e(substr((string) $a['bergabung_pada'], 0, 10)); ?></td>
-                        <td>
+                        <td class="cell-title"><?php echo e($a['nama']); ?></td>
+                        <td class="desc" data-label="Email"><?php echo e($a['email']); ?></td>
+                        <td data-label="Peran"><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
+                        <td class="nowrap" data-label="Bergabung"><?php echo e(tanggal_id($a['bergabung_pada'])); ?></td>
+                        <td data-label="Ubah peran">
                             <?php if ((int) $a['id_pengguna'] === (int) $id_user): ?>
-                            <span class="muted">Akun Anda</span>
+                            <span class="muted">Akun kamu</span>
                             <?php elseif ($saya_admin): ?>
                             <div class="role-form">
                                 <select name="peran[<?php echo (int) $a['id']; ?>]" class="role-select"
-                                    aria-label="Role untuk <?php echo e($a['nama']); ?>">
+                                    aria-label="Peran untuk <?php echo e($a['nama']); ?>">
                                     <option value="Anggota" <?php echo $a['peran'] === 'Anggota' ? 'selected' : ''; ?>>Anggota</option>
                                     <option value="Bendahara" <?php echo $a['peran'] === 'Bendahara' ? 'selected' : ''; ?>>Bendahara</option>
                                     <option value="Admin" <?php echo $a['peran'] === 'Admin' ? 'selected' : ''; ?>>Admin</option>
                                 </select>
                             </div>
-                            <?php else: ?><span class="muted">Tidak ada aksi</span><?php endif; ?>
+                            <?php else: ?><span class="muted">Hanya Admin</span><?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

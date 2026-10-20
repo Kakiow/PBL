@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 
-$page_title = 'Hapus Grup';
+$page_title = 'Hapus grup';
 $page_css = ['dashboard.css'];
 $id_user = (int) $_SESSION['user']['id'];
 $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
@@ -76,8 +76,7 @@ include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
     <?php tautan_kembali('detail.php?id=' . $id, 'Kembali ke Detail'); ?>
-    <span class="eyebrow">Grup</span>
-    <h1>Hapus Grup</h1>
+    <h1>Hapus grup</h1>
     <p>Tindakan ini permanen dan tidak dapat dibatalkan.</p>
 </div>
 
@@ -99,7 +98,7 @@ include __DIR__ . '/../includes/header.php';
                 <path d="M10 11v6M14 11v6" />
             </svg>
         </span>
-        Konfirmasi Penghapusan
+        Konfirmasi penghapusan
     </h2>
     <p class="form-hint">Seluruh data di atas akan hilang permanen, termasuk riwayat transaksi grup
         <strong><?php echo e($g['nama_grup']); ?></strong>. Ketik <strong><?php echo e($g['nama_grup']); ?></strong>
@@ -107,13 +106,13 @@ include __DIR__ . '/../includes/header.php';
     <form method="post">
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <p>
-            <label for="konfirmasi">Nama Grup</label>
+            <label for="konfirmasi">Ketik nama grup</label>
             <input id="konfirmasi" name="konfirmasi" type="text" required autocomplete="off" spellcheck="false"
-                placeholder="<?php echo e($g['nama_grup']); ?>">
+                placeholder="Ketik nama grup di sini" data-cocok="<?php echo e($g['nama_grup']); ?>" data-tombol="tombol-hapus-grup">
             <span class="field-hint">Harus sama persis, termasuk huruf besar/kecil dan spasi.</span>
         </p>
         <div class="form-actions">
-            <button class="btn danger" type="submit">Hapus Permanen</button>
+            <button class="btn danger" type="submit" id="tombol-hapus-grup">Hapus permanen</button>
             <a class="btn secondary" href="detail.php?id=<?php echo $id; ?>">Batal</a>
         </div>
     </form>

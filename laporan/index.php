@@ -25,54 +25,53 @@ $saldo = $ringkasan['pemasukan'] - $ringkasan['pengeluaran'];
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <span class="eyebrow">Laporan</span>
-    <h1>Laporan Kas</h1>
+    <h1>Laporan kas</h1>
     <p>Ringkasan transaksi berdasarkan periode yang dipilih.</p>
 </div>
 
 <div class="print-only print-head">
-    <h1>Laporan Kas</h1>
-    <p class="print-meta"><?php echo e($grup['nama_grup'] ?? ''); ?> &middot; Periode <?php echo e($mulai); ?> s/d
-        <?php echo e($selesai); ?></p>
+    <h1>Laporan kas</h1>
+    <p class="print-meta"><?php echo e($grup['nama_grup'] ?? ''); ?> &middot; Periode <?php echo e(tanggal_id($mulai)); ?> s/d
+        <?php echo e(tanggal_id($selesai)); ?></p>
 </div>
 
 <section class="content-card no-print">
     <div class="card-head">
         <div>
-            <h2>Periode Laporan</h2>
+            <h2>Periode laporan</h2>
             <p>Pilih rentang tanggal — laporan langsung diperbarui.</p>
         </div>
     </div>
     <form method="get" class="filter-form" data-autosubmit>
-        <p><label>Mulai</label><input type="date" name="mulai" value="<?php echo e($mulai); ?>"></p>
-        <p><label>Selesai</label><input type="date" name="selesai" value="<?php echo e($selesai); ?>"></p>
-        <button class="btn secondary" type="button" data-print>Export to PDF</button>
+        <p><label for="mulai">Mulai</label><input id="mulai" type="date" name="mulai" value="<?php echo e($mulai); ?>"></p>
+        <p><label for="selesai">Selesai</label><input id="selesai" type="date" name="selesai" value="<?php echo e($selesai); ?>"></p>
+        <button class="btn secondary" type="button" data-print>Unduh PDF</button>
         <noscript><button class="btn primary" type="submit">Tampilkan</button></noscript>
     </form>
 </section>
 
 <section class="stats">
-    <article class="stat-card"><span>Pemasukan</span><strong><?php echo rupiah($ringkasan['pemasukan']); ?></strong></article>
-    <article class="stat-card"><span>Pengeluaran</span><strong><?php echo rupiah($ringkasan['pengeluaran']); ?></strong></article>
-    <article class="stat-card is-primary"><span>Saldo</span><strong><?php echo rupiah($saldo); ?></strong></article>
+    <article class="stat-card is-in"><span>Pemasukan</span><strong><?php echo rupiah($ringkasan['pemasukan']); ?></strong></article>
+    <article class="stat-card is-out"><span>Pengeluaran</span><strong><?php echo rupiah($ringkasan['pengeluaran']); ?></strong></article>
+    <article class="stat-card is-primary"><span>Selisih periode ini</span><strong><?php echo rupiah($saldo); ?></strong></article>
 </section>
 
 <section class="content-card">
     <div class="card-head">
         <div>
-            <h2>Rincian Transaksi</h2>
+            <h2>Rincian transaksi</h2>
             <p><?php echo count($data); ?> transaksi pada periode ini.</p>
         </div>
     </div>
     <div class="table-fancy-wrap">
-        <table class="table-fancy">
+        <table class="table-fancy table-stack">
             <thead>
                 <tr>
-                    <th>Tanggal</th>
-                    <th>Kategori</th>
-                    <th>Jenis</th>
-                    <th class="num">Jumlah</th>
-                    <th>Deskripsi</th>
+                    <th scope="col">Deskripsi</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Jenis</th>
+                    <th scope="col" class="num">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
@@ -81,13 +80,13 @@ include __DIR__ . '/../includes/header.php';
                 </tr><?php endif; ?>
                 <?php foreach ($data as $row): ?>
                 <tr>
-                    <td class="nowrap"><?php echo e($row['tanggal_transaksi']); ?></td>
-                    <td><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
-                    <td><span class="badge <?php echo $row['jenis'] === 'Pemasukan' ? 'success' : 'danger'; ?>"><?php echo e($row['jenis']); ?></span></td>
-                    <td class="num <?php echo $row['jenis'] === 'Pemasukan' ? 'amount-in' : 'amount-out'; ?>">
+                    <td class="cell-title"><?php echo e($row['deskripsi'] ?: $row['nama_kategori']); ?></td>
+                    <td class="nowrap" data-label="Tanggal"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
+                    <td data-label="Kategori"><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
+                    <td data-label="Jenis"><span class="badge <?php echo $row['jenis'] === 'Pemasukan' ? 'success' : 'danger'; ?>"><?php echo e($row['jenis']); ?></span></td>
+                    <td class="num <?php echo $row['jenis'] === 'Pemasukan' ? 'amount-in' : 'amount-out'; ?>" data-label="Jumlah">
                         <?php echo $row['jenis'] === 'Pemasukan' ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
                     </td>
-                    <td class="desc"><?php echo e($row['deskripsi']); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

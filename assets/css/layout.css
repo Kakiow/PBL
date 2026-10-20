@@ -5,15 +5,6 @@
 .page-head {
   margin-bottom: 26px;
 }
-.page-head .eyebrow {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--primary);
-  font-size: 0.73rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
 .page-head h1 {
   font-size: clamp(1.7rem, 3vw, 2.3rem);
   font-weight: 800;
@@ -125,6 +116,13 @@
   font-weight: 600;
   word-break: break-word;
 }
+.detail-list dd.pre-line {
+  white-space: pre-line;
+}
+.detail-list dd .btn {
+  margin-left: 8px;
+  vertical-align: middle;
+}
 .detail-list code {
   padding: 3px 9px;
   border-radius: 6px;
@@ -175,5 +173,113 @@
   .section-heading {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* Judul halaman + aksi di kanan (mis. Edit/Hapus tagihan) ---------------- */
+.page-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.page-actions form {
+  margin: 0;
+}
+
+/* Tab penyaring (mis. Verifikasi: Menunggu / Riwayat) --------------------- */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: -1px;
+  padding: 10px 14px;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.tabs a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+.tabs a[aria-current="page"] {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+.tabs .tab-count {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #eef0f3;
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.tabs a[aria-current="page"] .tab-count {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+/* Pemberitahuan di dalam kartu (alasan penolakan, info rekening, dsb.) --- */
+.notice {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: #f0f2f5;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+.notice strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text);
+}
+.notice.is-danger {
+  background: var(--danger-soft);
+  color: #7d2e29;
+}
+.notice.is-danger strong {
+  color: #7d2e29;
+}
+.notice .notice-body {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .card-head {
+    flex-wrap: wrap;
+  }
+  .card-head > .btn,
+  .card-head > form {
+    width: 100%;
+  }
+  .card-head > form .btn,
+  .card-head > .btn {
+    width: 100%;
+  }
+  .page-actions {
+    width: 100%;
+  }
+  .page-actions > * {
+    flex: 1 1 auto;
+  }
+  .page-actions .btn {
+    width: 100%;
   }
 }

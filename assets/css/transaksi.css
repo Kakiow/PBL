@@ -2,9 +2,6 @@
    SIMKAS — halaman transaksi: kerangka, kartu, dan aksi
    ========================================================================== */
 
-.trx-card {
-  border-top: 3px solid var(--primary);
-}
 .trx-card-head {
   display: flex;
   align-items: center;
@@ -15,6 +12,8 @@
 }
 .trx-card-head h2 {
   margin: 0;
+  padding: 0;
+  border: 0;
   font-size: 1.05rem;
 }
 .trx-card-icon {

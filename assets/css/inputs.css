@@ -17,7 +17,7 @@ textarea {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #9aa3ae;
+  color: var(--placeholder);
 }
 input:hover,
 select:hover,
@@ -98,5 +98,5 @@ label {
 }
 .label-optional {
   font-weight: 500;
-  color: #9aa3ae;
+  color: var(--muted);
 }

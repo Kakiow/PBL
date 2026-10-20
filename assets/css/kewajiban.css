@@ -33,3 +33,125 @@
     min-width: 0;
   }
 }
+
+/* Halaman Bayar: nominal sebagai teks, bukan input terkunci --------------- */
+.pay-amount {
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.pay-amount span {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.pay-amount strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.pay-amount small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* Pilih file berbahasa Indonesia: input asli tetap fokusable, label jadi tombol. */
+.file-pick {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+}
+.file-pick-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.file-pick .file-pick-btn {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--text-soft);
+}
+.file-pick-input:focus-visible + .file-pick-btn {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.file-pick-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-pick-name.is-filled {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Timeline status pembayaran saya: Dikirim -> Diverifikasi -> Lunas ------- */
+.status-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: langkah;
+}
+.status-steps li {
+  position: relative;
+  padding-top: 14px;
+  border-top: 3px solid #e3e6ea;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+.status-steps li strong {
+  display: block;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+.status-steps li.is-done {
+  border-top-color: var(--success);
+}
+.status-steps li.is-done strong {
+  color: var(--success);
+}
+.status-steps li.is-current {
+  border-top-color: var(--warning);
+}
+.status-steps li.is-current strong {
+  color: var(--text);
+}
+.status-steps li.is-failed {
+  border-top-color: var(--danger);
+}
+.status-steps li.is-failed strong {
+  color: var(--danger);
+}
+
+@media (max-width: 640px) {
+  .status-steps {
+    gap: 8px;
+  }
+  .status-steps li {
+    padding-top: 10px;
+    font-size: 0.78rem;
+  }
+  .status-steps li strong {
+    font-size: 0.84rem;
+  }
+}

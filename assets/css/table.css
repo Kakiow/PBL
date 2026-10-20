@@ -44,9 +44,18 @@ tr.empty td {
 /* Tabel bersama (Dashboard, Transaksi, Anggota, dll.) -------------------- */
 .table-fancy-wrap {
   overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
   background: var(--surface);
+}
+.table-fancy-wrap th:first-child {
+  border-top-left-radius: var(--r-sm);
+  border-bottom-left-radius: var(--r-sm);
+}
+.table-fancy-wrap th:last-child {
+  border-top-right-radius: var(--r-sm);
+  border-bottom-right-radius: var(--r-sm);
+}
+.table-fancy-wrap th {
+  border-bottom: 0;
 }
 .table-fancy {
   width: 100%;
@@ -80,4 +89,147 @@ tr.empty td {
   padding: 26px 16px;
   text-align: center;
   color: var(--muted);
+}
+.table-fancy th[scope="col"] {
+  white-space: nowrap;
+}
+.table-fancy .cell-nowrap {
+  white-space: nowrap;
+}
+.table-fancy .cell-sub {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.table-fancy .cell-sub.is-late {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Progres lunas: angka tetap jadi isi utama, bar hanya penguat. */
+.meter {
+  display: grid;
+  gap: 5px;
+  min-width: 110px;
+}
+.meter-text {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.meter-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: #e8ebef;
+  overflow: hidden;
+}
+.meter-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--success);
+}
+
+/* Mobile: tabel `.table-stack` jadi daftar bertumpuk — tiap baris satu blok,
+   label kolom diambil dari data-label, aksi utama selebar penuh di bawah. */
+@media (max-width: 640px) {
+  .table-fancy-wrap:has(.table-stack) {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .table-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .table-stack,
+  .table-stack tbody,
+  .table-stack tr,
+  .table-stack td {
+    display: block;
+    width: 100%;
+  }
+  .table-stack tbody tr {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-stack tbody tr:first-child {
+    padding-top: 2px;
+  }
+  .table-stack tbody tr:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .table-stack tbody tr:hover {
+    background: transparent;
+  }
+  .table-stack td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 4px 0;
+    border: 0;
+    font-size: 0.92rem;
+    text-align: right;
+  }
+  .table-stack td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: left;
+  }
+  .table-stack td.num,
+  .table-stack .cell-value {
+    text-align: right;
+  }
+  .table-stack td.cell-title {
+    display: block;
+    padding-bottom: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: left;
+  }
+  .table-stack td.cell-title::before,
+  .table-stack td.cell-actions::before,
+  .table-stack tr.empty td::before {
+    content: none;
+  }
+  .table-stack td.desc {
+    text-align: right;
+  }
+  .table-stack td.cell-actions {
+    display: block;
+    padding-top: 10px;
+  }
+  .table-stack .row-actions {
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+  .table-stack .row-actions > * {
+    flex: 1 1 0;
+  }
+  .table-stack .row-actions .btn {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+  }
+  .table-stack tr.empty td {
+    display: block;
+    text-align: center;
+  }
+  .table-stack .meter {
+    min-width: 140px;
+  }
 }

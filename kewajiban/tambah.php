@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 
-$page_title = 'Buat Tagihan';
+$page_title = 'Buat tagihan';
 $page_css = ['kewajiban.css'];
 $page_js = ['form.js', 'kewajiban.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $mode = 'tambah';
 $row = [];
 $tenggat_min = date('Y-m-d');
-$judul = 'Buat Tagihan';
+$judul = 'Buat tagihan';
 $deskripsi_halaman = 'Tagihan ini otomatis dibebankan ke seluruh anggota grup.';
 
 include __DIR__ . '/../includes/header.php';

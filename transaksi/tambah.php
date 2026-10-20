@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/_data.php';
 
-$page_title = 'Tambah Transaksi';
+$page_title = 'Tambah transaksi';
 $page_css = ['transaksi.css', 'transaksi-jenis.css', 'transaksi-fields.css', 'transaksi-preview.css'];
 $page_js = ['form.js', 'transaksi.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $mode = 'tambah';
 $row = [];
-$judul = 'Tambah Transaksi';
+$judul = 'Tambah transaksi';
 $deskripsi = 'Catat pemasukan atau pengeluaran baru dan pantau ringkasannya secara langsung.';
 
 include __DIR__ . '/../includes/header.php';

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 
-$page_title = 'Edit Tagihan';
+$page_title = 'Edit tagihan';
 $page_css = ['kewajiban.css'];
 $page_js = ['form.js', 'kewajiban.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $mode = 'edit';
-$judul = 'Edit Tagihan';
+$judul = 'Edit tagihan';
 $deskripsi_halaman = 'Perbarui rincian tagihan. Status pembayaran anggota tidak berubah.';
 
 include __DIR__ . '/../includes/header.php';

@@ -73,7 +73,7 @@ if (!$reset) {
     }
 }
 
-$page_title = 'Reset Password';
+$page_title = 'Reset password';
 $noindex = true;
 include __DIR__ . '/../includes/auth_head.php';
 ?>

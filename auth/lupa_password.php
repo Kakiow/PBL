@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('lupa_password.php');
 }
 
-$page_title = 'Lupa Password';
+$page_title = 'Lupa password';
 $noindex = true;
 include __DIR__ . '/../includes/auth_head.php';
 ?>

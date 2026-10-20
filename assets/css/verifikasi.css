@@ -1,0 +1,101 @@
+/* ==========================================================================
+   SIMKAS — halaman Verifikasi: bukti pembayaran, tolak dengan alasan
+   ========================================================================== */
+
+.proof {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.proof span {
+  white-space: nowrap;
+}
+.proof img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-muted);
+}
+.proof-file {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.proof-missing {
+  color: var(--danger);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Tolak dibuka lewat <details>: alasan wajib diisi sebelum dikirim. */
+.reject {
+  position: relative;
+}
+.reject > summary {
+  list-style: none;
+}
+.reject > summary::-webkit-details-marker {
+  display: none;
+}
+/* Terbuka di dalam sel (bukan melayang) supaya tidak terpotong wrapper tabel yang bisa di-scroll. */
+.row-actions:has(.reject[open]) {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.row-actions .reject[open] {
+  display: flex;
+  flex: 1 0 100%;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.reject[open] > summary {
+  background: var(--danger-soft);
+}
+.reject-form {
+  display: grid;
+  gap: 8px;
+  width: 240px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  text-align: left;
+}
+.reject-form label {
+  margin: 0;
+}
+.reject-form textarea {
+  min-height: 70px;
+  font-size: 0.85rem;
+}
+.reason-text {
+  display: block;
+  max-width: 260px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  white-space: normal;
+}
+
+@media (max-width: 640px) {
+  .reject-form {
+    width: 100%;
+  }
+  .reason-text {
+    max-width: none;
+    text-align: right;
+  }
+}

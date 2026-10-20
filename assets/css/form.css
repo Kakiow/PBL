@@ -9,12 +9,6 @@
   background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
-.form-card--create {
-  border-top: 3px solid var(--primary);
-}
-.form-card--join {
-  border-top: 3px solid var(--success);
-}
 .form-card h2 {
   display: flex;
   align-items: center;

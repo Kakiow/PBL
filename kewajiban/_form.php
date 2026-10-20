@@ -13,7 +13,6 @@ $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (fl
 ?>
 <div class="page-head">
     <?php tautan_kembali($is_edit ? 'detail.php?id=' . (int) $row['id'] : 'index.php'); ?>
-    <span class="eyebrow">Tagihan</span>
     <h1><?php echo e($judul); ?></h1>
     <p><?php echo e($deskripsi_halaman); ?></p>
 </div>
@@ -31,7 +30,7 @@ $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (fl
                 <?php endif; ?>
             </svg>
         </span>
-        Detail Tagihan
+        Detail tagihan
     </h2>
     <p class="form-hint">Isi judul, nominal, dan tenggat pembayaran. Status lunas tiap anggota dapat dipantau dari
         daftar tagihan.</p>

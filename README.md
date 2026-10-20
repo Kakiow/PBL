@@ -13,14 +13,16 @@ SIMKAS/
 ├── config/          koneksi.php, mail.php, mail.local.example.php
 ├── cron/            bersihkan_bukti.php     (CLI saja)
 ├── database/        01_schema.sql, 02_seed_kategori.sql,
-│                    03_reset_password.sql, 04_indeks.sql
+│                    03_reset_password.sql, 04_indeks.sql, 05_info_pembayaran.sql
 ├── includes/        auth.php        (bootstrap: sesi + koneksi + helper + guard login)
 │                    header.php, sidebar.php, footer.php   (kerangka halaman)
 │                    auth_head.php, auth_foot.php          (kerangka halaman auth)
 │                    helpers.php     (fungsi umum, peran, grup, menu)
 │                    bukti.php       (upload & pembersihan bukti pembayaran)
+│                    tagihan.php     (label status, info tenggat, penagihan anggota)
 │                    reset_password.php (token reset + email Brevo)
-├── grup/            index.php, detail.php, edit.php, hapus.php
+├── grup/            index.php, detail.php, edit.php, hapus.php,
+│                    _daftar_grup.php, _form_grup.php
 ├── anggota/         index.php            (daftar anggota + ubah role)
 ├── kewajiban/       index.php, tambah.php, edit.php, hapus.php,
 │                    bayar.php, detail.php, _form.php  (Tagihan)
@@ -40,7 +42,7 @@ SIMKAS/
 ## Cara menjalankan
 
 1. Buat database PostgreSQL, misalnya `simkas`.
-2. Jalankan `database/01_schema.sql` pada database tersebut. Jika database sudah ada, jalankan juga `database/03_reset_password.sql` dan `database/04_indeks.sql` (indeks tambahan, aman dijalankan ulang).
+2. Jalankan `database/01_schema.sql` pada database tersebut. Jika database sudah ada, jalankan juga `database/03_reset_password.sql`, `database/04_indeks.sql`, dan `database/05_info_pembayaran.sql` (semuanya aman dijalankan ulang).
 3. Buka `config/koneksi.php`, lalu sesuaikan username dan password PostgreSQL.
 4. Jalankan project dari folder `SIMKAS` dengan Apache/XAMPP/Laragon atau PHP built-in server.
 5. Buka `auth/register.php` untuk membuat akun.

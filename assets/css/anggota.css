@@ -13,24 +13,6 @@
   padding: 8px 34px 8px 12px;
   font-size: 0.85rem;
 }
-.btn-simpan {
-  display: none;
-}
-.btn-simpan.is-visible {
-  display: inline-flex;
-  animation: rolePop 0.18s ease;
-}
-@keyframes rolePop {
-  from {
-    opacity: 0;
-    transform: translateY(3px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @media (max-width: 600px) {
   .role-form {
     width: 100%;

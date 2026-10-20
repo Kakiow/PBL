@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/_data.php';
 
-$page_title = 'Edit Transaksi';
+$page_title = 'Edit transaksi';
 $page_css = ['transaksi.css', 'transaksi-jenis.css', 'transaksi-fields.css', 'transaksi-preview.css'];
 $page_js = ['form.js', 'transaksi.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $mode = 'edit';
-$judul = 'Edit Transaksi';
+$judul = 'Edit transaksi';
 $deskripsi = 'Perbarui rincian transaksi lalu simpan kembali.';
 
 include __DIR__ . '/../includes/header.php';

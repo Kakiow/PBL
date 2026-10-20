@@ -13,12 +13,13 @@
   --border-strong: #d6d9de;
   --text: #1f2430;
   --text-soft: #3d4655;
-  --muted: #6b7280;
+  --muted: #636a76;
+  --placeholder: #6b7280;
   --primary: #2f4a7a;
   --primary-hover: #263d66;
   --primary-soft: #e9eef7;
   --primary-ring: rgba(47, 74, 122, 0.16);
-  --success: #2f7d5d;
+  --success: #2a7354;
   --success-soft: #e6f3ec;
   --danger: #b4453e;
   --danger-soft: #fbeae8;
@@ -44,6 +45,22 @@ body {
   background: var(--bg);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  caret-color: var(--primary);
+}
+
+/* Permukaan bawaan browser ikut palet: seleksi teks, fokus tautan, garis bawah. */
+::selection {
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+}
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+a {
+  text-underline-offset: 3px;
 }
 
 a {
@@ -80,6 +97,17 @@ p:last-child {
   margin-bottom: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 .muted {
   color: var(--muted);
 }

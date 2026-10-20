@@ -30,7 +30,6 @@ $data = $stmt->fetchAll();
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
-    <span class="eyebrow">Transaksi</span>
     <h1>Transaksi</h1>
     <p>Catatan seluruh pemasukan dan pengeluaran grup.</p>
 </div>
@@ -38,55 +37,54 @@ include __DIR__ . '/../includes/header.php';
 <section class="content-card">
     <div class="card-head">
         <div>
-            <h2>Riwayat Transaksi</h2>
+            <h2>Riwayat transaksi</h2>
             <p><?php echo $kelola
                     ? 'Kelola pemasukan dan pengeluaran kas grup.'
-                    : 'Anda hanya dapat melihat riwayat transaksi grup.'; ?></p>
+                    : 'Riwayat pemasukan dan pengeluaran kas grup. Hanya Admin dan Bendahara yang bisa mengubahnya.'; ?></p>
         </div>
         <?php if ($kelola): ?>
-        <a class="btn primary" href="tambah.php">+ Tambah Transaksi</a>
+        <a class="btn primary" href="tambah.php">Catat transaksi</a>
         <?php endif; ?>
     </div>
     <div class="table-fancy-wrap">
-        <table class="table-fancy">
+        <table class="table-fancy table-stack">
             <thead>
                 <tr>
-                    <th>Tanggal</th>
-                    <th>Kategori</th>
-                    <th>Jenis</th>
-                    <th>Akun Dana</th>
-                    <th class="num">Jumlah</th>
-                    <th>Deskripsi</th>
-                    <th>Dibuat Oleh</th>
-                    <?php if ($kelola): ?><th class="num">Aksi</th><?php endif; ?>
+                    <th scope="col">Deskripsi</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Akun dana</th>
+                    <th scope="col" class="num">Jumlah</th>
+                    <th scope="col">Dicatat oleh</th>
+                    <?php if ($kelola): ?><th scope="col" class="num"><span class="sr-only">Aksi</span></th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$data): ?><tr class="empty">
-                    <td colspan="<?php echo $kelola ? 8 : 7; ?>">Belum ada transaksi.</td>
+                    <td colspan="<?php echo $kelola ? 7 : 6; ?>"><?php echo $kelola ? 'Belum ada transaksi. Catat pemasukan atau pengeluaran pertama grup ini.' : 'Belum ada transaksi.'; ?></td>
                 </tr><?php endif; ?>
-                <?php foreach ($data as $row): ?>
+                <?php foreach ($data as $row): $masuk = $row['jenis'] === 'Pemasukan'; ?>
                 <tr>
-                    <td class="nowrap"><?php echo e($row['tanggal_transaksi']); ?></td>
-                    <td><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
-                    <td><span class="badge <?php echo $row['jenis'] === 'Pemasukan' ? 'success' : 'danger'; ?>"><?php echo e($row['jenis']); ?></span></td>
-                    <td><?php echo e($row['nama_akun']); ?></td>
-                    <td class="num <?php echo $row['jenis'] === 'Pemasukan' ? 'amount-in' : 'amount-out'; ?>">
-                        <?php echo $row['jenis'] === 'Pemasukan' ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
+                    <td class="cell-title">
+                        <?php echo e($row['deskripsi'] ?: $row['nama_kategori']); ?>
+                        <?php if ($row['id_pembayaran']): ?><span class="cell-sub">Dari verifikasi pembayaran</span><?php endif; ?>
                     </td>
-                    <td class="desc">
-                        <?php echo e($row['deskripsi']); ?>
-                        <?php if ($row['id_pembayaran']): ?><span class="chip">Dari verifikasi</span><?php endif; ?>
+                    <td class="nowrap" data-label="Tanggal"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
+                    <td data-label="Kategori"><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
+                    <td data-label="Akun dana"><?php echo e($row['nama_akun']); ?></td>
+                    <td class="num <?php echo $masuk ? 'amount-in' : 'amount-out'; ?>" data-label="<?php echo e($row['jenis']); ?>">
+                        <span class="sr-only"><?php echo e($row['jenis']); ?> </span><?php echo $masuk ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
                     </td>
-                    <td class="nowrap"><?php echo e($row['nama_pengguna']); ?></td>
+                    <td class="nowrap" data-label="Dicatat oleh"><?php echo e($row['nama_pengguna']); ?></td>
                     <?php if ($kelola): ?>
-                    <td>
+                    <td class="cell-actions">
                         <div class="row-actions">
                             <a class="btn secondary small" href="edit.php?id=<?php echo (int) $row['id']; ?>">Edit</a>
-                            <form method="post" class="inline-form" data-konfirmasi="Apakah Anda yakin ingin menghapus data ini?">
+                            <form method="post" class="inline-form"
+                                data-konfirmasi="Hapus transaksi <?php echo e(($masuk ? 'pemasukan ' : 'pengeluaran ') . rupiah($row['jumlah'])); ?>? Saldo kas akan berubah.">
                                 <input type="hidden" name="aksi" value="hapus">
                                 <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
-                                <button class="btn danger small" type="submit">Hapus</button>
+                                <button class="btn ghost-danger small" type="submit">Hapus</button>
                             </form>
                         </div>
                     </td>
