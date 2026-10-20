@@ -77,22 +77,22 @@ $label_peran = label_peran($peran_aktif);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo e($page_title); ?> | SIMKAS</title>
-    <link rel="icon" type="image/svg+xml" href="<?php echo $base; ?>assets/img/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="<?php echo aset($base, 'assets/img/logo.svg'); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/layout.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/sidebar.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/nav.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/rail.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/inputs.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/form.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/toast.css">
-    <link rel="stylesheet" href="<?php echo $base; ?>assets/css/print.css">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/style.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/layout.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/sidebar.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/nav.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/rail.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/inputs.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/form.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/toast.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/print.css'); ?>">
     <?php foreach ($page_css as $css): ?>
-    <link rel="stylesheet" href="<?php echo $base . 'assets/css/' . e($css); ?>">
+    <link rel="stylesheet" href="<?php echo aset($base, 'assets/css/' . e($css)); ?>">
     <?php endforeach; ?>
 </head>
 

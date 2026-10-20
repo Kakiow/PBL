@@ -16,6 +16,20 @@ function rupiah($angka)
     return 'Rp ' . number_format((float) $angka, 0, ',', '.');
 }
 
+// URL aset lokal + penanda versi dari waktu ubah berkas, supaya perubahan hasil pull
+// langsung dipakai browser tanpa hard reload. $base berisi "../" untuk halaman di subfolder.
+function aset($base, $path)
+{
+    $path = ltrim((string) $path, '/');
+    $berkas = dirname(__DIR__) . '/' . $path;
+
+    if (!is_file($berkas)) {
+        return $base . $path;
+    }
+
+    return $base . $path . '?v=' . filemtime($berkas);
+}
+
 function redirect($url)
 {
     header('Location: ' . $url);

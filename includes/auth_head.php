@@ -12,15 +12,15 @@
     <?php if (!empty($noindex)): ?>
     <meta name="robots" content="noindex, nofollow">
     <?php endif; ?>
-    <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
+    <link rel="icon" type="image/svg+xml" href="<?php echo aset('../', 'assets/img/logo.svg'); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/inputs.css">
-    <link rel="stylesheet" href="../assets/css/auth.css">
-    <link rel="stylesheet" href="../assets/css/toast.css">
+    <link rel="stylesheet" href="<?php echo aset('../', 'assets/css/style.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset('../', 'assets/css/inputs.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset('../', 'assets/css/auth.css'); ?>">
+    <link rel="stylesheet" href="<?php echo aset('../', 'assets/css/toast.css'); ?>">
 </head>
 
 <body class="auth-page">
