@@ -24,8 +24,6 @@ if (!$terverifikasi) {
     unset($_SESSION['profil_edit_ok']);
 }
 
-$error_verifikasi = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$terverifikasi) {
     $sandi = $_POST['sandi'] ?? '';
 
@@ -34,13 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$terverifikasi) {
     $hash_lama = (string) $stmt->fetchColumn();
 
     if ($sandi === '') {
-        $error_verifikasi = 'Password wajib diisi.';
+        flash('error', 'Password wajib diisi.');
     } elseif (!password_verify($sandi, $hash_lama)) {
-        $error_verifikasi = 'Password salah. Coba lagi.';
+        flash('error', 'Password salah. Coba lagi.');
     } else {
         $_SESSION['profil_edit_ok'] = time();
         redirect('edit.php');
     }
+
+    redirect('edit.php');
 }
 
 if ($terverifikasi && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -83,21 +83,18 @@ if ($terverifikasi && $_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($gagal !== null) {
-            $_SESSION['sandi_notice'] = ['tipe' => 'error', 'pesan' => $gagal];
+            flash('error', $gagal);
         } else {
             $stmt = $pdo->prepare("UPDATE pengguna SET hash_kata_sandi = ? WHERE id = ?");
             $stmt->execute([password_hash($baru, PASSWORD_DEFAULT), $id_user]);
             session_regenerate_id(true);
             $_SESSION['profil_edit_ok'] = time();
-            $_SESSION['sandi_notice'] = ['tipe' => 'success', 'pesan' => 'Password baru berlaku untuk masuk berikutnya; sesi ini tetap aktif.'];
+            flash('success', 'Password berhasil diperbarui. Sesi ini tetap aktif.');
         }
 
         redirect('edit.php#kata-sandi');
     }
 }
-
-$notice_sandi = $terverifikasi ? ($_SESSION['sandi_notice'] ?? null) : null;
-unset($_SESSION['sandi_notice']);
 
 $page_title = $terverifikasi ? 'Edit profil' : 'Verifikasi password';
 $page_css = ['profil.css'];
@@ -123,12 +120,6 @@ if (!$terverifikasi):
         </span>
         Password saat ini
     </h2>
-    <?php if ($error_verifikasi !== ''): ?>
-    <div class="notice is-danger" role="alert">
-        <strong>Verifikasi gagal</strong>
-        <?php echo e($error_verifikasi); ?>
-    </div>
-    <?php endif; ?>
     <p class="form-hint">Demi keamanan, edit profil selalu diawali dengan memasukkan password saat ini.</p>
     <form method="post" novalidate>
         <p>
@@ -192,13 +183,6 @@ if (!$terverifikasi):
             </span>
             Password
         </h2>
-        <?php if ($notice_sandi): $sandi_error = $notice_sandi['tipe'] === 'error'; ?>
-        <div class="notice <?php echo $sandi_error ? 'is-danger' : 'is-success'; ?>"
-            role="<?php echo $sandi_error ? 'alert' : 'status'; ?>">
-            <strong><?php echo $sandi_error ? 'Password belum diubah' : 'Password diperbarui'; ?></strong>
-            <?php echo e($notice_sandi['pesan']); ?>
-        </div>
-        <?php endif; ?>
         <p class="form-hint">Identitas sudah diverifikasi saat membuka halaman ini. Minimal 8 karakter; sesi ini tetap
             aktif setelah diganti.</p>
         <form method="post" novalidate>
