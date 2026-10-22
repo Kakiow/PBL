@@ -58,7 +58,8 @@ SIMKAS/
 - **Anggota**: melihat kewajiban dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih untuk tagihan yang tenggatnya belum lewat.
 - **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus.
 - **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
-- **Profil**: data akun dan daftar grup; tombol Edit profil & password (diawali verifikasi password saat ini, berlaku 15 menit dengan hitung mundur) untuk mengubah nama dan password (minimal 8 karakter). Isian nama dipertahankan bila sesi berakhir saat menyimpan. Email akun tidak dapat diubah.
+- **Masuk/Daftar**: field password punya tombol lihat/sembunyikan.
+- **Profil**: data akun dan daftar grup; tombol Edit profil & password (diawali verifikasi password saat ini, berlaku 15 menit dengan hitung mundur) untuk mengubah nama dan password (minimal 8 karakter, bisa diperiksa lewat tombol lihat). Grup aktif bisa diganti langsung dari daftar grup. Isian nama dipertahankan bila sesi berakhir saat menyimpan. Email akun tidak dapat diubah.
 - **Dashboard**: menampilkan saldo, pemasukan, pengeluaran, jumlah anggota, dan transaksi terbaru.
 - **Laporan**: menampilkan transaksi berdasarkan rentang tanggal.
 

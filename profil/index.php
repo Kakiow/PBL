@@ -18,6 +18,19 @@ if (!$akun) {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'pilih_grup') {
+    $id_target = (int) ($_POST['id_grup'] ?? 0);
+
+    if (role_group($pdo, $id_target, $id_user)) {
+        $_SESSION['grup_id'] = $id_target;
+        flash('success', 'Grup aktif berhasil diubah.');
+    } else {
+        flash('error', 'Kamu bukan anggota grup tersebut.');
+    }
+
+    redirect('index.php');
+}
+
 // Sesi edit tidak ditutup dari sini: tab lain mungkin sedang mengedit.
 
 $stmt = $pdo->prepare("
@@ -84,7 +97,11 @@ include __DIR__ . '/../includes/header.php';
             <?php if ($aktif_grup): ?>
             <span class="badge success">Grup aktif</span>
             <?php else: ?>
-            <a class="text-link" href="../grup/index.php">Pilih</a>
+            <form method="post" class="profile-group-form">
+                <input type="hidden" name="aksi" value="pilih_grup">
+                <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
+                <button type="submit" class="profile-group-action">Jadikan aktif</button>
+            </form>
             <?php endif; ?>
         </li>
         <?php endforeach; ?>

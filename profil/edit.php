@@ -161,7 +161,7 @@ if ($terverifikasi) {
 
 $page_title = $terverifikasi ? 'Edit profil' : 'Verifikasi password';
 $page_css = ['profil.css'];
-$page_js = $terverifikasi ? ['profil.js'] : [];
+$page_js = $terverifikasi ? ['password-toggle.js', 'profil.js'] : [];
 
 include __DIR__ . '/../includes/header.php';
 
@@ -274,19 +274,54 @@ if (!$terverifikasi):
             </span>
             Password
         </h2>
-        <p class="form-hint">Minimal 8 karakter. Jika sesi edit berakhir, password baru perlu dimasukkan ulang; sesi
-            login tetap aktif setelah diganti.</p>
+        <p class="form-hint">Minimal 8 karakter.</p>
         <form method="post" novalidate>
             <input type="hidden" name="aksi" value="ganti_sandi">
             <p>
                 <label for="sandi_baru">Password baru</label>
-                <input id="sandi_baru" name="sandi_baru" type="password" minlength="8" aria-required="true"
-                    autocomplete="new-password">
+                <span class="sandi-field">
+                    <input id="sandi_baru" name="sandi_baru" type="password" minlength="8" aria-required="true"
+                        autocomplete="new-password">
+                    <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi_baru"
+                        aria-pressed="false" aria-label="Tampilkan password baru"
+                        data-label-sembunyi="Sembunyikan password baru">
+                        <svg class="ikon-lihat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg class="ikon-tutup" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m3 3 18 18" />
+                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                            <path d="M9.9 5.7A10.5 10.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4.2" />
+                            <path d="M6.2 6.2A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5a10.2 10.2 0 0 0 4.3-.9" />
+                        </svg>
+                    </button>
+                </span>
             </p>
             <p>
                 <label for="sandi_konfirmasi">Konfirmasi password baru</label>
-                <input id="sandi_konfirmasi" name="sandi_konfirmasi" type="password" minlength="8"
-                    aria-required="true" autocomplete="new-password">
+                <span class="sandi-field">
+                    <input id="sandi_konfirmasi" name="sandi_konfirmasi" type="password" minlength="8"
+                        aria-required="true" autocomplete="new-password">
+                    <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi_konfirmasi"
+                        aria-pressed="false" aria-label="Tampilkan konfirmasi password baru"
+                        data-label-sembunyi="Sembunyikan konfirmasi password baru">
+                        <svg class="ikon-lihat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg class="ikon-tutup" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m3 3 18 18" />
+                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                            <path d="M9.9 5.7A10.5 10.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4.2" />
+                            <path d="M6.2 6.2A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5a10.2 10.2 0 0 0 4.3-.9" />
+                        </svg>
+                    </button>
+                </span>
             </p>
             <div class="form-actions">
                 <button class="btn primary" type="submit">Perbarui password</button>

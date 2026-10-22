@@ -100,3 +100,50 @@ label {
   font-weight: 500;
   color: var(--muted);
 }
+
+/* Password dengan tombol lihat ------------------------------------------ */
+.sandi-field {
+  position: relative;
+  display: block;
+}
+.sandi-field input {
+  padding-right: 46px;
+}
+.sandi-toggle {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+.sandi-toggle:hover {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+.sandi-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  color: var(--primary);
+}
+.sandi-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+.sandi-toggle .ikon-tutup {
+  display: none;
+}
+.sandi-toggle[aria-pressed="true"] .ikon-lihat {
+  display: none;
+}
+.sandi-toggle[aria-pressed="true"] .ikon-tutup {
+  display: block;
+}

@@ -185,6 +185,29 @@
   font-size: 0.8rem;
   white-space: nowrap;
 }
+.profile-group-form {
+  flex: 0 0 auto;
+}
+.profile-group-action {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.profile-group-action:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.profile-group-action:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 
 @media (max-width: 900px) {
   .profile-grid {
