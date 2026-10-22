@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/includes/sesi.php';
+mulai_sesi();
 require_once __DIR__ . '/includes/helpers.php';
 
 // Pengunjung yang belum masuk melihat landing page; database baru dibutuhkan setelah login.
@@ -11,6 +10,10 @@ if (!isset($_SESSION['user'])) {
 }
 
 require_once __DIR__ . '/config/koneksi.php';
+
+if (!sesi_stempel_sah($pdo)) {
+    sesi_gugurkan('auth/login.php');
+}
 
 $page_title = 'Dashboard';
 $page_css = ['dashboard.css', 'table.css'];

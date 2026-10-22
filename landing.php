@@ -1,9 +1,8 @@
 <?php
 // Landing page publik SIMKAS — tampil sebelum pengguna masuk.
 // Root index.php mengarahkan pengunjung yang belum login ke halaman ini.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/includes/sesi.php';
+mulai_sesi();
 
 // Landing tidak menyentuh database: hanya perlu sesi dan helper tampilan.
 require_once __DIR__ . '/includes/helpers.php';

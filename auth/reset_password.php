@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/sesi.php';
+mulai_sesi();
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/reset_password.php';
@@ -58,7 +59,7 @@ if (!$reset) {
             }
 
             session_destroy();
-            session_start();
+            mulai_sesi();
             flash('success', 'Password berhasil diubah. Silakan masuk dengan password baru.');
             redirect('login.php');
         } catch (Throwable $e) {

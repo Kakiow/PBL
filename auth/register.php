@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/sesi.php';
+mulai_sesi();
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 

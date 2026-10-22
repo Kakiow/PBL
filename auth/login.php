@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/sesi.php';
+mulai_sesi();
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
@@ -26,11 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     session_regenerate_id(true);
+    unset($_SESSION['csrf_token']);
     $_SESSION['user'] = [
         'id' => $user['id'],
         'nama' => $user['nama'],
         'email' => $user['email']
     ];
+    $_SESSION['sandi_stempel'] = hash('sha256', $user['hash_kata_sandi']);
 
     $stmt = $pdo->prepare("SELECT id_grup FROM anggota_grup WHERE id_pengguna = ? ORDER BY id LIMIT 1");
     $stmt->execute([$user['id']]);

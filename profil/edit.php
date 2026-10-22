@@ -15,15 +15,56 @@ if (!$akun) {
     exit;
 }
 
-// Verifikasi berlaku 15 menit; countdown di halaman membuat batas ini terlihat.
+// Izin edit hanya hidup selama halaman ini terbuka; mulai_sesi() menghapusnya di halaman lain.
 $masa_verifikasi = 15 * 60;
 $masa_draft = 10 * 60;
-
 $terverifikasi = isset($_SESSION['profil_edit_ok'])
     && time() - (int) $_SESSION['profil_edit_ok'] < $masa_verifikasi;
 
 if (!$terverifikasi) {
     unset($_SESSION['profil_edit_ok']);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+            flash('error', 'Sesi formulir berakhir. Muat ulang halaman lalu coba lagi.');
+            redirect('index.php?verifikasi=1');
+        }
+
+        $aksi = $_POST['aksi'] ?? '';
+
+        // Sesi habis di tengah edit: simpan isian non-sensitif agar tidak hilang.
+        if ($aksi === 'simpan_profil' || $aksi === 'ganti_sandi') {
+            $nama_draft = trim($_POST['nama'] ?? '');
+
+            if ($aksi === 'simpan_profil' && $nama_draft !== '') {
+                $_SESSION['profil_edit_draft'] = [
+                    'aksi' => 'simpan_profil',
+                    'nama' => $nama_draft,
+                    'waktu' => time(),
+                ];
+            } elseif ($aksi === 'ganti_sandi') {
+                $_SESSION['profil_edit_draft'] = [
+                    'aksi' => 'ganti_sandi',
+                    'waktu' => time(),
+                ];
+            } else {
+                unset($_SESSION['profil_edit_draft']);
+            }
+
+            flash('error', 'Sesi edit berakhir. Masukkan password lagi untuk melanjutkan.');
+        }
+    }
+
+    redirect('index.php?verifikasi=1');
+}
+
+$error_nama = null;
+$error_sandi_baru = null;
+$error_sandi_konfirmasi = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_valid($_POST['csrf_token'] ?? '')) {
+    flash('error', 'Sesi formulir berakhir. Muat ulang halaman lalu coba lagi.');
+    redirect('edit.php');
 }
 
 $draft = $_SESSION['profil_edit_draft'] ?? null;
@@ -32,76 +73,23 @@ if (!is_array($draft) || time() - (int) ($draft['waktu'] ?? 0) > $masa_draft) {
     $draft = null;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$terverifikasi) {
-    $aksi = $_POST['aksi'] ?? '';
-
-    // Sesi habis di tengah edit: simpan isian non-sensitif agar tidak hilang.
-    if ($aksi === 'simpan_profil' || $aksi === 'ganti_sandi') {
-        $nama_draft = trim($_POST['nama'] ?? '');
-
-        if ($aksi === 'simpan_profil' && $nama_draft !== '') {
-            $_SESSION['profil_edit_draft'] = [
-                'aksi' => 'simpan_profil',
-                'nama' => $nama_draft,
-                'waktu' => time(),
-            ];
-        } elseif ($aksi === 'ganti_sandi') {
-            $_SESSION['profil_edit_draft'] = [
-                'aksi' => 'ganti_sandi',
-                'waktu' => time(),
-            ];
-        } else {
-            unset($_SESSION['profil_edit_draft']);
-        }
-
-        flash('error', 'Sesi edit berakhir. Masukkan password lagi untuk melanjutkan.');
-        redirect('edit.php');
-    }
-
-    $sandi = $_POST['sandi'] ?? '';
-
-    $stmt = $pdo->prepare("SELECT hash_kata_sandi FROM pengguna WHERE id = ?");
-    $stmt->execute([$id_user]);
-    $hash_lama = (string) $stmt->fetchColumn();
-
-    if ($sandi === '') {
-        flash('error', 'Password wajib diisi.');
-    } elseif (!password_verify($sandi, $hash_lama)) {
-        flash('error', 'Password salah. Coba lagi.');
-    } else {
-        $_SESSION['profil_edit_ok'] = time();
-
-        $tujuan = 'edit.php';
-        if ($draft !== null && ($draft['aksi'] ?? '') === 'simpan_profil') {
-            $tujuan = 'edit.php#data-akun';
-        } elseif ($draft !== null && ($draft['aksi'] ?? '') === 'ganti_sandi') {
-            $tujuan = 'edit.php#kata-sandi';
-        }
-
-        redirect($tujuan);
-    }
-
-    redirect('edit.php');
-}
-
-if ($terverifikasi && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $aksi = $_POST['aksi'] ?? '';
 
     if ($aksi === 'simpan_profil') {
         $nama = trim($_POST['nama'] ?? '');
 
         if ($nama === '') {
-            flash('error', 'Nama wajib diisi.');
-            redirect('edit.php');
+            $error_nama = 'Nama wajib diisi.';
+        } else {
+            $stmt = $pdo->prepare("UPDATE pengguna SET nama = ? WHERE id = ?");
+            $stmt->execute([$nama, $id_user]);
+
+            $_SESSION['user']['nama'] = $nama;
+            unset($_SESSION['profil_edit_ok'], $_SESSION['profil_edit_draft']);
+            flash('success', 'Data akun berhasil diperbarui.');
+            redirect('index.php');
         }
-
-        $stmt = $pdo->prepare("UPDATE pengguna SET nama = ? WHERE id = ?");
-        $stmt->execute([$nama, $id_user]);
-
-        $_SESSION['user']['nama'] = $nama;
-        unset($_SESSION['profil_edit_ok'], $_SESSION['profil_edit_draft']);
-        flash('success', 'Data akun berhasil diperbarui.');
-        redirect('index.php');
     }
 
     if ($aksi === 'ganti_sandi') {
@@ -112,35 +100,47 @@ if ($terverifikasi && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$id_user]);
         $hash_lama = (string) $stmt->fetchColumn();
 
-        $gagal = null;
-        if ($baru === '' || $konfirmasi === '') {
-            $gagal = 'Password baru dan konfirmasi wajib diisi.';
-        } elseif (strlen($baru) < 8) {
-            $gagal = 'Password baru minimal 8 karakter.';
-        } elseif ($baru !== $konfirmasi) {
-            $gagal = 'Konfirmasi password baru tidak sama.';
-        } elseif (password_verify($baru, $hash_lama)) {
-            $gagal = 'Password baru harus berbeda dari password saat ini.';
+        if ($baru === '') {
+            $error_sandi_baru = 'Password baru wajib diisi.';
+        }
+        if ($konfirmasi === '') {
+            $error_sandi_konfirmasi = 'Konfirmasi password baru wajib diisi.';
         }
 
-        if ($gagal !== null) {
-            flash('error', $gagal);
-        } else {
+        if ($error_sandi_baru === null && $error_sandi_konfirmasi === null) {
+            if (strlen($baru) < 8) {
+                $error_sandi_baru = 'Password baru minimal 8 karakter.';
+            } elseif ($baru !== $konfirmasi) {
+                $error_sandi_konfirmasi = 'Konfirmasi password baru tidak sama.';
+            } elseif (password_verify($baru, $hash_lama)) {
+                $error_sandi_baru = 'Password baru harus berbeda dari password saat ini.';
+            }
+        }
+
+        if ($error_sandi_baru === null && $error_sandi_konfirmasi === null) {
+            $hash_baru = password_hash($baru, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("UPDATE pengguna SET hash_kata_sandi = ? WHERE id = ?");
-            $stmt->execute([password_hash($baru, PASSWORD_DEFAULT), $id_user]);
+            $stmt->execute([$hash_baru, $id_user]);
+
+            unset($_SESSION['csrf_token']);
             session_regenerate_id(true);
+            $_SESSION['sandi_stempel'] = hash('sha256', $hash_baru);
             $_SESSION['profil_edit_ok'] = time();
             flash('success', 'Password berhasil diperbarui. Sesi ini tetap aktif.');
+            redirect('edit.php#kata-sandi');
         }
-
-        redirect('edit.php#kata-sandi');
     }
 }
 
 $nama_form = (string) $akun['nama'];
-$draft_menunggu = $terverifikasi ? null : $draft;
+if ($error_nama !== null) {
+    $nama_form = trim($_POST['nama'] ?? '');
+}
 
-if ($terverifikasi && $draft !== null) {
+$fokus_sandi = $error_sandi_baru !== null ? 'sandi_baru'
+    : ($error_sandi_konfirmasi !== null ? 'sandi_konfirmasi' : '');
+
+if ($draft !== null) {
     if (($draft['aksi'] ?? '') === 'simpan_profil' && ($draft['nama'] ?? '') !== '') {
         $nama_form = (string) $draft['nama'];
         flash('success', 'Isian nama sebelumnya dipulihkan. Periksa lalu simpan.');
@@ -159,57 +159,12 @@ if ($terverifikasi) {
     $pukul_kedaluwarsa = date('H:i', $kedaluwarsa);
 }
 
-$page_title = $terverifikasi ? 'Edit profil' : 'Verifikasi password';
+$page_title = 'Edit profil';
 $page_css = ['profil.css'];
-$page_js = $terverifikasi ? ['password-toggle.js', 'profil.js'] : [];
+$page_js = ['password-toggle.js', 'profil.js'];
 
 include __DIR__ . '/../includes/header.php';
-
-if (!$terverifikasi):
 ?>
-<div class="page-head">
-    <?php tautan_kembali('index.php', 'Kembali ke Profil'); ?>
-    <h1>Verifikasi password</h1>
-    <p>Edit profil selalu diawali verifikasi. Setelah berhasil, kamu punya 15 menit untuk mengubah data.</p>
-</div>
-
-<section class="form-card profile-verify" aria-labelledby="judul-verifikasi">
-    <h2 id="judul-verifikasi">
-        <span class="card-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-                <rect x="4" y="10" width="16" height="10" rx="2" />
-                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-            </svg>
-        </span>
-        Konfirmasi akun
-    </h2>
-    <p class="form-hint"><strong class="profile-step">Langkah 1 dari 2</strong> · Masukkan password saat ini untuk
-        membuka halaman edit.</p>
-    <?php if ($draft_menunggu !== null): ?>
-    <div class="profile-verify-note">
-        <strong>Sesi edit berakhir sebelum perubahan tersimpan.</strong>
-        <p>
-            <?php if (($draft_menunggu['aksi'] ?? '') === 'simpan_profil'): ?>
-            Isian nama sudah dipertahankan dan akan dipulihkan setelah verifikasi.
-            <?php else: ?>
-            Password baru tidak disimpan demi keamanan; masukkan ulang setelah verifikasi.
-            <?php endif; ?>
-        </p>
-    </div>
-    <?php endif; ?>
-    <form method="post" novalidate>
-        <p>
-            <label for="sandi">Password</label>
-            <input id="sandi" name="sandi" type="password" autocomplete="current-password" aria-required="true"
-                autofocus>
-        </p>
-        <div class="form-actions">
-            <button class="btn primary" type="submit">Lanjutkan</button>
-        </div>
-    </form>
-</section>
-<?php else: ?>
 <div class="page-head">
     <?php tautan_kembali('index.php', 'Kembali ke Profil'); ?>
     <h1>Edit profil</h1>
@@ -259,12 +214,16 @@ if (!$terverifikasi):
             </div>
         </div>
         <form method="post">
+            <?php csrf_field(); ?>
             <input type="hidden" name="aksi" value="simpan_profil">
-            <p>
+            <div class="field<?php echo $error_nama !== null ? ' is-invalid' : ''; ?>">
                 <label for="nama">Nama</label>
                 <input id="nama" name="nama" type="text" maxlength="120" required
-                    value="<?php echo e($nama_form); ?>">
-            </p>
+                    <?php echo $error_nama !== null ? 'aria-invalid="true" aria-describedby="nama-error" autofocus ' : ''; ?>value="<?php echo e($nama_form); ?>">
+                <?php if ($error_nama !== null): ?>
+                <span class="field-error" id="nama-error" role="alert"><?php echo e($error_nama); ?></span>
+                <?php endif; ?>
+            </div>
             <div class="form-actions">
                 <button class="btn primary" type="submit">Simpan perubahan</button>
             </div>
@@ -284,12 +243,14 @@ if (!$terverifikasi):
         </h2>
         <p class="form-hint">Minimal 8 karakter.</p>
         <form method="post" novalidate>
+            <?php csrf_field(); ?>
             <input type="hidden" name="aksi" value="ganti_sandi">
-            <p>
+            <div class="field<?php echo $error_sandi_baru !== null ? ' is-invalid' : ''; ?>">
                 <label for="sandi_baru">Password baru</label>
                 <span class="sandi-field">
                     <input id="sandi_baru" name="sandi_baru" type="password" minlength="8" aria-required="true"
-                        autocomplete="new-password">
+                        autocomplete="new-password"
+                        <?php echo $error_sandi_baru !== null ? 'aria-invalid="true" aria-describedby="sandi-baru-error" ' : ''; ?><?php echo $fokus_sandi === 'sandi_baru' ? 'autofocus' : ''; ?>>
                     <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi_baru"
                         aria-pressed="false" aria-label="Tampilkan password baru"
                         data-label-sembunyi="Sembunyikan password baru">
@@ -307,12 +268,16 @@ if (!$terverifikasi):
                         </svg>
                     </button>
                 </span>
-            </p>
-            <p>
+                <?php if ($error_sandi_baru !== null): ?>
+                <span class="field-error" id="sandi-baru-error" role="alert"><?php echo e($error_sandi_baru); ?></span>
+                <?php endif; ?>
+            </div>
+            <div class="field<?php echo $error_sandi_konfirmasi !== null ? ' is-invalid' : ''; ?>">
                 <label for="sandi_konfirmasi">Konfirmasi password baru</label>
                 <span class="sandi-field">
                     <input id="sandi_konfirmasi" name="sandi_konfirmasi" type="password" minlength="8"
-                        aria-required="true" autocomplete="new-password">
+                        aria-required="true" autocomplete="new-password"
+                        <?php echo $error_sandi_konfirmasi !== null ? 'aria-invalid="true" aria-describedby="sandi-konfirmasi-error" ' : ''; ?><?php echo $fokus_sandi === 'sandi_konfirmasi' ? 'autofocus' : ''; ?>>
                     <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi_konfirmasi"
                         aria-pressed="false" aria-label="Tampilkan konfirmasi password baru"
                         data-label-sembunyi="Sembunyikan konfirmasi password baru">
@@ -330,12 +295,15 @@ if (!$terverifikasi):
                         </svg>
                     </button>
                 </span>
-            </p>
+                <?php if ($error_sandi_konfirmasi !== null): ?>
+                <span class="field-error" id="sandi-konfirmasi-error"
+                    role="alert"><?php echo e($error_sandi_konfirmasi); ?></span>
+                <?php endif; ?>
+            </div>
             <div class="form-actions">
                 <button class="btn primary" type="submit">Perbarui password</button>
             </div>
         </form>
     </section>
 </div>
-<?php endif; ?>
 <?php include __DIR__ . '/../includes/footer.php'; ?>

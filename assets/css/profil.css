@@ -54,12 +54,86 @@
 }
 
 /* Konfirmasi password sebelum mengedit -------------------------------- */
-.profile-verify {
-  max-width: 480px;
-}
-.profile-step {
+.profile-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(440px, calc(100% - 32px));
+  height: fit-content;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  margin: auto;
+  border: 0;
+  border-radius: var(--r-lg);
+  background: transparent;
   color: var(--text);
-  font-weight: 600;
+  overflow: visible;
+}
+.profile-dialog::backdrop {
+  background: rgba(16, 24, 40, 0.48);
+  backdrop-filter: blur(2px);
+}
+body:has(.profile-dialog[open]) {
+  overflow: hidden;
+}
+/* Fallback tanpa JS: dialog `open` tetap tampil sebagai card mengambang. */
+.profile-dialog:not(:modal)[open] {
+  box-shadow: 0 0 0 100vmax rgba(16, 24, 40, 0.48);
+}
+.profile-dialog .profile-verify {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  box-shadow: var(--shadow-md);
+}
+.profile-dialog .form-card h2 {
+  padding-right: 38px;
+}
+.profile-dialog-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--muted);
+  transition: background 0.16s ease, color 0.16s ease;
+}
+.profile-dialog-close:hover {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+.profile-dialog-close:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.profile-dialog-close svg {
+  width: 18px;
+  height: 18px;
+}
+@keyframes profile-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.profile-dialog[open] .profile-verify {
+  animation: profile-dialog-in 0.18s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-dialog[open] .profile-verify {
+    animation: none;
+  }
+}
+@media (max-width: 480px) {
+  .profile-dialog {
+    width: calc(100% - 24px);
+  }
 }
 .profile-email {
   display: flex;

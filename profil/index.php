@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Profil';
 $page_css = ['profil.css'];
+$page_js = ['password-toggle.js', 'profil-verifikasi.js'];
 
 $id_user = (int) $_SESSION['user']['id'];
 
@@ -18,20 +19,83 @@ if (!$akun) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'pilih_grup') {
-    $id_target = (int) ($_POST['id_grup'] ?? 0);
+$masa_draft = 10 * 60;
+$batas_verifikasi = 5;
+$jendela_verifikasi = 10 * 60;
+$error_sandi = null;
+$buka_verifikasi = isset($_GET['verifikasi']);
 
-    if (role_group($pdo, $id_target, $id_user)) {
-        $_SESSION['grup_id'] = $id_target;
-        flash('success', 'Grup aktif berhasil diubah.');
-    } else {
-        flash('error', 'Kamu bukan anggota grup tersebut.');
-    }
-
-    redirect('index.php');
+$draft = $_SESSION['profil_edit_draft'] ?? null;
+if (!is_array($draft) || time() - (int) ($draft['waktu'] ?? 0) > $masa_draft) {
+    unset($_SESSION['profil_edit_draft']);
+    $draft = null;
 }
 
-// Sesi edit tidak ditutup dari sini: tab lain mungkin sedang mengedit.
+$percobaan = $_SESSION['profil_verifikasi_coba'] ?? null;
+if (!is_array($percobaan) || time() - (int) ($percobaan['mulai'] ?? 0) >= $jendela_verifikasi) {
+    $percobaan = ['jumlah' => 0, 'mulai' => time()];
+}
+
+$sisa_blokir = (int) $percobaan['mulai'] + $jendela_verifikasi - time();
+if ((int) $percobaan['jumlah'] >= $batas_verifikasi && $sisa_blokir > 0) {
+    $menit = max(1, (int) ceil($sisa_blokir / 60));
+    $error_sandi = 'Terlalu banyak percobaan. Coba lagi dalam ' . $menit . ' menit.';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $aksi = $_POST['aksi'] ?? '';
+
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir berakhir. Muat ulang halaman lalu coba lagi.');
+        redirect($aksi === 'verifikasi' ? 'index.php?verifikasi=1' : 'index.php');
+    }
+
+    if ($aksi === 'verifikasi') {
+        $buka_verifikasi = true;
+
+        if ($error_sandi === null) {
+            $stmt = $pdo->prepare("SELECT hash_kata_sandi FROM pengguna WHERE id = ?");
+            $stmt->execute([$id_user]);
+            $hash_lama = (string) $stmt->fetchColumn();
+            $sandi = $_POST['sandi'] ?? '';
+
+            if ($sandi === '') {
+                $error_sandi = 'Password wajib diisi.';
+            } elseif (!password_verify($sandi, $hash_lama)) {
+                $error_sandi = 'Password salah. Coba lagi.';
+            } else {
+                unset($_SESSION['profil_verifikasi_coba'], $_SESSION['csrf_token']);
+                session_regenerate_id(true);
+                $_SESSION['profil_edit_ok'] = time();
+
+                $tujuan = 'edit.php';
+                if ($draft !== null && ($draft['aksi'] ?? '') === 'simpan_profil') {
+                    $tujuan = 'edit.php#data-akun';
+                } elseif ($draft !== null && ($draft['aksi'] ?? '') === 'ganti_sandi') {
+                    $tujuan = 'edit.php#kata-sandi';
+                }
+
+                redirect($tujuan);
+            }
+
+            $percobaan['jumlah'] = (int) $percobaan['jumlah'] + 1;
+            $_SESSION['profil_verifikasi_coba'] = $percobaan;
+        }
+    } elseif ($aksi === 'pilih_grup') {
+        $id_target = (int) ($_POST['id_grup'] ?? 0);
+
+        if (role_group($pdo, $id_target, $id_user)) {
+            $_SESSION['grup_id'] = $id_target;
+            flash('success', 'Grup aktif berhasil diubah.');
+        } else {
+            flash('error', 'Kamu bukan anggota grup tersebut.');
+        }
+
+        redirect('index.php');
+    } else {
+        redirect('index.php');
+    }
+}
 
 $stmt = $pdo->prepare("
     SELECT g.id, g.nama_grup, g.kode_grup, ag.peran, ag.bergabung_pada
@@ -70,7 +134,8 @@ include __DIR__ . '/../includes/header.php';
             <span class="chip">Bergabung <?php echo e(tanggal_id($akun['dibuat_pada'])); ?></span>
         </div>
     </div>
-    <a class="btn primary profile-edit-btn" href="edit.php">Edit profil &amp; password</a>
+    <a class="btn primary profile-edit-btn" href="index.php?verifikasi=1" data-buka-verifikasi
+        aria-haspopup="dialog" aria-controls="dialog-verifikasi">Edit profil &amp; password</a>
 </section>
 
 <section class="content-card" aria-labelledby="judul-grup-saya">
@@ -98,6 +163,7 @@ include __DIR__ . '/../includes/header.php';
             <span class="badge success">Grup aktif</span>
             <?php else: ?>
             <form method="post" class="profile-group-form">
+                <?php csrf_field(); ?>
                 <input type="hidden" name="aksi" value="pilih_grup">
                 <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
                 <button type="submit" class="profile-group-action">Jadikan aktif</button>
@@ -108,4 +174,72 @@ include __DIR__ . '/../includes/header.php';
     </ul>
     <?php endif; ?>
 </section>
+
+<dialog class="profile-dialog" id="dialog-verifikasi" aria-labelledby="judul-verifikasi"<?php echo $buka_verifikasi ? ' open' : ''; ?>>
+    <div class="form-card profile-verify">
+        <a class="profile-dialog-close" href="index.php" data-tutup-verifikasi aria-label="Tutup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+        </a>
+        <h2 id="judul-verifikasi">
+            <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="10" width="16" height="10" rx="2" />
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                </svg>
+            </span>
+            Konfirmasi akun
+        </h2>
+        <p class="form-hint">Masukkan password saat ini untuk membuka halaman edit.</p>
+        <?php if ($draft !== null): ?>
+        <div class="profile-verify-note">
+            <strong>Sesi edit berakhir sebelum perubahan tersimpan.</strong>
+            <p>
+                <?php if (($draft['aksi'] ?? '') === 'simpan_profil'): ?>
+                Isian nama sudah dipertahankan dan akan dipulihkan setelah verifikasi.
+                <?php else: ?>
+                Password baru tidak disimpan demi keamanan; masukkan ulang setelah verifikasi.
+                <?php endif; ?>
+            </p>
+        </div>
+        <?php endif; ?>
+        <form method="post" action="index.php" novalidate>
+            <?php csrf_field(); ?>
+            <input type="hidden" name="aksi" value="verifikasi">
+            <div class="field<?php echo $error_sandi !== null ? ' is-invalid' : ''; ?>">
+                <label for="sandi">Password</label>
+                <span class="sandi-field">
+                    <input id="sandi" name="sandi" type="password" autocomplete="current-password"
+                        aria-required="true"
+                        <?php echo $error_sandi !== null ? 'aria-invalid="true" aria-describedby="sandi-error" ' : ''; ?>autofocus>
+                    <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi"
+                        aria-pressed="false" aria-label="Tampilkan password"
+                        data-label-sembunyi="Sembunyikan password">
+                        <svg class="ikon-lihat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg class="ikon-tutup" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m3 3 18 18" />
+                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                            <path d="M9.9 5.7A10.5 10.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4.2" />
+                            <path d="M6.2 6.2A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5a10.2 10.2 0 0 0 4.3-.9" />
+                        </svg>
+                    </button>
+                </span>
+                <?php if ($error_sandi !== null): ?>
+                <span class="field-error" id="sandi-error" role="alert"><?php echo e($error_sandi); ?></span>
+                <?php endif; ?>
+            </div>
+            <div class="form-actions">
+                <button class="btn primary" type="submit">Lanjutkan</button>
+            </div>
+        </form>
+    </div>
+</dialog>
 <?php include __DIR__ . '/../includes/footer.php'; ?>
