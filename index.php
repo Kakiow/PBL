@@ -2,12 +2,15 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once __DIR__ . '/config/koneksi.php';
 require_once __DIR__ . '/includes/helpers.php';
 
+// Pengunjung yang belum masuk melihat landing page; database baru dibutuhkan setelah login.
 if (!isset($_SESSION['user'])) {
-    redirect('auth/login.php');
+    include __DIR__ . '/landing.php';
+    exit;
 }
+
+require_once __DIR__ . '/config/koneksi.php';
 
 $page_title = 'Dashboard';
 $page_css = ['dashboard.css', 'table.css'];
