@@ -18,8 +18,7 @@ if (!$akun) {
     exit;
 }
 
-// Kembali ke profil berarti sesi edit ditutup; edit berikutnya minta password lagi.
-unset($_SESSION['profil_edit_ok']);
+// Sesi edit tidak ditutup dari sini: tab lain mungkin sedang mengedit.
 
 $stmt = $pdo->prepare("
     SELECT g.id, g.nama_grup, g.kode_grup, ag.peran, ag.bergabung_pada
@@ -58,7 +57,7 @@ include __DIR__ . '/../includes/header.php';
             <span class="chip">Bergabung <?php echo e(tanggal_id($akun['dibuat_pada'])); ?></span>
         </div>
     </div>
-    <a class="btn primary profile-edit-btn" href="edit.php">Edit profil</a>
+    <a class="btn primary profile-edit-btn" href="edit.php">Edit profil &amp; password</a>
 </section>
 
 <section class="content-card" aria-labelledby="judul-grup-saya">
