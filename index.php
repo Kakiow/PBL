@@ -31,7 +31,7 @@ if (!$grup) {
 <div class="welcome-card">
     <h2>Belum ada grup aktif</h2>
     <p>Buat grup baru atau gabung memakai kode grup untuk mulai mencatat kas kelasmu.</p>
-    <a class="btn primary" href="grup/index.php">Kelola Grup</a>
+    <a class="btn primary" href="grup/index.php">Kelola grup</a>
 </div>
 <?php
     include __DIR__ . '/includes/footer.php';

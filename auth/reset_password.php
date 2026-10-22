@@ -78,7 +78,7 @@ $page_title = 'Reset password';
 $noindex = true;
 include __DIR__ . '/../includes/auth_head.php';
 ?>
-        <h1>Reset Password</h1>
+        <h1>Reset password</h1>
         <p class="muted">Buat password baru untuk akun Anda. Password minimal 8 karakter.</p>
 
         <?php if ($error !== null): ?>
@@ -91,16 +91,16 @@ include __DIR__ . '/../includes/auth_head.php';
         <form method="post">
             <input type="hidden" name="token" value="<?php echo e($token); ?>">
             <p>
-                <label for="password">Password Baru</label>
+                <label for="password">Password baru</label>
                 <input type="password" id="password" name="password" minlength="8" required autocomplete="new-password"
                     autofocus>
             </p>
             <p>
-                <label for="konfirmasi">Konfirmasi Password Baru</label>
+                <label for="konfirmasi">Konfirmasi password baru</label>
                 <input type="password" id="konfirmasi" name="konfirmasi" minlength="8" required
                     autocomplete="new-password">
             </p>
-            <button type="submit" class="btn primary full">Simpan Password Baru</button>
+            <button type="submit" class="btn primary full">Simpan password baru</button>
         </form>
         <?php endif; ?>
 

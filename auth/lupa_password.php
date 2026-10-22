@@ -61,7 +61,7 @@ $page_title = 'Lupa password';
 $noindex = true;
 include __DIR__ . '/../includes/auth_head.php';
 ?>
-        <h1>Lupa Password</h1>
+        <h1>Lupa password</h1>
         <p class="muted">Masukkan email akun Anda. Kami akan mengirim link untuk membuat password baru jika email
             terdaftar.</p>
         <?php tampil_flash(); ?>
@@ -71,7 +71,7 @@ include __DIR__ . '/../includes/auth_head.php';
                 <input type="email" id="email" name="email" value="<?php echo e($email); ?>" required
                     autocomplete="email" autofocus>
             </p>
-            <button type="submit" class="btn primary full">Kirim Link Reset</button>
+            <button type="submit" class="btn primary full">Kirim link reset</button>
         </form>
         <p class="auth-link"><a href="login.php">Kembali ke halaman masuk</a></p>
 <?php include __DIR__ . '/../includes/auth_foot.php'; ?>

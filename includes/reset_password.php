@@ -92,11 +92,11 @@ function kirim_email_reset($konfigurasi, $email, $nama, $tautan)
     $nama_aman = e($nama);
 
     $html = '<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1f2937;line-height:1.6">'
-        . '<h2 style="margin:0 0 16px">Reset Password SIMKAS</h2>'
+        . '<h2 style="margin:0 0 16px">Reset password SIMKAS</h2>'
         . '<p>Halo ' . $nama_aman . ',</p>'
         . '<p>Kami menerima permintaan untuk mengatur ulang password akun SIMKAS Anda. Klik tombol di bawah ini:</p>'
         . '<p style="margin:24px 0">'
-        . '<a href="' . $tautan_aman . '" style="background:#2563eb;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Reset Password</a>'
+        . '<a href="' . $tautan_aman . '" style="background:#2563eb;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Reset password</a>'
         . '</p>'
         . '<p>Link ini berlaku selama ' . RESET_TOKEN_MENIT . ' menit dan hanya bisa dipakai sekali.</p>'
         . '<p>Jika Anda tidak meminta reset password, abaikan email ini.</p>'

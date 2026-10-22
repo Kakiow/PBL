@@ -86,7 +86,7 @@ $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (fl
             </p>
         </div>
         <div class="form-actions">
-            <button class="btn primary" type="submit" data-loading-text="Menyimpan…"><?php echo $is_edit ? 'Simpan Perubahan' : 'Buat Tagihan'; ?></button>
+            <button class="btn primary" type="submit" data-loading-text="Menyimpan…"><?php echo $is_edit ? 'Simpan perubahan' : 'Buat tagihan'; ?></button>
             <?php if ($is_edit): ?>
             <a class="btn secondary" href="detail.php?id=<?php echo (int) $row['id']; ?>">Batal</a>
             <?php endif; ?>

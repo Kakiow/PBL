@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $page_title = 'Daftar';
 include __DIR__ . '/../includes/auth_head.php';
 ?>
-        <h1>Buat Akun</h1>
+        <h1>Buat akun</h1>
         <p class="muted">Daftarkan akun untuk mulai menggunakan SIMKAS.</p>
         <?php tampil_flash(); ?>
         <form method="post">
@@ -66,7 +66,7 @@ include __DIR__ . '/../includes/auth_head.php';
                 </span>
             </p>
             <p>
-                <label for="konfirmasi">Konfirmasi Password</label>
+                <label for="konfirmasi">Konfirmasi password</label>
                 <span class="sandi-field">
                     <input type="password" id="konfirmasi" name="konfirmasi" required>
                     <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="konfirmasi"

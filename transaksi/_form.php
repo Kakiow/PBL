@@ -170,7 +170,7 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
         </div>
         <div class="trx-actions">
             <button class="btn primary" type="submit"
-                data-loading-text="Menyimpan…"><?php echo $is_edit ? 'Simpan Perubahan' : 'Simpan Transaksi'; ?></button>
+                data-loading-text="Menyimpan…"><?php echo $is_edit ? 'Simpan perubahan' : 'Simpan transaksi'; ?></button>
             <span class="form-status" role="status" aria-live="polite"></span>
         </div>
     </form>
