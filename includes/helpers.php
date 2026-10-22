@@ -255,8 +255,10 @@ function menu_nav($base, $peran, $ada_grup)
         ['seksi' => 'Menu', 'slug' => '', 'label' => 'Dashboard', 'href' => $base . 'index.php'],
         ['seksi' => 'Menu', 'slug' => 'grup', 'label' => 'Grup', 'href' => $base . 'grup/index.php'],
     ];
+    $profil = ['seksi' => 'Menu', 'slug' => 'profil', 'label' => 'Profil', 'href' => $base . 'profil/index.php'];
 
     if (!$ada_grup) {
+        $menu[] = $profil;
         return $menu;
     }
 
@@ -274,6 +276,8 @@ function menu_nav($base, $peran, $ada_grup)
             $menu[] = ['seksi' => $info[2], 'slug' => $slug, 'label' => $info[0], 'href' => $base . $info[1]];
         }
     }
+
+    $menu[] = $profil;
 
     return $menu;
 }

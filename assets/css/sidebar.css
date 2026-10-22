@@ -91,6 +91,20 @@
   gap: 10px;
   min-width: 0;
 }
+a.user-card {
+  margin: -6px;
+  padding: 6px;
+  border-radius: var(--r-sm);
+  transition: background 0.18s ease;
+}
+a.user-card:hover {
+  background: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+}
+a.user-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
 .avatar {
   display: grid;
   place-items: center;

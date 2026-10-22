@@ -256,6 +256,13 @@
 .notice.is-danger strong {
   color: #7d2e29;
 }
+.notice.is-success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.notice.is-success strong {
+  color: var(--success);
+}
 .notice .notice-body {
   white-space: pre-line;
   overflow-wrap: anywhere;

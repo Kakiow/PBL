@@ -12,6 +12,7 @@ $ikon_nav = [
     'pembayaran' => '<path d="M20 6L9 17l-5-5"/>',
     'transaksi' => '<path d="M7 8h10l-3-3"/><path d="M17 16H7l3 3"/>',
     'laporan' => '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>',
+    'profil' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
 ];
 
 $seksi = [];
@@ -73,13 +74,14 @@ $tulis_item = function (array $item) use ($ikon_nav, $badge_nav, $base, $slug_ak
         </div>
     </nav>
     <div class="sidebar-foot">
-        <div class="user-card">
+        <a class="user-card" href="<?php echo $base; ?>profil/index.php"
+            aria-label="Buka profil <?php echo e($nama_user); ?>">
             <span class="avatar" aria-hidden="true"><?php echo e($inisial); ?></span>
             <span class="user-meta">
                 <span class="user-name"><?php echo e($nama_user); ?></span>
                 <span class="user-email"><?php echo e($email_user); ?></span>
             </span>
-        </div>
+        </a>
         <a class="logout-btn" href="<?php echo $base; ?>auth/logout.php" data-label="Logout" aria-label="Logout">
             <span class="logout-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

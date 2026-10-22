@@ -24,6 +24,7 @@ SIMKAS/
 ├── grup/            index.php, detail.php, edit.php, hapus.php,
 │                    _daftar_grup.php, _form_grup.php
 ├── anggota/         index.php            (daftar anggota + ubah role)
+├── profil/          index.php            (data akun, password, grup saya)
 ├── kewajiban/       index.php, tambah.php, edit.php, hapus.php,
 │                    bayar.php, detail.php, _form.php  (Tagihan)
 ├── pembayaran/      index.php            (Verifikasi)
@@ -32,7 +33,7 @@ SIMKAS/
 ├── assets/
 │   ├── css/         style, layout, sidebar, nav, rail, inputs, form, toast,
 │   │                print, auth, dashboard, table, grup, anggota, kewajiban,
-│   │                transaksi*
+│   │                profil, transaksi*
 │   └── js/          toast.js, sidebar.js, script.js (semua halaman)
 │                    form.js + kewajiban.js / transaksi.js (khusus form)
 ├── index.php        (Dashboard)
@@ -57,6 +58,7 @@ SIMKAS/
 - **Anggota**: melihat kewajiban dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih untuk tagihan yang tenggatnya belum lewat.
 - **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus.
 - **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
+- **Profil**: data akun dan daftar grup; tombol Edit profil (diawali verifikasi password saat ini) untuk mengubah nama dan password (minimal 8 karakter). Email akun tidak dapat diubah.
 - **Dashboard**: menampilkan saldo, pemasukan, pengeluaran, jumlah anggota, dan transaksi terbaru.
 - **Laporan**: menampilkan transaksi berdasarkan rentang tanggal.
 

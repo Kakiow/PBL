@@ -1,0 +1,146 @@
+/* ==========================================================================
+   SIMKAS — halaman profil: kartu identitas, data akun, password, grup saya
+   ========================================================================== */
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.profile-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #4a6ea8, var(--primary));
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.profile-ident {
+  min-width: 0;
+}
+.profile-ident h2 {
+  margin-bottom: 2px;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.profile-ident p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.profile-edit-btn {
+  margin-left: auto;
+}
+
+/* Konfirmasi password sebelum mengedit -------------------------------- */
+.profile-verify {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+#kata-sandi {
+  scroll-margin-top: 92px;
+}
+#kata-sandi .notice {
+  margin-bottom: 16px;
+}
+
+/* Daftar grup ------------------------------------------------------------ */
+.profile-groups {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.profile-groups li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.profile-groups li:first-child {
+  padding-top: 2px;
+  border-top: 0;
+}
+.profile-group-main {
+  flex: 1;
+  min-width: 0;
+}
+.profile-group-main b {
+  display: block;
+  color: var(--text);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.profile-group-main span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.profile-group-date {
+  color: var(--muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-hero {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 18px;
+  }
+  .profile-avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 1.2rem;
+  }
+  .profile-edit-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+  .profile-groups li {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+  .profile-group-main {
+    flex: 1 1 100%;
+  }
+  .profile-group-date {
+    flex: 1 1 auto;
+  }
+}
