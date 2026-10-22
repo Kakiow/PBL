@@ -56,7 +56,54 @@
 /* Konfirmasi password sebelum mengedit -------------------------------- */
 .profile-verify {
   max-width: 480px;
-  margin: 0 auto;
+}
+.profile-step {
+  color: var(--text);
+  font-weight: 600;
+}
+.profile-email {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-muted);
+}
+.profile-email-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--muted);
+}
+.profile-email-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.profile-email-body {
+  min-width: 0;
+}
+.profile-email-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.profile-email-value {
+  display: block;
+  margin-top: 1px;
+  color: var(--text);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.profile-email-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 .profile-verify-note {
   padding: 12px 14px;

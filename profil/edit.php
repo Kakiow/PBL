@@ -170,7 +170,7 @@ if (!$terverifikasi):
 <div class="page-head">
     <?php tautan_kembali('index.php', 'Kembali ke Profil'); ?>
     <h1>Verifikasi password</h1>
-    <p>Masukkan password akunmu untuk membuka halaman edit profil. Verifikasi berlaku 15 menit.</p>
+    <p>Edit profil selalu diawali verifikasi. Setelah berhasil, kamu punya 15 menit untuk mengubah data.</p>
 </div>
 
 <section class="form-card profile-verify" aria-labelledby="judul-verifikasi">
@@ -182,9 +182,10 @@ if (!$terverifikasi):
                 <path d="M8 10V7a4 4 0 0 1 8 0v3" />
             </svg>
         </span>
-        Password saat ini
+        Konfirmasi akun
     </h2>
-    <p class="form-hint">Demi keamanan, edit profil selalu diawali dengan memasukkan password saat ini.</p>
+    <p class="form-hint"><strong class="profile-step">Langkah 1 dari 2</strong> · Masukkan password saat ini untuk
+        membuka halaman edit.</p>
     <?php if ($draft_menunggu !== null): ?>
     <div class="profile-verify-note">
         <strong>Sesi edit berakhir sebelum perubahan tersimpan.</strong>
@@ -205,7 +206,6 @@ if (!$terverifikasi):
         </p>
         <div class="form-actions">
             <button class="btn primary" type="submit">Lanjutkan</button>
-            <a class="btn secondary" href="index.php">Batal</a>
         </div>
     </form>
 </section>
@@ -213,7 +213,7 @@ if (!$terverifikasi):
 <div class="page-head">
     <?php tautan_kembali('index.php', 'Kembali ke Profil'); ?>
     <h1>Edit profil</h1>
-    <p>Perbarui nama atau password akun. Email tidak dapat diubah.</p>
+    <p>Perbarui nama atau password akun.</p>
 </div>
 
 <div class="profile-session" data-edit-session data-sisa="<?php echo (int) $sisa_verifikasi; ?>">
@@ -244,6 +244,20 @@ if (!$terverifikasi):
             Data akun
         </h2>
         <p class="form-hint">Nama tampil di daftar anggota, riwayat pembayaran, dan laporan grup.</p>
+        <div class="profile-email">
+            <span class="profile-email-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="4" y="10" width="16" height="10" rx="2" />
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                </svg>
+            </span>
+            <div class="profile-email-body">
+                <span class="profile-email-label">Email</span>
+                <span class="profile-email-value"><?php echo e($akun['email']); ?></span>
+                <span class="profile-email-hint">Dipakai untuk masuk dan tidak dapat diubah.</span>
+            </div>
+        </div>
         <form method="post">
             <input type="hidden" name="aksi" value="simpan_profil">
             <p>
@@ -251,14 +265,8 @@ if (!$terverifikasi):
                 <input id="nama" name="nama" type="text" maxlength="120" required
                     value="<?php echo e($nama_form); ?>">
             </p>
-            <p>
-                <label for="email">Email</label>
-                <input id="email" type="email" value="<?php echo e($akun['email']); ?>" readonly>
-                <span class="field-hint">Email dipakai untuk masuk dan tidak dapat diubah.</span>
-            </p>
             <div class="form-actions">
                 <button class="btn primary" type="submit">Simpan perubahan</button>
-                <a class="btn secondary" href="index.php">Batal</a>
             </div>
         </form>
     </section>
