@@ -6,6 +6,7 @@ $page_css = ['dashboard.css', 'table.css'];
 
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 cek_role($pdo, $id_grup, akses_menu()['laporan']);
+$grup = grup_aktif($pdo);
 
 // Tanggal dari query string divalidasi dulu; format salah akan membuat PostgreSQL melempar error.
 $mulai = tanggal_valid($_GET['mulai'] ?? '') ? $_GET['mulai'] : date('Y-m-01');
@@ -31,7 +32,7 @@ include __DIR__ . '/../includes/header.php';
 
 <div class="print-only print-head">
     <h1>Laporan kas</h1>
-    <p class="print-meta"><?php echo e($grup['nama_grup'] ?? ''); ?> &middot; Periode <?php echo e(tanggal_id($mulai)); ?> s/d
+    <p class="print-meta"><?php echo e($grup['nama_grup']); ?> &middot; Periode <?php echo e(tanggal_id($mulai)); ?> s/d
         <?php echo e(tanggal_id($selesai)); ?></p>
 </div>
 

@@ -27,11 +27,55 @@ if (!$k) {
     redirect('index.php');
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $kelola && ($_POST['aksi'] ?? '') === 'tagihkan_anggota_baru') {
-    $jumlah_baru = tagihkan_ke_anggota($pdo, $id, $id_grup);
-    flash('success', $jumlah_baru > 0
-        ? $jumlah_baru . ' anggota baru ditambahkan ke tagihan ini.'
-        : 'Semua anggota grup sudah tercatat di tagihan ini.');
+$sasaran_semua = (bool) $k['sasaran_semua'];
+
+$kandidat_sasaran = [];
+if (!$sasaran_semua) {
+    $stmt = $pdo->prepare("
+        SELECT p.id, p.nama, p.email, ag.peran
+        FROM anggota_grup ag
+        JOIN pengguna p ON p.id = ag.id_pengguna
+        WHERE ag.id_grup = ?
+          AND NOT EXISTS (
+              SELECT 1 FROM tagihan_anggota ak
+              WHERE ak.id_tagihan = ? AND ak.id_pengguna = ag.id_pengguna
+          )
+        ORDER BY p.nama
+    ");
+    $stmt->execute([$id_grup, $id]);
+    $kandidat_sasaran = $stmt->fetchAll();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $kelola) {
+    $aksi = $_POST['aksi'] ?? '';
+
+    if ($aksi === 'tagihkan_anggota_baru') {
+        if (!$sasaran_semua) {
+            flash('error', 'Aksi ini hanya untuk tagihan semua anggota.');
+        } else {
+            $jumlah_baru = tagihkan_ke_anggota($pdo, $id, $id_grup);
+            flash('success', $jumlah_baru > 0
+                ? $jumlah_baru . ' anggota baru ditambahkan ke tagihan ini.'
+                : 'Semua anggota grup sudah tercatat di tagihan ini.');
+        }
+    } elseif ($aksi === 'tambah_sasaran') {
+        if ($sasaran_semua) {
+            flash('error', 'Tagihan ini sudah mencakup semua anggota.');
+        } else {
+            $dipilih = array_values(array_unique(array_map('intval', (array) ($_POST['sasaran'] ?? []))));
+            $kandidat_id = array_map(fn ($a) => (int) $a['id'], $kandidat_sasaran);
+
+            if (!$dipilih) {
+                flash('error', 'Pilih minimal satu anggota.');
+            } elseif (array_diff($dipilih, $kandidat_id)) {
+                flash('error', 'Pilihan anggota tidak valid.');
+            } else {
+                $jumlah_baru = tagihkan_ke_pengguna($pdo, $id, $id_grup, $dipilih);
+                flash('success', $jumlah_baru . ' anggota ditambahkan ke sasaran tagihan ini.');
+            }
+        }
+    }
+
     redirect('detail.php?id=' . $id);
 }
 
@@ -133,11 +177,19 @@ include __DIR__ . '/../includes/header.php';
     <div class="card-head">
         <div>
             <h2>Status anggota</h2>
-            <p><?php echo $kelola && $belum_tertagih > 0
+            <p><?php
+            if ($sasaran_semua) {
+                echo $kelola && $belum_tertagih > 0
                     ? $belum_tertagih . ' anggota grup belum termasuk di tagihan ini karena bergabung setelah tagihan dibuat.'
-                    : 'Pantau siapa saja yang sudah membayar tagihan ini.'; ?></p>
+                    : 'Pantau siapa saja yang sudah membayar tagihan ini.';
+            } else {
+                echo count($kandidat_sasaran) > 0
+                    ? count($kandidat_sasaran) . ' anggota grup tidak termasuk sasaran tagihan ini.'
+                    : 'Semua anggota grup sudah termasuk sasaran tagihan ini.';
+            }
+            ?></p>
         </div>
-        <?php if ($kelola && $belum_tertagih > 0): ?>
+        <?php if ($kelola && $sasaran_semua && $belum_tertagih > 0): ?>
         <form method="post" data-konfirmasi="Tagihkan <?php echo e($k['judul']); ?> ke <?php echo $belum_tertagih; ?> anggota baru?">
             <input type="hidden" name="aksi" value="tagihkan_anggota_baru">
             <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
@@ -145,6 +197,26 @@ include __DIR__ . '/../includes/header.php';
         </form>
         <?php endif; ?>
     </div>
+    <?php if ($kelola && !$sasaran_semua && $kandidat_sasaran): ?>
+    <details class="sasaran-tambah">
+        <summary class="btn secondary small">Tambah sasaran</summary>
+        <form method="post" class="sasaran-tambah-form">
+            <input type="hidden" name="aksi" value="tambah_sasaran">
+            <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
+            <p class="form-hint">Centang anggota yang ingin ditambahkan ke tagihan ini.</p>
+            <div class="sasaran-list sasaran-list--compact">
+                <?php foreach ($kandidat_sasaran as $a): ?>
+                <label class="sasaran-item">
+                    <input type="checkbox" name="sasaran[]" value="<?php echo (int) $a['id']; ?>">
+                    <span class="sasaran-nama"><?php echo e($a['nama']); ?></span>
+                    <span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span>
+                </label>
+                <?php endforeach; ?>
+            </div>
+            <button class="btn primary small" type="submit">Tambahkan</button>
+        </form>
+    </details>
+    <?php endif; ?>
     <div class="table-fancy-wrap">
         <table class="table-fancy table-stack">
             <thead>

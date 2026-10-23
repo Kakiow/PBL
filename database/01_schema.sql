@@ -84,6 +84,7 @@ CREATE TABLE tagihan (
     jumlah DECIMAL(12,2) NOT NULL CHECK (jumlah >= 0),
     tenggat_waktu DATE NOT NULL,
     deskripsi TEXT,
+    sasaran_semua BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT fk_tagihan_grup FOREIGN KEY (id_grup) REFERENCES grup(id) ON DELETE CASCADE
 );
 

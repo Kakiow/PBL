@@ -10,6 +10,7 @@ if (!isset($mode, $row, $tenggat_min)) {
 $is_edit = $mode === 'edit';
 $nominal_terkunci = !empty($nominal_terkunci);
 $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (float) $row['jumlah'] : '';
+$tampil_sasaran = !$is_edit && isset($anggota_grup, $mode_sasaran, $sasaran_terpilih);
 ?>
 <div class="page-head">
     <?php tautan_kembali($is_edit ? 'detail.php?id=' . (int) $row['id'] : 'index.php'); ?>
@@ -84,6 +85,49 @@ $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (fl
                     placeholder="Contoh: Iuran kas untuk kegiatan bakti sosial."><?php echo e($row['deskripsi'] ?? ''); ?></textarea>
                 <span class="field-hint field-hint--counter" id="deskripsi-counter">0/200</span>
             </p>
+            <?php if ($tampil_sasaran): ?>
+            <fieldset class="field field--full sasaran-field" data-sasaran-field aria-describedby="sasaran-hint">
+                <legend>Sasaran anggota</legend>
+                <p class="field-hint" id="sasaran-hint">Pilih apakah tagihan dibebankan ke semua anggota atau hanya
+                    anggota tertentu. Anggota yang tidak dipilih tidak melihat tagihan ini.</p>
+                <div class="sasaran-mode">
+                    <label class="sasaran-mode-item">
+                        <input type="radio" name="mode_sasaran" value="semua"
+                            <?php echo $mode_sasaran === 'semua' ? 'checked' : ''; ?> data-mode-sasaran>
+                        <span>
+                            <strong>Semua anggota</strong>
+                            <small>Termasuk anggota yang bergabung kemudian.</small>
+                        </span>
+                    </label>
+                    <label class="sasaran-mode-item">
+                        <input type="radio" name="mode_sasaran" value="pilih"
+                            <?php echo $mode_sasaran === 'pilih' ? 'checked' : ''; ?> data-mode-sasaran>
+                        <span>
+                            <strong>Pilih anggota</strong>
+                            <small>Hanya anggota yang dicentang yang ditagih.</small>
+                        </span>
+                    </label>
+                </div>
+                <div class="sasaran-picker" data-sasaran-picker>
+                    <div class="sasaran-toolbar">
+                        <button type="button" class="btn secondary small" data-sasaran-all>Pilih semua</button>
+                        <button type="button" class="btn secondary small" data-sasaran-none>Kosongkan</button>
+                        <span class="sasaran-count" data-sasaran-count aria-live="polite"></span>
+                    </div>
+                    <div class="sasaran-list">
+                        <?php foreach ($anggota_grup as $a): ?>
+                        <label class="sasaran-item">
+                            <input type="checkbox" name="sasaran[]" value="<?php echo (int) $a['id']; ?>"
+                                <?php echo in_array((int) $a['id'], $sasaran_terpilih, true) ? 'checked' : ''; ?>>
+                            <span class="sasaran-nama"><?php echo e($a['nama']); ?></span>
+                            <span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="field-error" id="sasaran-error" data-sasaran-error role="alert" hidden>Pilih minimal satu anggota.</p>
+                </div>
+            </fieldset>
+            <?php endif; ?>
         </div>
         <div class="form-actions">
             <button class="btn primary" type="submit" data-loading-text="Menyimpan…"><?php echo $is_edit ? 'Simpan perubahan' : 'Buat tagihan'; ?></button>

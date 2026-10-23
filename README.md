@@ -54,9 +54,9 @@ SIMKAS/
 ## Alur fitur
 
 - **Admin**: membuat grup dan mengatur role anggota.
-- **Bendahara**: membuat tagihan, memverifikasi pembayaran, dan mencatat transaksi.
-- **Anggota**: melihat tagihan dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih untuk tagihan yang tenggatnya belum lewat.
-- **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus.
+- **Bendahara**: membuat tagihan (untuk semua anggota atau anggota terpilih), memverifikasi pembayaran, dan mencatat transaksi.
+- **Anggota**: melihat tagihan dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih hanya untuk tagihan semua-anggota yang tenggatnya belum lewat; tagihan dengan sasaran tertentu tidak ikut bertambah.
+- **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus. Sasaran tagihan tertentu bisa ditambah lewat Detail, tetapi tidak bisa dikurangi.
 - **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
 - **Masuk/Daftar**: field password punya tombol lihat/sembunyikan.
 - **Profil**: data akun dan daftar grup; tombol Edit profil & password membuka dialog verifikasi password (maksimal 5 percobaan per 10 menit) sebelum masuk halaman edit. Izin edit berakhir begitu kamu meninggalkan halaman edit dan berlaku maksimal 15 menit selama halaman itu terbuka, jadi setiap klik Edit meminta password lagi. Di halaman edit kamu bisa mengubah nama dan password (minimal 8 karakter, bisa diperiksa lewat tombol lihat). Grup aktif bisa diganti langsung dari daftar grup. Isian nama dipertahankan bila sesi berakhir saat menyimpan, dan sesi lain otomatis berakhir setelah password diganti. Email akun tampil sebagai baris terkunci dan tidak dapat diubah.

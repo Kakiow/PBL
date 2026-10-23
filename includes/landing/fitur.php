@@ -20,7 +20,7 @@
         <ul class="lp-features">
             <li data-reveal>
                 <h3>Tagihan sekali, status per orang</h3>
-                <p>Satu tagihan dibebankan ke seluruh anggota, dan status tiap orang terbaca: belum bayar, menunggu, lunas, atau ditolak.</p>
+                <p>Satu tagihan bisa dibebankan ke seluruh atau sebagian anggota, dan status tiap orang terbaca: belum bayar, menunggu, lunas, atau ditolak.</p>
             </li>
             <li data-reveal>
                 <h3>Bukti tersimpan, bukan hilang di chat</h3>
