@@ -1,4 +1,4 @@
-// Helper form bersama untuk kewajiban.js & transaksi.js: tanggal, rupiah, chip pintasan,
+// Helper form bersama untuk tagihan.js & transaksi.js: tanggal, rupiah, chip pintasan,
 // pesan error per field, counter karakter, dan status "Menyimpan…".
 window.FormKas = (function () {
   function duaAngka(angka) {

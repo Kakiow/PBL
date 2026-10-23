@@ -10,13 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputTanggal = form.querySelector("#tanggal_transaksi");
   const previewTanggal = form.querySelector("#tanggal-preview");
   const inputKategori = form.querySelector("#kategori");
-  const selectAkun = form.querySelector("#id_akun_dana");
   const tombolKirim = form.querySelector("button[type='submit']");
   const statusForm = form.querySelector(".form-status");
   const panel = form.querySelector(".trx-preview");
   const teksJenis = form.querySelector("#trx-preview-jenis");
   const teksKategori = form.querySelector("#trx-preview-kategori");
-  const teksAkun = form.querySelector("#trx-preview-akun");
   const teksTanggal = form.querySelector("#trx-preview-tanggal");
   const teksTotal = form.querySelector("#trx-preview-amount");
   const radiosJenis = Array.from(form.querySelectorAll("input[name='jenis']"));
@@ -26,12 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return item.checked;
     });
     return radio ? radio.value : "";
-  }
-
-  function labelTerpilih(select) {
-    if (!select || !select.value) return "";
-    const opsi = select.options[select.selectedIndex];
-    return opsi ? opsi.textContent.trim() : "";
   }
 
   function nilaiKategori() {
@@ -86,11 +78,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function perbaruiRingkasan() {
     setTeks(teksKategori, nilaiKategori());
-    setTeks(teksAkun, labelTerpilih(selectAkun));
 
-    const lengkap = Boolean(
-      jenisTerpilih() && nilaiKategori() && selectAkun && selectAkun.value && nilaiJumlah() > 0
-    );
+    const lengkap = Boolean(jenisTerpilih() && nilaiKategori() && nilaiJumlah() > 0);
     if (panel) panel.classList.toggle("is-ready", lengkap);
   }
 
@@ -154,10 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (inputKategori) {
     inputKategori.addEventListener("input", perbaruiRingkasan);
-  }
-
-  if (selectAkun) {
-    selectAkun.addEventListener("change", perbaruiRingkasan);
   }
 
   form.addEventListener("submit", function (event) {

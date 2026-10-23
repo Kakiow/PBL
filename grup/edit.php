@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('success', 'Data grup berhasil diperbarui.');
             redirect('detail.php?id=' . $id);
         } catch (PDOException $e) {
-            // 42703 = kolom belum ada: migrasi database/05_info_pembayaran.sql belum dijalankan.
+            // 42703 = kolom belum ada: skema database belum diperbarui.
             flash('error', $e->getCode() === '42703'
-                ? 'Kolom info pembayaran belum ada di database. Jalankan database/05_info_pembayaran.sql terlebih dahulu.'
+                ? 'Kolom info pembayaran belum ada di database. Perbarui skema database terlebih dahulu.'
                 : 'Data grup gagal disimpan. Silakan coba lagi.');
         }
     }

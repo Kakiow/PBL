@@ -138,8 +138,8 @@ function bersihkan_bukti_kedaluwarsa($pdo, $hari = BUKTI_HARI_SIMPAN)
     $stmt = $pdo->prepare("
         SELECT p.id, p.berkas_bukti
         FROM pembayaran p
-        JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban
-        JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+        JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota
+        JOIN tagihan k ON k.id = ak.id_tagihan
         WHERE p.berkas_bukti <> ''
           AND k.tenggat_waktu <= CURRENT_DATE - (CAST(? AS integer) * INTERVAL '1 day')
     ");

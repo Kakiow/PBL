@@ -1,6 +1,6 @@
 <?php
 
-// Status & pembebanan tagihan (kewajiban): label, warna badge, info tenggat, dan penagihan anggota.
+// Status & pembebanan tagihan (tagihan): label, warna badge, info tenggat, dan penagihan anggota.
 
 // Satu kosakata status di seluruh UI. Enum DB tetap (Belum_Bayar, Menunggu, Lunas, Ditolak, Disetujui).
 function label_status($status)
@@ -42,14 +42,14 @@ function info_tenggat($tenggat)
 }
 
 // Bebankan satu tagihan ke semua anggota grup yang belum tercatat. Mengembalikan jumlah anggota yang ditambahkan.
-function tagihkan_ke_anggota($pdo, $id_kewajiban, $id_grup)
+function tagihkan_ke_anggota($pdo, $id_tagihan, $id_grup)
 {
     $stmt = $pdo->prepare("
-        INSERT INTO anggota_kewajiban (id_kewajiban, id_pengguna)
+        INSERT INTO tagihan_anggota (id_tagihan, id_pengguna)
         SELECT ?, id_pengguna FROM anggota_grup WHERE id_grup = ?
-        ON CONFLICT (id_kewajiban, id_pengguna) DO NOTHING
+        ON CONFLICT (id_tagihan, id_pengguna) DO NOTHING
     ");
-    $stmt->execute([$id_kewajiban, $id_grup]);
+    $stmt->execute([$id_tagihan, $id_grup]);
 
     return $stmt->rowCount();
 }
@@ -59,9 +59,9 @@ function tagihkan_ke_anggota($pdo, $id_kewajiban, $id_grup)
 function tagihkan_tagihan_berjalan($pdo, $id_grup, $id_pengguna)
 {
     $stmt = $pdo->prepare("
-        INSERT INTO anggota_kewajiban (id_kewajiban, id_pengguna)
-        SELECT id, ? FROM kewajiban_pembayaran WHERE id_grup = ? AND tenggat_waktu >= CURRENT_DATE
-        ON CONFLICT (id_kewajiban, id_pengguna) DO NOTHING
+        INSERT INTO tagihan_anggota (id_tagihan, id_pengguna)
+        SELECT id, ? FROM tagihan WHERE id_grup = ? AND tenggat_waktu >= CURRENT_DATE
+        ON CONFLICT (id_tagihan, id_pengguna) DO NOTHING
     ");
     $stmt->execute([$id_pengguna, $id_grup]);
 

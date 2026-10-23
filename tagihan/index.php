@@ -1,20 +1,20 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 $page_title = 'Tagihan';
-$page_css = ['kewajiban.css', 'table.css'];
+$page_css = ['tagihan.css', 'table.css'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $id_user = (int) $_SESSION['user']['id'];
-$role = cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
+$role = cek_role($pdo, $id_grup, akses_menu()['tagihan']);
 $boleh_buat = peran_pengelola($role);
 
-// Satu kali scan anggota_kewajiban per tagihan: hitung lunas/total + ambil status milik saya.
+// Satu kali scan tagihan_anggota per tagihan: hitung lunas/total + ambil status milik saya.
 $stmt = $pdo->prepare("
     SELECT k.*,
         COUNT(ak.id) FILTER (WHERE ak.status = 'Lunas') AS lunas,
         COUNT(ak.id) AS total,
         MAX(ak.status::text) FILTER (WHERE ak.id_pengguna = ?) AS status_saya
-    FROM kewajiban_pembayaran k
-    LEFT JOIN anggota_kewajiban ak ON ak.id_kewajiban = k.id
+    FROM tagihan k
+    LEFT JOIN tagihan_anggota ak ON ak.id_tagihan = k.id
     WHERE k.id_grup = ?
     GROUP BY k.id
     ORDER BY k.tenggat_waktu DESC

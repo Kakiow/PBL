@@ -12,9 +12,7 @@ SIMKAS/
 │                    reset_password.php, logout.php
 ├── config/          koneksi.php, mail.php, mail.local.example.php
 ├── cron/            bersihkan_bukti.php     (CLI saja)
-├── database/        01_schema.sql, 02_seed_kategori.sql,
-│                    03_reset_password.sql, 04_indeks.sql, 05_info_pembayaran.sql,
-│                    06_batas_login.sql, 07_sumber_dana.sql
+├── database/        01_schema.sql     (skema lengkap)
 ├── includes/        auth.php        (bootstrap: sesi + koneksi + helper + guard login)
 │                    header.php, sidebar.php, footer.php   (kerangka halaman)
 │                    auth_head.php, auth_foot.php          (kerangka halaman auth)
@@ -26,17 +24,17 @@ SIMKAS/
 │                    _daftar_grup.php, _form_grup.php
 ├── anggota/         index.php            (daftar anggota + ubah role)
 ├── profil/          index.php            (data akun, password, grup saya)
-├── kewajiban/       index.php, tambah.php, edit.php, hapus.php,
+├── tagihan/         index.php, tambah.php, edit.php, hapus.php,
 │                    bayar.php, detail.php, _form.php  (Tagihan)
 ├── pembayaran/      index.php            (Verifikasi)
 ├── transaksi/       index.php, tambah.php, edit.php, _form.php, _data.php
 ├── laporan/         index.php
 ├── assets/
 │   ├── css/         style, layout, sidebar, nav, rail, inputs, form, toast,
-│   │                print, auth, dashboard, table, grup, anggota, kewajiban,
+│   │                print, auth, dashboard, table, grup, anggota, tagihan,
 │   │                profil, transaksi*
 │   └── js/          toast.js, sidebar.js, script.js (semua halaman)
-│                    form.js + kewajiban.js / transaksi.js (khusus form)
+│                    form.js + tagihan.js / transaksi.js (khusus form)
 ├── index.php        (Dashboard)
 └── storage/uploads/
 ```
@@ -44,19 +42,19 @@ SIMKAS/
 ## Cara menjalankan
 
 1. Buat database PostgreSQL, misalnya `simkas`.
-2. Jalankan `database/01_schema.sql` pada database tersebut. Jika database sudah ada, jalankan juga `database/03_reset_password.sql`, `database/04_indeks.sql`, `database/05_info_pembayaran.sql`, `database/06_batas_login.sql`, dan `database/07_sumber_dana.sql` (semuanya aman dijalankan ulang).
+2. Jalankan `database/01_schema.sql` pada database tersebut. Satu file ini sudah berisi seluruh tabel, enum, dan indeks yang dipakai aplikasi.
 3. Buka `config/koneksi.php`, lalu sesuaikan username dan password PostgreSQL.
 4. Jalankan project dari folder `SIMKAS` dengan Apache/XAMPP/Laragon atau PHP built-in server.
 5. Buka `auth/register.php` untuk membuat akun.
 6. Login melalui `auth/login.php`.
 7. Buat grup baru. Pembuat grup otomatis menjadi Admin.
-8. Grup otomatis memiliki kategori dasar dan tiga sumber dana: `Kas Tunai`, `Rekening Bank`, dan `E-Wallet`.
+8. Grup otomatis memiliki kategori dasar untuk pemasukan dan pengeluaran.
 
 ## Alur fitur
 
 - **Admin**: membuat grup dan mengatur role anggota.
-- **Bendahara**: membuat kewajiban, memverifikasi pembayaran, dan mencatat transaksi.
-- **Anggota**: melihat kewajiban dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih untuk tagihan yang tenggatnya belum lewat.
+- **Bendahara**: membuat tagihan, memverifikasi pembayaran, dan mencatat transaksi.
+- **Anggota**: melihat tagihan dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih untuk tagihan yang tenggatnya belum lewat.
 - **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus.
 - **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
 - **Masuk/Daftar**: field password punya tombol lihat/sembunyikan.

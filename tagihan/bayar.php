@@ -2,10 +2,10 @@
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Bayar tagihan';
-$page_css = ['kewajiban.css'];
+$page_css = ['tagihan.css'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $id_user = (int) $_SESSION['user']['id'];
-cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
+cek_role($pdo, $id_grup, akses_menu()['tagihan']);
 
 // Kalau ukuran kiriman melebihi post_max_size, PHP mengosongkan $_POST dan $_FILES.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && (int) ($_SERVER['C
 
 $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 
-$stmt = $pdo->prepare("SELECT * FROM kewajiban_pembayaran WHERE id = ? AND id_grup = ?");
+$stmt = $pdo->prepare("SELECT * FROM tagihan WHERE id = ? AND id_grup = ?");
 $stmt->execute([$id, $id_grup]);
 $k = $stmt->fetch();
 
@@ -27,9 +27,9 @@ if (!$k) {
 // Ikut ambil alasan penolakan terakhir, supaya anggota tahu apa yang harus diperbaiki.
 $stmt = $pdo->prepare("
     SELECT ak.id, ak.status,
-        (SELECT catatan FROM pembayaran WHERE id_anggota_kewajiban = ak.id ORDER BY id DESC LIMIT 1) AS catatan_terakhir
-    FROM anggota_kewajiban ak
-    WHERE ak.id_kewajiban = ? AND ak.id_pengguna = ?
+        (SELECT catatan FROM pembayaran WHERE id_tagihan_anggota = ak.id ORDER BY id DESC LIMIT 1) AS catatan_terakhir
+    FROM tagihan_anggota ak
+    WHERE ak.id_tagihan = ? AND ak.id_pengguna = ?
 ");
 $stmt->execute([$id, $id_user]);
 $ak = $stmt->fetch();
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo->beginTransaction();
 
-            $stmt = $pdo->prepare("SELECT status FROM anggota_kewajiban WHERE id = ? FOR UPDATE");
+            $stmt = $pdo->prepare("SELECT status FROM tagihan_anggota WHERE id = ? FOR UPDATE");
             $stmt->execute([$ak['id']]);
             $status_kini = $stmt->fetchColumn();
 
@@ -84,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception('Pembayaran tidak dapat dikirim lagi untuk tagihan ini.');
             }
 
-            $stmt = $pdo->prepare("INSERT INTO pembayaran (id_anggota_kewajiban, jumlah, metode_pembayaran, berkas_bukti) VALUES (?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO pembayaran (id_tagihan_anggota, jumlah, metode_pembayaran, berkas_bukti) VALUES (?, ?, ?, ?)");
             $stmt->execute([$ak['id'], $jumlah, $metode, $nama_file]);
 
-            $stmt = $pdo->prepare("UPDATE anggota_kewajiban SET status = 'Menunggu' WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE tagihan_anggota SET status = 'Menunggu' WHERE id = ?");
             $stmt->execute([$ak['id']]);
 
             $pdo->commit();

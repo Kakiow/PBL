@@ -2,10 +2,10 @@
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Buat tagihan';
-$page_css = ['kewajiban.css'];
-$page_js = ['form.js', 'kewajiban.js'];
+$page_css = ['tagihan.css'];
+$page_js = ['form.js', 'tagihan.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
-$role = cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
+$role = cek_role($pdo, $id_grup, akses_menu()['tagihan']);
 
 if (!peran_pengelola($role)) {
     flash('error', 'Hanya Admin dan Bendahara yang dapat membuat tagihan.');
@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             $pdo->beginTransaction();
-            $stmt = $pdo->prepare("INSERT INTO kewajiban_pembayaran (id_grup,judul,jumlah,tenggat_waktu,deskripsi,dibuat_oleh) VALUES (?,?,?,?,?,?) RETURNING id");
-            $stmt->execute([$id_grup, $judul, $jumlah, $tenggat, $deskripsi, $_SESSION['user']['id']]);
+            $stmt = $pdo->prepare("INSERT INTO tagihan (id_grup,judul,jumlah,tenggat_waktu,deskripsi) VALUES (?,?,?,?,?) RETURNING id");
+            $stmt->execute([$id_grup, $judul, $jumlah, $tenggat, $deskripsi]);
             tagihkan_ke_anggota($pdo, $stmt->fetchColumn(), $id_grup);
             $pdo->commit();
             flash('success', 'Tagihan berhasil dibuat.');

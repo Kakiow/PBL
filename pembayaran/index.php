@@ -26,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("
-                SELECT p.*, ak.id_kewajiban, ak.id_pengguna, ak.status AS status_kewajiban, k.judul, u.nama
+                SELECT p.*, ak.id_tagihan, ak.id_pengguna, ak.status AS status_tagihan, k.judul, u.nama
                 FROM pembayaran p
-                JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban
-                JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+                JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota
+                JOIN tagihan k ON k.id = ak.id_tagihan
                 JOIN pengguna u ON u.id = ak.id_pengguna
                 WHERE p.id = ? AND k.id_grup = ?
                 FOR UPDATE OF p, ak
@@ -45,29 +45,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
                 throw new Exception('Pembayaran ini sudah diproses.');
             }
 
-            if ($bayar['status_kewajiban'] === 'Lunas') {
-                throw new Exception('Kewajiban ini sudah lunas.');
+            if ($bayar['status_tagihan'] === 'Lunas') {
+                throw new Exception('Tagihan ini sudah lunas.');
             }
 
             $stmt = $pdo->prepare("UPDATE pembayaran SET status = ?, diverifikasi_oleh = ?, diverifikasi_pada = CURRENT_TIMESTAMP, catatan = ? WHERE id = ?");
             $stmt->execute([$status, $_SESSION['user']['id'], $status === 'Ditolak' ? $catatan : null, $id]);
 
-            $stmt = $pdo->prepare("UPDATE anggota_kewajiban SET status = ? WHERE id = ?");
-            $stmt->execute([$status === 'Disetujui' ? 'Lunas' : 'Ditolak', $bayar['id_anggota_kewajiban']]);
+            $stmt = $pdo->prepare("UPDATE tagihan_anggota SET status = ? WHERE id = ?");
+            $stmt->execute([$status === 'Disetujui' ? 'Lunas' : 'Ditolak', $bayar['id_tagihan_anggota']]);
 
             if ($status === 'Disetujui') {
-                $stmt = $pdo->prepare("
-                    SELECT
-                        (SELECT id FROM kategori WHERE id_grup = ? AND jenis = 'Pemasukan' ORDER BY id LIMIT 1) AS kategori,
-                        (SELECT id FROM akun_dana WHERE id_grup = ? ORDER BY id LIMIT 1) AS akun
-                ");
-                $stmt->execute([$id_grup, $id_grup]);
-                $tujuan = $stmt->fetch();
-                $kategori = $tujuan['kategori'];
-                $akun = $tujuan['akun'];
+                $stmt = $pdo->prepare("SELECT id FROM kategori WHERE id_grup = ? AND jenis = 'Pemasukan' ORDER BY id LIMIT 1");
+                $stmt->execute([$id_grup]);
+                $kategori = $stmt->fetchColumn();
 
-                if (!$kategori || !$akun) {
-                    throw new Exception('Kategori pemasukan dan sumber dana harus tersedia.');
+                if (!$kategori) {
+                    throw new Exception('Kategori pemasukan harus tersedia.');
                 }
 
                 $stmt = $pdo->prepare("SELECT 1 FROM transaksi WHERE id_pembayaran = ?");
@@ -78,14 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
 
                 $stmt = $pdo->prepare("
                     INSERT INTO transaksi
-                        (id_grup, id_pengguna, id_kategori, id_akun_dana, id_pembayaran, jenis, jumlah, tanggal_transaksi, deskripsi)
-                    VALUES (?, ?, ?, ?, ?, 'Pemasukan', ?, CURRENT_DATE, ?)
+                        (id_grup, id_pengguna, id_kategori, id_pembayaran, jenis, jumlah, tanggal_transaksi, deskripsi)
+                    VALUES (?, ?, ?, ?, 'Pemasukan', ?, CURRENT_DATE, ?)
                 ");
                 $stmt->execute([
                     $id_grup,
                     $_SESSION['user']['id'],
                     $kategori,
-                    $akun,
                     $id,
                     $bayar['jumlah'],
                     'Iuran: ' . $bayar['judul'] . ' – ' . $bayar['nama'],
@@ -111,9 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
 $stmt = $pdo->prepare("
     SELECT p.*, u.nama, k.judul
     FROM pembayaran p
-    JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban
+    JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota
     JOIN pengguna u ON u.id = ak.id_pengguna
-    JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+    JOIN tagihan k ON k.id = ak.id_tagihan
     WHERE k.id_grup = ?
     ORDER BY p.id DESC
 ");

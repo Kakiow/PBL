@@ -2,10 +2,10 @@
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Edit tagihan';
-$page_css = ['kewajiban.css'];
-$page_js = ['form.js', 'kewajiban.js'];
+$page_css = ['tagihan.css'];
+$page_js = ['form.js', 'tagihan.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
-$role = cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
+$role = cek_role($pdo, $id_grup, akses_menu()['tagihan']);
 
 if (!peran_pengelola($role)) {
     flash('error', 'Hanya Admin dan Bendahara yang dapat mengubah tagihan.');
@@ -18,10 +18,10 @@ $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 $stmt = $pdo->prepare("
     SELECT k.*, EXISTS (
         SELECT 1 FROM pembayaran p
-        JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban
-        WHERE ak.id_kewajiban = k.id AND p.status IN ('Menunggu', 'Disetujui')
+        JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota
+        WHERE ak.id_tagihan = k.id AND p.status IN ('Menunggu', 'Disetujui')
     ) AS nominal_terkunci
-    FROM kewajiban_pembayaran k
+    FROM tagihan k
     WHERE k.id = ? AND k.id_grup = ?
 ");
 $stmt->execute([$id, $id_grup]);
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($tenggat < $tenggat_min) {
         flash('error', 'Tenggat tidak boleh sebelum hari ini.');
     } else {
-        $stmt = $pdo->prepare("UPDATE kewajiban_pembayaran SET judul = ?, jumlah = ?, tenggat_waktu = ?, deskripsi = ? WHERE id = ? AND id_grup = ?");
+        $stmt = $pdo->prepare("UPDATE tagihan SET judul = ?, jumlah = ?, tenggat_waktu = ?, deskripsi = ? WHERE id = ? AND id_grup = ?");
         $stmt->execute([$judul, $jumlah, $tenggat, $deskripsi, $id, $id_grup]);
         flash('success', 'Tagihan berhasil diperbarui.');
         redirect('detail.php?id=' . $id);

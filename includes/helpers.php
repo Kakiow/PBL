@@ -140,7 +140,7 @@ function akses_menu()
 {
     return [
         'anggota' => ['Admin', 'Bendahara', 'Anggota'],
-        'kewajiban' => ['Admin', 'Bendahara', 'Anggota'],
+        'tagihan' => ['Admin', 'Bendahara', 'Anggota'],
         'pembayaran' => ['Admin', 'Bendahara', 'Anggota'],
         'transaksi' => ['Admin', 'Bendahara', 'Anggota'],
         'laporan' => ['Admin', 'Bendahara'],
@@ -284,7 +284,7 @@ function menu_nav($base, $peran, $ada_grup)
     $akses = akses_menu();
     $items = [
         'anggota' => ['Anggota', 'anggota/index.php', 'Menu'],
-        'kewajiban' => ['Tagihan', 'kewajiban/index.php', 'Kas'],
+        'tagihan' => ['Tagihan', 'tagihan/index.php', 'Kas'],
         'pembayaran' => ['Verifikasi', 'pembayaran/index.php', 'Kas'],
         'transaksi' => ['Transaksi', 'transaksi/index.php', 'Kas'],
         'laporan' => ['Laporan', 'laporan/index.php', 'Kas'],

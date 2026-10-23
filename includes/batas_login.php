@@ -32,7 +32,7 @@ function batas_login_tersisa($pdo, $email, $ip)
         $stmt->execute([$email, $ip]);
         $baris = $stmt->fetch();
     } catch (Throwable $e) {
-        // Migrasi database/06_batas_login.sql belum dijalankan: login tetap bisa dipakai.
+        // Tabel percobaan_login belum ada (skema belum dijalankan): login tetap bisa dipakai.
         error_log('Pembatas login tidak tersedia: ' . $e->getMessage());
         return 0;
     }

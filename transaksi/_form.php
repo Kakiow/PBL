@@ -1,13 +1,12 @@
 <?php
 // Partial form transaksi: hanya dipakai lewat tambah.php / edit.php.
-if (!isset($mode, $row, $kategori, $akun)) {
+if (!isset($mode, $row, $kategori)) {
     http_response_code(404);
     exit;
 }
 
 $is_edit = ($mode ?? 'tambah') === 'edit';
 $val_kategori = (string) ($row['nama_kategori'] ?? '');
-$val_akun = (int) ($row['id_akun_dana'] ?? 0);
 $val_jenis = (string) ($row['jenis'] ?? '');
 $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (float) $row['jumlah'] : '';
 $val_tanggal = (string) ($row['tanggal_transaksi'] ?? date('Y-m-d'));
@@ -95,16 +94,6 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                         </datalist>
                         <span class="field-hint">Tulis tujuan transaksi, mis. "Study Tour" atau "Iuran Kas".</span>
                     </p>
-                    <p class="field">
-                        <label for="id_akun_dana">Sumber dana</label>
-                        <select id="id_akun_dana" name="id_akun_dana" required data-error="Sumber dana wajib dipilih.">
-                            <option value="">Pilih sumber dana</option>
-                            <?php foreach ($akun as $a): ?>
-                            <option value="<?php echo $a['id']; ?>"<?php echo $val_akun === (int) $a['id'] ? ' selected' : ''; ?>>
-                                <?php echo e($a['nama_akun']); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </p>
                 </div>
                 <div class="trx-row">
                     <p class="field">
@@ -156,10 +145,6 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                     <div>
                         <dt>Kategori</dt>
                         <dd class="is-empty" id="trx-preview-kategori">—</dd>
-                    </div>
-                    <div>
-                        <dt>Sumber dana</dt>
-                        <dd class="is-empty" id="trx-preview-akun">—</dd>
                     </div>
                     <div>
                         <dt>Tanggal</dt>

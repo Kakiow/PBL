@@ -60,10 +60,10 @@ $transaksi = $stmt->fetchAll();
 // Tagihan milik user ini + status & alasan pembayaran terakhirnya (bila ditolak).
 $stmt = $pdo->prepare("
     SELECT k.id, k.judul, k.jumlah, k.tenggat_waktu, ak.status, bayar.catatan
-    FROM anggota_kewajiban ak
-    JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+    FROM tagihan_anggota ak
+    JOIN tagihan k ON k.id = ak.id_tagihan
     LEFT JOIN LATERAL (
-        SELECT catatan FROM pembayaran WHERE id_anggota_kewajiban = ak.id ORDER BY id DESC LIMIT 1
+        SELECT catatan FROM pembayaran WHERE id_tagihan_anggota = ak.id ORDER BY id DESC LIMIT 1
     ) bayar ON TRUE
     WHERE ak.id_pengguna = ? AND k.id_grup = ?
     ORDER BY k.tenggat_waktu
@@ -92,7 +92,7 @@ $tampil_tagihan = array_slice($tagihan_terbuka, 0, 4);
 $kelola = peran_pengelola($peran);
 $menunggu_verifikasi = 0;
 if ($kelola) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM pembayaran p JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE k.id_grup = ? AND p.status = 'Menunggu'");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM pembayaran p JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota JOIN tagihan k ON k.id = ak.id_tagihan WHERE k.id_grup = ? AND p.status = 'Menunggu'");
     $stmt->execute([$id_grup]);
     $menunggu_verifikasi = (int) $stmt->fetchColumn();
 }
@@ -122,7 +122,7 @@ include __DIR__ . '/includes/header.php';
                     <?php endif; ?>
                 </p>
             </div>
-            <a class="text-link" href="kewajiban/index.php">Semua tagihan →</a>
+            <a class="text-link" href="tagihan/index.php">Semua tagihan →</a>
         </div>
 
         <?php if ($tampil_tagihan): ?>
@@ -130,7 +130,7 @@ include __DIR__ . '/includes/header.php';
             <?php foreach ($tampil_tagihan as $t): $tenggat = info_tenggat($t['tenggat_waktu']); ?>
             <li class="bill-item">
                 <div>
-                    <a class="bill-title" href="kewajiban/detail.php?id=<?php echo (int) $t['id']; ?>"><?php echo e($t['judul']); ?></a>
+                    <a class="bill-title" href="tagihan/detail.php?id=<?php echo (int) $t['id']; ?>"><?php echo e($t['judul']); ?></a>
                     <span class="bill-meta">
                         <span>Tenggat <?php echo e(tanggal_id($t['tenggat_waktu'])); ?></span>
                         <span class="<?php echo $tenggat['lewat'] ? 'is-late' : ''; ?>"><?php echo e($tenggat['teks']); ?></span>
@@ -141,7 +141,7 @@ include __DIR__ . '/includes/header.php';
                     <?php if ($t['status'] === 'Menunggu'): ?>
                     <span class="badge warning"><?php echo e(label_status('Menunggu')); ?></span>
                     <?php else: ?>
-                    <a class="btn primary small" href="kewajiban/bayar.php?id=<?php echo (int) $t['id']; ?>"><?php echo $t['status'] === 'Ditolak' ? 'Bayar ulang' : 'Bayar'; ?></a>
+                    <a class="btn primary small" href="tagihan/bayar.php?id=<?php echo (int) $t['id']; ?>"><?php echo $t['status'] === 'Ditolak' ? 'Bayar ulang' : 'Bayar'; ?></a>
                     <?php endif; ?>
                 </span>
                 <?php if ($t['status'] === 'Ditolak'): ?>
@@ -151,7 +151,7 @@ include __DIR__ . '/includes/header.php';
             <?php endforeach; ?>
         </ul>
         <?php if (count($tagihan_terbuka) > count($tampil_tagihan)): ?>
-        <p class="bill-more"><a href="kewajiban/index.php">dan <?php echo count($tagihan_terbuka) - count($tampil_tagihan); ?> tagihan lainnya</a></p>
+        <p class="bill-more"><a href="tagihan/index.php">dan <?php echo count($tagihan_terbuka) - count($tampil_tagihan); ?> tagihan lainnya</a></p>
         <?php endif; ?>
         <?php endif; ?>
     </section>
@@ -168,7 +168,7 @@ include __DIR__ . '/includes/header.php';
             <li><a href="pembayaran/index.php">Verifikasi pembayaran
                 <?php if ($menunggu_verifikasi > 0): ?><span class="todo-count"><?php echo $menunggu_verifikasi; ?></span>
                 <?php else: ?><span class="todo-go">Tidak ada antrean</span><?php endif; ?></a></li>
-            <li><a href="kewajiban/tambah.php">Buat tagihan <span class="todo-go">→</span></a></li>
+            <li><a href="tagihan/tambah.php">Buat tagihan <span class="todo-go">→</span></a></li>
             <li><a href="transaksi/tambah.php">Catat transaksi <span class="todo-go">→</span></a></li>
             <li><a href="laporan/index.php">Lihat laporan <span class="todo-go">→</span></a></li>
         </ul>

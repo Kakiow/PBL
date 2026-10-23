@@ -13,17 +13,17 @@ if (!boleh_kelola_transaksi($role)) {
     redirect('index.php');
 }
 
-[$kategori, $akun] = opsi_form_transaksi($pdo, $id_grup);
+$kategori = opsi_form_transaksi($pdo, $id_grup);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $in = input_transaksi($akun);
+    $in = input_transaksi();
 
     if ($in === null) {
         flash('error', 'Semua data transaksi wajib diisi.');
     } else {
         $id_kategori = kategori_id_untuk($pdo, $id_grup, $in['kategori'], $in['jenis']);
-        $stmt = $pdo->prepare("INSERT INTO transaksi (id_grup,id_pengguna,id_kategori,id_akun_dana,jenis,jumlah,tanggal_transaksi,deskripsi) VALUES (?,?,?,?,?,?,?,?)");
-        $stmt->execute([$id_grup, $_SESSION['user']['id'], $id_kategori, $in['akun'], $in['jenis'], $in['jumlah'], $in['tanggal'], $in['deskripsi']]);
+        $stmt = $pdo->prepare("INSERT INTO transaksi (id_grup,id_pengguna,id_kategori,jenis,jumlah,tanggal_transaksi,deskripsi) VALUES (?,?,?,?,?,?,?)");
+        $stmt->execute([$id_grup, $_SESSION['user']['id'], $id_kategori, $in['jenis'], $in['jumlah'], $in['tanggal'], $in['deskripsi']]);
         flash('success', 'Transaksi berhasil ditambahkan.');
         redirect('index.php');
     }

@@ -34,7 +34,7 @@ $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (fl
     </h2>
     <p class="form-hint">Isi judul, nominal, dan tenggat pembayaran. Status lunas tiap anggota dapat dipantau dari
         daftar tagihan.</p>
-    <form method="post" class="form-kewajiban">
+    <form method="post" class="form-tagihan">
         <?php if ($is_edit): ?>
         <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
         <?php endif; ?>
@@ -43,7 +43,7 @@ $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (fl
                 <label for="judul">Judul</label>
                 <input id="judul" name="judul" type="text" maxlength="120" required
                     value="<?php echo e($row['judul'] ?? ''); ?>"
-                    data-error="Judul kewajiban wajib diisi." placeholder="Contoh: Kas mingguan Oktober">
+                    data-error="Judul tagihan wajib diisi." placeholder="Contoh: Kas mingguan Oktober">
                 <span class="field-hint">Nama singkat tagihan agar mudah dikenali anggota.</span>
             </p>
             <p class="field">

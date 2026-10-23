@@ -1,15 +1,15 @@
 /* ==========================================================================
-   SIMKAS — halaman Tagihan (kewajiban pembayaran)
+   SIMKAS — halaman Tagihan (tagihan pembayaran)
    ========================================================================== */
 
-.form-kewajiban .btn.primary {
+.form-tagihan .btn.primary {
   min-width: 195px;
 }
-.form-kewajiban .btn.primary.is-loading {
+.form-tagihan .btn.primary.is-loading {
   pointer-events: none;
   opacity: 0.88;
 }
-.form-kewajiban .btn.primary.is-loading::after {
+.form-tagihan .btn.primary.is-loading::after {
   content: "";
   display: inline-block;
   width: 12px;
@@ -19,16 +19,16 @@
   border-top-color: #fff;
   border-radius: 50%;
   vertical-align: -1px;
-  animation: kewajibanSpin 0.7s linear infinite;
+  animation: tagihanSpin 0.7s linear infinite;
 }
-@keyframes kewajibanSpin {
+@keyframes tagihanSpin {
   to {
     transform: rotate(360deg);
   }
 }
 
 @media (max-width: 700px) {
-  .form-kewajiban .btn.primary {
+  .form-tagihan .btn.primary {
     width: 100%;
     min-width: 0;
   }

@@ -1,6 +1,6 @@
-// Interaksi form Buat Tagihan (kewajiban/tambah.php). Butuh form.js.
+// Interaksi form Buat Tagihan (tagihan/tambah.php). Butuh form.js.
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.querySelector(".form-kewajiban");
+  const form = document.querySelector(".form-tagihan");
   if (!form || !window.FormKas) return;
 
   const F = window.FormKas;
@@ -75,6 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   form.addEventListener("submit", function () {
     if (!form.checkValidity()) return;
-    F.tandaiMenyimpan(tombolKirim, statusForm, "Menyimpan kewajiban…");
+    F.tandaiMenyimpan(tombolKirim, statusForm, "Menyimpan tagihan…");
   });
 });

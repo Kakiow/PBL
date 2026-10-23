@@ -24,17 +24,17 @@ if (!$row) {
     redirect('index.php');
 }
 
-[$kategori, $akun] = opsi_form_transaksi($pdo, $id_grup);
+$kategori = opsi_form_transaksi($pdo, $id_grup);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $in = input_transaksi($akun);
+    $in = input_transaksi();
 
     if ($in === null) {
         flash('error', 'Semua data transaksi wajib diisi.');
     } else {
         $id_kategori = kategori_id_untuk($pdo, $id_grup, $in['kategori'], $in['jenis']);
-        $stmt = $pdo->prepare("UPDATE transaksi SET id_kategori = ?, id_akun_dana = ?, jenis = ?, jumlah = ?, tanggal_transaksi = ?, deskripsi = ? WHERE id = ? AND id_grup = ?");
-        $stmt->execute([$id_kategori, $in['akun'], $in['jenis'], $in['jumlah'], $in['tanggal'], $in['deskripsi'], $id, $id_grup]);
+        $stmt = $pdo->prepare("UPDATE transaksi SET id_kategori = ?, jenis = ?, jumlah = ?, tanggal_transaksi = ?, deskripsi = ? WHERE id = ? AND id_grup = ?");
+        $stmt->execute([$id_kategori, $in['jenis'], $in['jumlah'], $in['tanggal'], $in['deskripsi'], $id, $id_grup]);
         flash('success', 'Transaksi berhasil diperbarui.');
         redirect('index.php');
     }

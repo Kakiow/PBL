@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $kelola) {
     }
 }
 
-$stmt = $pdo->prepare("SELECT t.*, k.nama_kategori, a.nama_akun, u.nama AS nama_pengguna FROM transaksi t JOIN kategori k ON k.id = t.id_kategori JOIN akun_dana a ON a.id = t.id_akun_dana JOIN pengguna u ON u.id = t.id_pengguna WHERE t.id_grup = ? ORDER BY t.tanggal_transaksi DESC, t.id DESC");
+$stmt = $pdo->prepare("SELECT t.*, k.nama_kategori, u.nama AS nama_pengguna FROM transaksi t JOIN kategori k ON k.id = t.id_kategori JOIN pengguna u ON u.id = t.id_pengguna WHERE t.id_grup = ? ORDER BY t.tanggal_transaksi DESC, t.id DESC");
 $stmt->execute([$id_grup]);
 $data = $stmt->fetchAll();
 
@@ -53,7 +53,6 @@ include __DIR__ . '/../includes/header.php';
                     <th scope="col">Deskripsi</th>
                     <th scope="col">Tanggal</th>
                     <th scope="col">Kategori</th>
-                    <th scope="col">Sumber dana</th>
                     <th scope="col" class="num">Jumlah</th>
                     <th scope="col">Dicatat oleh</th>
                     <?php if ($kelola): ?><th scope="col" class="num"><span class="sr-only">Aksi</span></th><?php endif; ?>
@@ -61,7 +60,7 @@ include __DIR__ . '/../includes/header.php';
             </thead>
             <tbody>
                 <?php if (!$data): ?><tr class="empty">
-                    <td colspan="<?php echo $kelola ? 7 : 6; ?>"><?php echo $kelola ? 'Belum ada transaksi. Catat pemasukan atau pengeluaran pertama grup ini.' : 'Belum ada transaksi.'; ?></td>
+                    <td colspan="<?php echo $kelola ? 6 : 5; ?>"><?php echo $kelola ? 'Belum ada transaksi. Catat pemasukan atau pengeluaran pertama grup ini.' : 'Belum ada transaksi.'; ?></td>
                 </tr><?php endif; ?>
                 <?php foreach ($data as $row): $masuk = $row['jenis'] === 'Pemasukan'; ?>
                 <tr>
@@ -71,7 +70,6 @@ include __DIR__ . '/../includes/header.php';
                     </td>
                     <td class="nowrap" data-label="Tanggal"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
                     <td data-label="Kategori"><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
-                    <td data-label="Sumber dana"><?php echo e($row['nama_akun']); ?></td>
                     <td class="num <?php echo $masuk ? 'amount-in' : 'amount-out'; ?>" data-label="<?php echo e($row['jenis']); ?>">
                         <span class="sr-only"><?php echo e($row['jenis']); ?> </span><?php echo $masuk ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
                     </td>

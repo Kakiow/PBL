@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Kumpulkan bukti pembayaran grup ini dulu supaya tidak tertinggal di disk.
-    $stmt = $pdo->prepare("SELECT p.berkas_bukti FROM pembayaran p JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban WHERE k.id_grup = ? AND p.berkas_bukti <> ''");
+    $stmt = $pdo->prepare("SELECT p.berkas_bukti FROM pembayaran p JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota JOIN tagihan k ON k.id = ak.id_tagihan WHERE k.id_grup = ? AND p.berkas_bukti <> ''");
     $stmt->execute([$id]);
     $berkas = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
@@ -58,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $stmt = $pdo->prepare("
     SELECT
         (SELECT COUNT(*) FROM anggota_grup WHERE id_grup = ?) AS anggota,
-        (SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?) AS tagihan,
+        (SELECT COUNT(*) FROM tagihan WHERE id_grup = ?) AS tagihan,
         (SELECT COUNT(*) FROM pembayaran p
-            JOIN anggota_kewajiban ak ON ak.id = p.id_anggota_kewajiban
-            JOIN kewajiban_pembayaran k ON k.id = ak.id_kewajiban
+            JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota
+            JOIN tagihan k ON k.id = ak.id_tagihan
             WHERE k.id_grup = ?) AS pembayaran,
         (SELECT COUNT(*) FROM transaksi WHERE id_grup = ?) AS transaksi
 ");

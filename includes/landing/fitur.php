@@ -32,7 +32,7 @@
             </li>
             <li data-reveal>
                 <h3>Tidak ada pemasukan dobel</h3>
-                <p>Verifikasi dijaga aturan: satu kewajiban hanya menghasilkan satu transaksi pemasukan, meski tombolnya ditekan dua kali.</p>
+                <p>Verifikasi dijaga aturan: satu tagihan hanya menghasilkan satu transaksi pemasukan, meski tombolnya ditekan dua kali.</p>
             </li>
             <li data-reveal>
                 <h3>Laporan per rentang tanggal</h3>

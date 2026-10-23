@@ -2,10 +2,10 @@
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Detail tagihan';
-$page_css = ['dashboard.css', 'table.css', 'kewajiban.css'];
+$page_css = ['dashboard.css', 'table.css', 'tagihan.css'];
 
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
-$role = cek_role($pdo, $id_grup, akses_menu()['kewajiban']);
+$role = cek_role($pdo, $id_grup, akses_menu()['tagihan']);
 $kelola = peran_pengelola($role);
 $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 
@@ -14,9 +14,9 @@ $stmt = $pdo->prepare("
     SELECT k.*,
         (SELECT COUNT(*) FROM anggota_grup ag
             WHERE ag.id_grup = k.id_grup
-              AND NOT EXISTS (SELECT 1 FROM anggota_kewajiban ak WHERE ak.id_kewajiban = k.id AND ak.id_pengguna = ag.id_pengguna)
+              AND NOT EXISTS (SELECT 1 FROM tagihan_anggota ak WHERE ak.id_tagihan = k.id AND ak.id_pengguna = ag.id_pengguna)
         ) AS belum_tertagih
-    FROM kewajiban_pembayaran k
+    FROM tagihan k
     WHERE k.id = ? AND k.id_grup = ?
 ");
 $stmt->execute([$id, $id_grup]);
@@ -40,13 +40,13 @@ $belum_tertagih = (int) $k['belum_tertagih'];
 // Pembayaran terakhir tiap anggota ikut diambil di sini (LATERAL), bukan satu query per baris tabel.
 $stmt = $pdo->prepare("
     SELECT ak.*, p.nama, p.email, bayar.tanggal_pembayaran, bayar.status AS status_bayar, bayar.catatan
-    FROM anggota_kewajiban ak
+    FROM tagihan_anggota ak
     JOIN pengguna p ON p.id = ak.id_pengguna
     LEFT JOIN LATERAL (
         SELECT tanggal_pembayaran, status, catatan FROM pembayaran
-        WHERE id_anggota_kewajiban = ak.id ORDER BY id DESC LIMIT 1
+        WHERE id_tagihan_anggota = ak.id ORDER BY id DESC LIMIT 1
     ) bayar ON TRUE
-    WHERE ak.id_kewajiban = ?
+    WHERE ak.id_tagihan = ?
     ORDER BY p.nama
 ");
 $stmt->execute([$id]);

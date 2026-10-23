@@ -46,17 +46,17 @@ $badge_nav = [];
 if ($grup && $peran_aktif) {
     $stmt = $pdo->prepare("
         SELECT
-            COUNT(DISTINCT ak.id) FILTER (WHERE ak.id_pengguna = ? AND ak.status IN ('Belum_Bayar', 'Ditolak')) AS kewajiban,
+            COUNT(DISTINCT ak.id) FILTER (WHERE ak.id_pengguna = ? AND ak.status IN ('Belum_Bayar', 'Ditolak')) AS tagihan,
             COUNT(p.id) AS pembayaran
-        FROM kewajiban_pembayaran k
-        JOIN anggota_kewajiban ak ON ak.id_kewajiban = k.id
-        LEFT JOIN pembayaran p ON p.id_anggota_kewajiban = ak.id AND p.status = 'Menunggu'
+        FROM tagihan k
+        JOIN tagihan_anggota ak ON ak.id_tagihan = k.id
+        LEFT JOIN pembayaran p ON p.id_tagihan_anggota = ak.id AND p.status = 'Menunggu'
         WHERE k.id_grup = ?
     ");
     $stmt->execute([$_SESSION['user']['id'], $grup['id']]);
     $hitung = $stmt->fetch();
 
-    $badge_nav['kewajiban'] = (int) $hitung['kewajiban'];
+    $badge_nav['tagihan'] = (int) $hitung['tagihan'];
     if (peran_pengelola($peran_aktif)) {
         $badge_nav['pembayaran'] = (int) $hitung['pembayaran'];
     }

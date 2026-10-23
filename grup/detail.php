@@ -50,7 +50,7 @@ if ($jumlah_anggota <= 1) {
     $alasan_tak_bisa_keluar = 'Kamu Admin satu-satunya. Jadikan anggota lain Admin di halaman Anggota sebelum keluar.';
 }
 
-$stmt = $pdo->prepare("SELECT (SELECT COUNT(*) FROM kewajiban_pembayaran WHERE id_grup = ?) AS tagihan, (SELECT COUNT(*) FROM transaksi WHERE id_grup = ?) AS transaksi");
+$stmt = $pdo->prepare("SELECT (SELECT COUNT(*) FROM tagihan WHERE id_grup = ?) AS tagihan, (SELECT COUNT(*) FROM transaksi WHERE id_grup = ?) AS transaksi");
 $stmt->execute([$id, $id]);
 $hitung = $stmt->fetch();
 $jumlah_tagihan = (int) $hitung['tagihan'];

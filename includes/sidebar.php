@@ -8,7 +8,7 @@ $ikon_nav = [
     '' => '<rect x="3" y="4" width="6" height="6" rx="1.5"/><rect x="15" y="4" width="6" height="6" rx="1.5"/><rect x="3" y="14" width="6" height="6" rx="1.5"/><rect x="15" y="14" width="6" height="6" rx="1.5"/>',
     'grup' => '<rect x="7" y="3" width="14" height="14" rx="2"/><path d="M17 21H5a2 2 0 0 1-2-2V7"/>',
     'anggota' => '<circle cx="9" cy="8" r="3.5"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5a3.5 3.5 0 0 1 0 7"/><path d="M16.5 19a5.5 5.5 0 0 1 4.5-5"/>',
-    'kewajiban' => '<path d="M4 4h16v16l-3-2-2 2-3-2-3 2-2-2-3 2z"/><path d="M8 9h8M8 13h5"/>',
+    'tagihan' => '<path d="M4 4h16v16l-3-2-2 2-3-2-3 2-2-2-3 2z"/><path d="M8 9h8M8 13h5"/>',
     'pembayaran' => '<path d="M20 6L9 17l-5-5"/>',
     'transaksi' => '<path d="M7 8h10l-3-3"/><path d="M17 16H7l3 3"/>',
     'laporan' => '<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>',

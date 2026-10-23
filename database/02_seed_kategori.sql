@@ -1,3 +1,0 @@
--- Jalankan setelah membuat grup jika ingin menambahkan kategori manual.
--- Grup baru pada aplikasi otomatis mendapatkan kategori dasar dan tiga akun sumber dana
--- (Kas Tunai, Rekening Bank, E-Wallet).
