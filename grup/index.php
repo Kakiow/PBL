@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$id_grup, $id_user]);
                 $stmt = $pdo->prepare("INSERT INTO kategori (id_grup, nama_kategori, jenis) VALUES (?, 'Iuran Kas', 'Pemasukan'), (?, 'Lain-lain', 'Pemasukan'), (?, 'Kebutuhan Kelas', 'Pengeluaran')");
                 $stmt->execute([$id_grup, $id_grup, $id_grup]);
-                $stmt = $pdo->prepare("INSERT INTO akun_dana (id_grup, nama_akun, jenis_akun) VALUES (?, 'Kas Tunai', 'Kas_Tunai')");
-                $stmt->execute([$id_grup]);
+                $stmt = $pdo->prepare("INSERT INTO akun_dana (id_grup, nama_akun, jenis_akun) VALUES (?, 'Kas Tunai', 'Kas_Tunai'), (?, 'Rekening Bank', 'Rekening_Bank'), (?, 'E-Wallet', 'E-Wallet')");
+                $stmt->execute([$id_grup, $id_grup, $id_grup]);
                 $pdo->commit();
                 $_SESSION['grup_id'] = $id_grup;
                 flash('success', 'Grup berhasil dibuat. Kode grup: ' . $kode);

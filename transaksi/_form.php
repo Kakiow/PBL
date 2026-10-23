@@ -96,9 +96,9 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                         <span class="field-hint">Tulis tujuan transaksi, mis. "Study Tour" atau "Iuran Kas".</span>
                     </p>
                     <p class="field">
-                        <label for="id_akun_dana">Akun dana</label>
-                        <select id="id_akun_dana" name="id_akun_dana" required data-error="Akun dana wajib dipilih.">
-                            <option value="">Pilih akun</option>
+                        <label for="id_akun_dana">Sumber dana</label>
+                        <select id="id_akun_dana" name="id_akun_dana" required data-error="Sumber dana wajib dipilih.">
+                            <option value="">Pilih sumber dana</option>
                             <?php foreach ($akun as $a): ?>
                             <option value="<?php echo $a['id']; ?>"<?php echo $val_akun === (int) $a['id'] ? ' selected' : ''; ?>>
                                 <?php echo e($a['nama_akun']); ?></option>
@@ -158,7 +158,7 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
                         <dd class="is-empty" id="trx-preview-kategori">—</dd>
                     </div>
                     <div>
-                        <dt>Akun dana</dt>
+                        <dt>Sumber dana</dt>
                         <dd class="is-empty" id="trx-preview-akun">—</dd>
                     </div>
                     <div>

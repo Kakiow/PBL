@@ -16,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($nama === '' || $email === '' || $password === '') {
         flash('error', 'Semua data wajib diisi.');
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        flash('error', 'Format email tidak valid.');
+    } elseif (strlen($password) < 8) {
+        flash('error', 'Password minimal 8 karakter.');
     } elseif ($password !== $konfirmasi) {
         flash('error', 'Konfirmasi password tidak sama.');
     } else {
@@ -46,7 +50,7 @@ include __DIR__ . '/../includes/auth_head.php';
             <p>
                 <label for="password">Password</label>
                 <span class="sandi-field">
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" minlength="8" required>
                     <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="password"
                         aria-pressed="false" aria-label="Tampilkan password"
                         data-label-sembunyi="Sembunyikan password">

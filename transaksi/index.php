@@ -53,7 +53,7 @@ include __DIR__ . '/../includes/header.php';
                     <th scope="col">Deskripsi</th>
                     <th scope="col">Tanggal</th>
                     <th scope="col">Kategori</th>
-                    <th scope="col">Akun dana</th>
+                    <th scope="col">Sumber dana</th>
                     <th scope="col" class="num">Jumlah</th>
                     <th scope="col">Dicatat oleh</th>
                     <?php if ($kelola): ?><th scope="col" class="num"><span class="sr-only">Aksi</span></th><?php endif; ?>
@@ -71,7 +71,7 @@ include __DIR__ . '/../includes/header.php';
                     </td>
                     <td class="nowrap" data-label="Tanggal"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
                     <td data-label="Kategori"><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
-                    <td data-label="Akun dana"><?php echo e($row['nama_akun']); ?></td>
+                    <td data-label="Sumber dana"><?php echo e($row['nama_akun']); ?></td>
                     <td class="num <?php echo $masuk ? 'amount-in' : 'amount-out'; ?>" data-label="<?php echo e($row['jenis']); ?>">
                         <span class="sr-only"><?php echo e($row['jenis']); ?> </span><?php echo $masuk ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
                     </td>

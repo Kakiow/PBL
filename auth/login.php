@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/sesi.php';
 mulai_sesi();
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/batas_login.php';
 
 if (isset($_SESSION['user'])) {
     redirect('../index.php');
@@ -17,15 +18,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('login.php');
     }
 
+    $email_kunci = batas_login_email($email);
+    $ip = batas_login_ip();
+    $sisa_blokir = batas_login_tersisa($pdo, $email_kunci, $ip);
+
+    if ($sisa_blokir > 0) {
+        flash('error', pesan_batas_login($sisa_blokir));
+        redirect('login.php');
+    }
+
     $stmt = $pdo->prepare("SELECT * FROM pengguna WHERE email = ? AND apakah_aktif = TRUE");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if (!$user || !password_verify($password, $user['hash_kata_sandi'])) {
-        flash('error', 'Email atau password salah.');
+        catat_login_gagal($pdo, $email_kunci, $ip);
+        $sisa_blokir = batas_login_tersisa($pdo, $email_kunci, $ip);
+        flash('error', $sisa_blokir > 0 ? pesan_batas_login($sisa_blokir) : 'Email atau password salah.');
         redirect('login.php');
     }
 
+    bersihkan_login_gagal($pdo, $email_kunci, $ip);
     session_regenerate_id(true);
     unset($_SESSION['csrf_token']);
     $_SESSION['user'] = [

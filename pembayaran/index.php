@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
                 $akun = $tujuan['akun'];
 
                 if (!$kategori || !$akun) {
-                    throw new Exception('Kategori pemasukan dan akun dana harus tersedia.');
+                    throw new Exception('Kategori pemasukan dan sumber dana harus tersedia.');
                 }
 
                 $stmt = $pdo->prepare("SELECT 1 FROM transaksi WHERE id_pembayaran = ?");
