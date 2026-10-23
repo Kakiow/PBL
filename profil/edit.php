@@ -247,54 +247,34 @@ include __DIR__ . '/../includes/header.php';
             <input type="hidden" name="aksi" value="ganti_sandi">
             <div class="field<?php echo $error_sandi_baru !== null ? ' is-invalid' : ''; ?>">
                 <label for="sandi_baru">Password baru</label>
-                <span class="sandi-field">
-                    <input id="sandi_baru" name="sandi_baru" type="password" minlength="8" aria-required="true"
-                        autocomplete="new-password"
-                        <?php echo $error_sandi_baru !== null ? 'aria-invalid="true" aria-describedby="sandi-baru-error" ' : ''; ?><?php echo $fokus_sandi === 'sandi_baru' ? 'autofocus' : ''; ?>>
-                    <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi_baru"
-                        aria-pressed="false" aria-label="Tampilkan password baru"
-                        data-label-sembunyi="Sembunyikan password baru">
-                        <svg class="ikon-lihat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
-                            <circle cx="12" cy="12" r="3" />
-                        </svg>
-                        <svg class="ikon-tutup" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="m3 3 18 18" />
-                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
-                            <path d="M9.9 5.7A10.5 10.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4.2" />
-                            <path d="M6.2 6.2A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5a10.2 10.2 0 0 0 4.3-.9" />
-                        </svg>
-                    </button>
-                </span>
+                <?php sandi_field([
+                    'id' => 'sandi_baru',
+                    'minlength' => 8,
+                    'autocomplete' => 'new-password',
+                    'aria_required' => true,
+                    'aria_invalid' => $error_sandi_baru !== null,
+                    'aria_describedby' => $error_sandi_baru !== null ? 'sandi-baru-error' : null,
+                    'autofocus' => $fokus_sandi === 'sandi_baru',
+                    'label_tampil' => 'Tampilkan password baru',
+                    'label_sembunyi' => 'Sembunyikan password baru',
+                ]); ?>
                 <?php if ($error_sandi_baru !== null): ?>
                 <span class="field-error" id="sandi-baru-error" role="alert"><?php echo e($error_sandi_baru); ?></span>
                 <?php endif; ?>
             </div>
             <div class="field<?php echo $error_sandi_konfirmasi !== null ? ' is-invalid' : ''; ?>">
                 <label for="sandi_konfirmasi">Konfirmasi password baru</label>
-                <span class="sandi-field">
-                    <input id="sandi_konfirmasi" name="sandi_konfirmasi" type="password" minlength="8"
-                        aria-required="true" autocomplete="new-password"
-                        <?php echo $error_sandi_konfirmasi !== null ? 'aria-invalid="true" aria-describedby="sandi-konfirmasi-error" ' : ''; ?><?php echo $fokus_sandi === 'sandi_konfirmasi' ? 'autofocus' : ''; ?>>
-                    <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi_konfirmasi"
-                        aria-pressed="false" aria-label="Tampilkan konfirmasi password baru"
-                        data-label-sembunyi="Sembunyikan konfirmasi password baru">
-                        <svg class="ikon-lihat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
-                            <circle cx="12" cy="12" r="3" />
-                        </svg>
-                        <svg class="ikon-tutup" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="m3 3 18 18" />
-                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
-                            <path d="M9.9 5.7A10.5 10.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4.2" />
-                            <path d="M6.2 6.2A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5a10.2 10.2 0 0 0 4.3-.9" />
-                        </svg>
-                    </button>
-                </span>
+                <?php sandi_field([
+                    'id' => 'sandi_konfirmasi',
+                    'minlength' => 8,
+                    'autocomplete' => 'new-password',
+                    'aria_required' => true,
+                    'aria_invalid' => $error_sandi_konfirmasi !== null,
+                    'aria_describedby' => $error_sandi_konfirmasi !== null ? 'sandi-konfirmasi-error' : null,
+                    'autofocus' => $fokus_sandi === 'sandi_konfirmasi',
+                    'label_tampil' => 'Tampilkan konfirmasi password baru',
+                    'label_sembunyi' => 'Sembunyikan konfirmasi password baru',
+                ]); ?>
                 <?php if ($error_sandi_konfirmasi !== null): ?>
                 <span class="field-error" id="sandi-konfirmasi-error"
                     role="alert"><?php echo e($error_sandi_konfirmasi); ?></span>

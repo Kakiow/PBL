@@ -211,27 +211,14 @@ include __DIR__ . '/../includes/header.php';
             <input type="hidden" name="aksi" value="verifikasi">
             <div class="field<?php echo $error_sandi !== null ? ' is-invalid' : ''; ?>">
                 <label for="sandi">Password</label>
-                <span class="sandi-field">
-                    <input id="sandi" name="sandi" type="password" autocomplete="current-password"
-                        aria-required="true"
-                        <?php echo $error_sandi !== null ? 'aria-invalid="true" aria-describedby="sandi-error" ' : ''; ?>autofocus>
-                    <button type="button" class="sandi-toggle" data-sandi-toggle aria-controls="sandi"
-                        aria-pressed="false" aria-label="Tampilkan password"
-                        data-label-sembunyi="Sembunyikan password">
-                        <svg class="ikon-lihat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
-                            <circle cx="12" cy="12" r="3" />
-                        </svg>
-                        <svg class="ikon-tutup" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="m3 3 18 18" />
-                            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
-                            <path d="M9.9 5.7A10.5 10.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4.2" />
-                            <path d="M6.2 6.2A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5a10.2 10.2 0 0 0 4.3-.9" />
-                        </svg>
-                    </button>
-                </span>
+                <?php sandi_field([
+                    'id' => 'sandi',
+                    'autocomplete' => 'current-password',
+                    'aria_required' => true,
+                    'aria_invalid' => $error_sandi !== null,
+                    'aria_describedby' => $error_sandi !== null ? 'sandi-error' : null,
+                    'autofocus' => true,
+                ]); ?>
                 <?php if ($error_sandi !== null): ?>
                 <span class="field-error" id="sandi-error" role="alert"><?php echo e($error_sandi); ?></span>
                 <?php endif; ?>

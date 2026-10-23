@@ -19,6 +19,7 @@ SIMKAS/
 │                    helpers.php     (fungsi umum, peran, grup, menu)
 │                    bukti.php       (upload & pembersihan bukti pembayaran)
 │                    tagihan.php     (label status, info tenggat, penagihan anggota)
+│                    sandi_field.php (input password + tombol lihat/sembunyikan)
 │                    reset_password.php (token reset + email Brevo)
 ├── grup/            index.php, detail.php, edit.php, hapus.php,
 │                    _daftar_grup.php, _form_grup.php

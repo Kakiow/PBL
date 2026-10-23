@@ -19,13 +19,23 @@ if (!$g || !$peran) {
 
 $saya_admin = $peran === 'Admin';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'keluar_grup') {
-    $jumlah_anggota = jumlah_anggota_grup($pdo, $id);
+$stmt = $pdo->prepare("SELECT ag.peran, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY CASE ag.peran WHEN 'Admin' THEN 1 WHEN 'Bendahara' THEN 2 ELSE 3 END, p.nama");
+$stmt->execute([$id]);
+$anggota = $stmt->fetchAll();
+$jumlah_anggota = count($anggota);
+$jumlah_admin = count(array_filter($anggota, fn ($a) => $a['peran'] === 'Admin'));
 
-    if ($jumlah_anggota <= 1) {
-        flash('error', 'Anda anggota terakhir di grup ini. Gunakan Hapus Grup untuk menutup grup.');
-    } elseif ($saya_admin && jumlah_admin_grup($pdo, $id) <= 1) {
-        flash('error', 'Anda Admin satu-satunya. Jadikan anggota lain sebagai Admin di tab Anggota terlebih dahulu.');
+// Alasan Keluar Grup tidak tersedia, ditampilkan langsung di samping tombol (bukan baru muncul sebagai error).
+$alasan_tak_bisa_keluar = '';
+if ($jumlah_anggota <= 1) {
+    $alasan_tak_bisa_keluar = 'Kamu anggota terakhir. Gunakan Hapus Grup untuk menutup grup ini.';
+} elseif ($saya_admin && $jumlah_admin <= 1) {
+    $alasan_tak_bisa_keluar = 'Kamu Admin satu-satunya. Jadikan anggota lain Admin di halaman Anggota sebelum keluar.';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'keluar_grup') {
+    if ($alasan_tak_bisa_keluar !== '') {
+        flash('error', $alasan_tak_bisa_keluar);
     } else {
         $stmt = $pdo->prepare("DELETE FROM anggota_grup WHERE id_grup = ? AND id_pengguna = ?");
         $stmt->execute([$id, $id_user]);
@@ -35,19 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'keluar_
     }
 
     redirect('detail.php?id=' . $id);
-}
-
-$stmt = $pdo->prepare("SELECT ag.peran, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY CASE ag.peran WHEN 'Admin' THEN 1 WHEN 'Bendahara' THEN 2 ELSE 3 END, p.nama");
-$stmt->execute([$id]);
-$anggota = $stmt->fetchAll();
-$jumlah_anggota = count($anggota);
-
-// Alasan Keluar Grup tidak tersedia, ditampilkan langsung di samping tombol (bukan baru muncul sebagai error).
-$alasan_tak_bisa_keluar = '';
-if ($jumlah_anggota <= 1) {
-    $alasan_tak_bisa_keluar = 'Kamu anggota terakhir. Gunakan Hapus Grup untuk menutup grup ini.';
-} elseif ($saya_admin && count(array_filter($anggota, fn ($a) => $a['peran'] === 'Admin')) <= 1) {
-    $alasan_tak_bisa_keluar = 'Kamu Admin satu-satunya. Jadikan anggota lain Admin di halaman Anggota sebelum keluar.';
 }
 
 $stmt = $pdo->prepare("SELECT (SELECT COUNT(*) FROM tagihan WHERE id_grup = ?) AS tagihan, (SELECT COUNT(*) FROM transaksi WHERE id_grup = ?) AS transaksi");
