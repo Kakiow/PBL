@@ -3,8 +3,8 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/_data.php';
 
 $page_title = 'Edit transaksi';
-$page_css = ['transaksi.css', 'transaksi-jenis.css', 'transaksi-fields.css', 'transaksi-preview.css'];
-$page_js = ['form.js', 'transaksi.js'];
+$page_css = ['transaksi.css', 'transaksi-jenis.css', 'transaksi-fields.css', 'transaksi-preview.css', 'datepicker.css'];
+$page_js = ['form.js', 'datepicker.js', 'transaksi.js'];
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
 $role = cek_role($pdo, $id_grup, akses_menu()['transaksi']);
 

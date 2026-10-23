@@ -33,9 +33,9 @@ SIMKAS/
 ├── assets/
 │   ├── css/         style, layout, sidebar, nav, rail, inputs, form, toast,
 │   │                print, auth, dashboard, table, grup, anggota, tagihan,
-│   │                profil, transaksi*
+│   │                profil, transaksi*, datepicker
 │   └── js/          toast.js, sidebar.js, script.js (semua halaman)
-│                    form.js + tagihan.js / transaksi.js (khusus form)
+│                    form.js + datepicker.js + tagihan.js / transaksi.js (khusus form)
 ├── index.php        (Dashboard)
 └── storage/uploads/
 ```
@@ -57,6 +57,7 @@ SIMKAS/
 - **Bendahara**: membuat tagihan (untuk semua anggota atau anggota terpilih), memverifikasi pembayaran, dan mencatat transaksi.
 - **Anggota**: melihat tagihan dan mengirim pembayaran. Anggota yang baru gabung otomatis ikut ditagih hanya untuk tagihan semua-anggota yang tenggatnya belum lewat; tagihan dengan sasaran tertentu tidak ikut bertambah.
 - **Edit/hapus tagihan** (Admin/Bendahara): nominal terkunci setelah ada pembayaran masuk; tagihan yang sudah punya pembayaran disetujui tidak bisa dihapus. Sasaran tagihan tertentu bisa ditambah lewat Detail, tetapi tidak bisa dikurangi.
+- **Tanggal tagihan & transaksi**: kolom tanggal tidak bisa diketik manual; klik (atau Enter/Space) membuka kalender interaktif dengan navigasi bulan, penanda hari ini, tombol Hari ini, dan navigasi keyboard. Di ponsel kalender tampil sebagai bottom sheet. Tenggat tagihan tidak bisa dipilih sebelum hari ini.
 - **Lupa password**: mengirim link reset sekali pakai melalui email Brevo.
 - **Masuk/Daftar**: field password punya tombol lihat/sembunyikan.
 - **Profil**: data akun dan daftar grup; tombol Edit profil & password membuka dialog verifikasi password (maksimal 5 percobaan per 10 menit) sebelum masuk halaman edit. Izin edit berakhir begitu kamu meninggalkan halaman edit dan berlaku maksimal 15 menit selama halaman itu terbuka, jadi setiap klik Edit meminta password lagi. Di halaman edit kamu bisa mengubah nama dan password (minimal 8 karakter, bisa diperiksa lewat tombol lihat). Grup aktif bisa diganti langsung dari daftar grup. Isian nama dipertahankan bila sesi berakhir saat menyimpan, dan sesi lain otomatis berakhir setelah password diganti. Email akun tampil sebagai baris terkunci dan tidak dapat diubah.
