@@ -5,8 +5,9 @@ $page_title = 'Laporan';
 $page_css = ['dashboard.css', 'table.css'];
 
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
-cek_role($pdo, $id_grup, akses_menu()['laporan']);
+$role = cek_role($pdo, $id_grup, akses_menu()['laporan']);
 $grup = grup_aktif($pdo);
+$nama_user = trim((string) ($_SESSION['user']['nama'] ?? '')) ?: 'Pengguna';
 
 // Tanggal dari query string divalidasi dulu; format salah akan membuat PostgreSQL melempar error.
 $mulai = tanggal_valid($_GET['mulai'] ?? '') ? $_GET['mulai'] : date('Y-m-01');
@@ -30,11 +31,72 @@ include __DIR__ . '/../includes/header.php';
     <p>Ringkasan transaksi berdasarkan periode yang dipilih.</p>
 </div>
 
-<div class="print-only print-head">
-    <h1>Laporan kas</h1>
-    <p class="print-meta"><?php echo e($grup['nama_grup']); ?> &middot; Periode <?php echo e(tanggal_id($mulai)); ?> s/d
-        <?php echo e(tanggal_id($selesai)); ?></p>
-</div>
+<section class="print-report" aria-hidden="true">
+    <header class="pr-kop">
+        <img class="pr-logo" src="<?php echo aset($base, 'assets/img/logo.svg'); ?>" alt="">
+        <div class="pr-identitas">
+            <strong>SIMKAS</strong>
+            <span>Sistem Informasi Manajemen Kas</span>
+        </div>
+    </header>
+
+    <div class="pr-judul">
+        <h1>LAPORAN KAS</h1>
+        <p class="pr-grup"><?php echo e($grup['nama_grup']); ?></p>
+        <p class="pr-periode">Periode <?php echo e(tanggal_id($mulai)); ?> &ndash; <?php echo e(tanggal_id($selesai)); ?></p>
+    </div>
+
+    <table class="pr-summary">
+        <thead>
+            <tr>
+                <th scope="col">Pemasukan</th>
+                <th scope="col">Pengeluaran</th>
+                <th scope="col">Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php echo rupiah($ringkasan['pemasukan']); ?></td>
+                <td><?php echo rupiah($ringkasan['pengeluaran']); ?></td>
+                <td><?php echo rupiah($saldo); ?></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="pr-table">
+        <thead>
+            <tr>
+                <th scope="col" class="pr-no">No</th>
+                <th scope="col">Tanggal</th>
+                <th scope="col">Deskripsi</th>
+                <th scope="col">Kategori</th>
+                <th scope="col">Jenis</th>
+                <th scope="col" class="num">Jumlah</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!$data): ?><tr>
+                <td colspan="6" class="pr-empty">Tidak ada transaksi pada periode ini.</td>
+            </tr><?php endif; ?>
+            <?php $nomor = 1; foreach ($data as $row): ?>
+            <tr>
+                <td class="pr-no"><?php echo $nomor++; ?></td>
+                <td class="nowrap"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
+                <td><?php echo e($row['deskripsi'] ?: $row['nama_kategori']); ?></td>
+                <td><?php echo e($row['nama_kategori']); ?></td>
+                <td><?php echo e($row['jenis']); ?></td>
+                <td class="num"><?php echo rupiah($row['jumlah']); ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <footer class="pr-footer">
+        <span>Dicetak pada <?php echo e(tanggal_id(date('Y-m-d H:i:s'), true)); ?> oleh <?php echo e($nama_user); ?>
+            (<?php echo e(label_peran($role)); ?>)</span>
+        <span>Dokumen ini dihasilkan otomatis oleh SIMKAS.</span>
+    </footer>
+</section>
 
 <section class="content-card no-print">
     <div class="card-head">
@@ -47,17 +109,18 @@ include __DIR__ . '/../includes/header.php';
         <p><label for="mulai">Mulai</label><input id="mulai" type="date" name="mulai" value="<?php echo e($mulai); ?>"></p>
         <p><label for="selesai">Selesai</label><input id="selesai" type="date" name="selesai" value="<?php echo e($selesai); ?>"></p>
         <button class="btn secondary" type="button" data-print>Unduh PDF</button>
+        <a class="btn secondary" href="export_xlsx.php?mulai=<?php echo e(rawurlencode($mulai)); ?>&amp;selesai=<?php echo e(rawurlencode($selesai)); ?>">Unduh XLSX</a>
         <noscript><button class="btn primary" type="submit">Tampilkan</button></noscript>
     </form>
 </section>
 
-<section class="stats">
+<section class="stats no-print">
     <article class="stat-card is-in"><span>Pemasukan</span><strong><?php echo rupiah($ringkasan['pemasukan']); ?></strong></article>
     <article class="stat-card is-out"><span>Pengeluaran</span><strong><?php echo rupiah($ringkasan['pengeluaran']); ?></strong></article>
     <article class="stat-card is-primary"><span>Selisih periode ini</span><strong><?php echo rupiah($saldo); ?></strong></article>
 </section>
 
-<section class="content-card">
+<section class="content-card no-print">
     <div class="card-head">
         <div>
             <h2>Rincian transaksi</h2>

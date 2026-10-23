@@ -29,7 +29,8 @@ storage/uploads/.pembersihan_terakhir
 *.log
 
 #Other
-/Laporan
+/laporan/*
+!/laporan/*.php
 AGENTS.md
 .commandcode
 .dist

@@ -21,6 +21,7 @@ SIMKAS/
 │                    tagihan.php     (label status, info tenggat, penagihan anggota)
 │                    sandi_field.php (input password + tombol lihat/sembunyikan)
 │                    reset_password.php (token reset + email Brevo)
+│                    xlsx.php        (penulis XLSX native tanpa Composer)
 ├── grup/            index.php, detail.php, edit.php, hapus.php,
 │                    _daftar_grup.php, _form_grup.php
 ├── anggota/         index.php            (daftar anggota + ubah role)
@@ -29,7 +30,7 @@ SIMKAS/
 │                    bayar.php, detail.php, _form.php  (Tagihan)
 ├── pembayaran/      index.php            (Verifikasi)
 ├── transaksi/       index.php, tambah.php, edit.php, _form.php, _data.php
-├── laporan/         index.php
+├── laporan/         index.php, export_xlsx.php
 ├── assets/
 │   ├── css/         style, layout, sidebar, nav, rail, inputs, form, toast,
 │   │                print, auth, dashboard, table, grup, anggota, tagihan,
@@ -62,7 +63,13 @@ SIMKAS/
 - **Masuk/Daftar**: field password punya tombol lihat/sembunyikan.
 - **Profil**: data akun dan daftar grup; tombol Edit profil & password membuka dialog verifikasi password (maksimal 5 percobaan per 10 menit) sebelum masuk halaman edit. Izin edit berakhir begitu kamu meninggalkan halaman edit dan berlaku maksimal 15 menit selama halaman itu terbuka, jadi setiap klik Edit meminta password lagi. Di halaman edit kamu bisa mengubah nama dan password (minimal 8 karakter, bisa diperiksa lewat tombol lihat). Grup aktif bisa diganti langsung dari daftar grup. Isian nama dipertahankan bila sesi berakhir saat menyimpan, dan sesi lain otomatis berakhir setelah password diganti. Email akun tampil sebagai baris terkunci dan tidak dapat diubah.
 - **Dashboard**: menampilkan saldo, pemasukan, pengeluaran, jumlah anggota, dan transaksi terbaru.
-- **Laporan**: menampilkan transaksi berdasarkan rentang tanggal.
+- **Laporan**: menampilkan transaksi berdasarkan rentang tanggal. **Unduh PDF** membuka dialog cetak browser dengan tata letak laporan formal A4 (kop SIMKAS, identitas grup, periode, ringkasan, tabel detail, waktu cetak & nama pencetak; tanpa tanda tangan). **Unduh XLSX** mengunduh file Excel native satu sheet "Laporan Kas" yang mengikuti filter yang sama.
+
+## Ekspor laporan
+
+- **PDF**: tombol Unduh PDF memanggil dialog cetak browser; pilih "Simpan sebagai PDF". Tata letak A4 formal diatur `assets/css/print.css` dan markup `.print-report` hanya tampil di media cetak.
+- **XLSX**: dibuat langsung oleh PHP memakai `ZipArchive` (tanpa Composer), satu sheet "Laporan Kas" berisi kop, ringkasan, dan tabel detail. Nominal disimpan sebagai angka berformat Rupiah sehingga bisa dijumlahkan di Excel.
+- Kedua ekspor mengikuti rentang tanggal yang sedang aktif dan memakai hak akses menu Laporan. Ekstensi PHP `zip` harus aktif di server.
 
 ## Konfigurasi email reset password
 
