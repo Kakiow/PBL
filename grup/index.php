@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Grup';
 $page_css = ['grup.css'];
+$page_js = ['grup-dialog.js'];
 $id_user = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -103,12 +104,6 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <?php
-// Sudah punya grup: daftar grup lebih dulu. Belum: form buat/gabung lebih dulu.
-if ($grup_saya) {
-    include __DIR__ . '/_daftar_grup.php';
-    include __DIR__ . '/_form_grup.php';
-} else {
-    include __DIR__ . '/_form_grup.php';
-    include __DIR__ . '/_daftar_grup.php';
-}
+include __DIR__ . '/_daftar_grup.php';
+include __DIR__ . '/_form_grup.php';
 include __DIR__ . '/../includes/footer.php';
