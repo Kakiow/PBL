@@ -3,11 +3,11 @@ require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Profil';
 $page_css = ['profil.css'];
-$page_js = ['password-toggle.js', 'profil-verifikasi.js'];
+$page_js = ['password-toggle.js', 'profil-verifikasi.js', 'crop-foto.js'];
 
 $id_user = (int) $_SESSION['user']['id'];
 
-$stmt = $pdo->prepare("SELECT id, nama, email, apakah_aktif, dibuat_pada FROM pengguna WHERE id = ?");
+$stmt = $pdo->prepare("SELECT id, nama, email, apakah_aktif, foto_profil, dibuat_pada FROM pengguna WHERE id = ?");
 $stmt->execute([$id_user]);
 $akun = $stmt->fetch();
 
@@ -122,7 +122,23 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <section class="profile-hero" aria-labelledby="profil-nama">
-    <span class="profile-avatar" aria-hidden="true"><?php echo e($inisial); ?></span>
+    <div class="profile-avatar-col">
+        <div class="profile-avatar-wrap">
+            <div class="profile-avatar-box" id="profile-avatar-box">
+                <?php echo avatar_pengguna($akun['nama'], $akun['foto_profil'], 'profile-avatar'); ?>
+            </div>
+            <button type="button" class="btn-avatar-camera" id="btn-pilih-foto" title="Ubah foto profil" aria-label="Ubah foto profil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>
+            </button>
+        </div>
+        <button type="button" class="btn-avatar-hapus" id="btn-hapus-foto" <?php echo empty($akun['foto_profil']) ? 'style="display:none"' : ''; ?>>
+            Hapus foto
+        </button>
+    </div>
+    <input type="file" id="input-foto-profil" accept="image/jpeg,image/png,image/webp" style="display:none" aria-hidden="true">
     <div class="profile-ident">
         <h2 id="profil-nama"><?php echo e($akun['nama']); ?></h2>
         <p><?php echo e($akun['email']); ?></p>
@@ -227,6 +243,36 @@ include __DIR__ . '/../includes/header.php';
                 <button class="btn primary" type="submit">Lanjutkan</button>
             </div>
         </form>
+    </div>
+</dialog>
+<dialog id="dialog-crop-foto" class="crop-dialog" aria-labelledby="judul-crop">
+    <div class="crop-dialog-in">
+        <div class="crop-dialog-head">
+            <h2 id="judul-crop">Sesuaikan Foto Profil</h2>
+            <button type="button" class="crop-close-btn" id="btn-tutup-crop" aria-label="Tutup dialog">✕</button>
+        </div>
+        <p class="crop-dialog-desc">Geser untuk memposisikan dan gunakan slider untuk memperbesar foto.</p>
+        <div class="crop-viewport-wrap">
+            <div class="crop-viewport" id="crop-viewport">
+                <canvas id="crop-canvas" width="280" height="280"></canvas>
+                <div class="crop-circle-mask" aria-hidden="true"></div>
+            </div>
+        </div>
+        <div class="crop-controls">
+            <span class="crop-zoom-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+                </svg>
+            </span>
+            <input type="range" id="crop-zoom" min="1" max="3" step="0.01" value="1" aria-label="Perbesar foto">
+        </div>
+        <div class="crop-dialog-foot">
+            <button type="button" class="btn text" id="btn-batal-crop">Batal</button>
+            <button type="button" class="btn primary" id="btn-simpan-crop">
+                <span class="btn-text">Gunakan Foto</span>
+                <span class="btn-spinner" aria-hidden="true" style="display:none">Menyimpan...</span>
+            </button>
+        </div>
     </div>
 </dialog>
 <?php include __DIR__ . '/../includes/footer.php'; ?>

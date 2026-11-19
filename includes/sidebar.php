@@ -76,7 +76,7 @@ $tulis_item = function (array $item) use ($ikon_nav, $badge_nav, $base, $slug_ak
     <div class="sidebar-foot">
         <a class="user-card" href="<?php echo $base; ?>profil/index.php"
             aria-label="Buka profil <?php echo e($nama_user); ?>">
-            <span class="avatar" aria-hidden="true"><?php echo e($inisial); ?></span>
+            <?php echo avatar_pengguna($nama_user, $foto_user, '', ['base' => $base]); ?>
             <span class="user-meta">
                 <span class="user-name"><?php echo e($nama_user); ?></span>
                 <span class="user-email"><?php echo e($email_user); ?></span>

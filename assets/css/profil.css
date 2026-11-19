@@ -13,11 +13,29 @@
   background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
+.profile-avatar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.profile-avatar-wrap {
+  position: relative;
+  width: 68px;
+  height: 68px;
+}
+.profile-avatar-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
 .profile-avatar {
   display: grid;
   flex: 0 0 auto;
-  width: 64px;
-  height: 64px;
+  width: 100%;
+  height: 100%;
   place-items: center;
   border-radius: 50%;
   background: linear-gradient(140deg, #4a6ea8, var(--primary));
@@ -25,6 +43,51 @@
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 0.02em;
+}
+img.profile-avatar {
+  display: block;
+  object-fit: cover;
+}
+.btn-avatar-camera {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.btn-avatar-camera:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  transform: scale(1.08);
+}
+.btn-avatar-camera svg {
+  width: 14px;
+  height: 14px;
+}
+.btn-avatar-hapus {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--danger, #dc2626);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn-avatar-hapus:hover {
+  color: #b91c1c;
 }
 .profile-ident {
   flex: 1 1 auto;
@@ -344,9 +407,11 @@ body:has(.profile-dialog[open]) {
     gap: 16px 14px;
     padding: 18px;
   }
+  .profile-avatar-wrap {
+    width: 56px;
+    height: 56px;
+  }
   .profile-avatar {
-    width: 52px;
-    height: 52px;
     font-size: 1.2rem;
   }
   .profile-edit-btn {
@@ -365,3 +430,117 @@ body:has(.profile-dialog[open]) {
     flex: 1 1 auto;
   }
 }
+
+/* Dialog Crop Lingkaran Ala WhatsApp -------------------------------- */
+.crop-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(360px, calc(100% - 32px));
+  max-width: 100%;
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  color: var(--text);
+  z-index: 1000;
+}
+.crop-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+}
+.crop-dialog-in {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.crop-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.crop-dialog-head h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+.crop-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 4px;
+}
+.crop-close-btn:hover {
+  color: var(--text);
+  background: var(--surface-alt, #f1f5f9);
+}
+.crop-dialog-desc {
+  margin: -8px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.crop-viewport-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.crop-viewport {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  background: #0f172a;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.crop-viewport:active {
+  cursor: grabbing;
+}
+.crop-viewport canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.crop-circle-mask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.65);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+}
+.crop-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
+}
+.crop-zoom-icon {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+}
+.crop-zoom-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.crop-controls input[type="range"] {
+  flex: 1;
+  cursor: pointer;
+}
+.crop-dialog-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+

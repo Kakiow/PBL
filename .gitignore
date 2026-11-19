@@ -14,6 +14,9 @@ config/koneksi.php
 storage/uploads/*
 storage/uploads/**
 !storage/uploads/.gitkeep
+storage/avatars/*
+storage/avatars/**
+!storage/avatars/.gitkeep
 
 # Penanda pembersihan otomatis harian
 storage/uploads/.pembersihan_terakhir

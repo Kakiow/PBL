@@ -2,6 +2,35 @@
    SIMKAS — halaman Anggota: daftar anggota grup & pengaturan role
    ========================================================================== */
 
+.user-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.user-inline-name {
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(140deg, #4a6ea8, var(--primary));
+  color: #fff;
+  flex-shrink: 0;
+}
+img.avatar-sm {
+  display: inline-block;
+  object-fit: cover;
+}
+
 .role-form {
   display: inline-flex;
   align-items: center;

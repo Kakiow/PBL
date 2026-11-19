@@ -117,6 +117,12 @@ a.user-card:focus-visible {
   font-size: 0.85rem;
   font-weight: 700;
 }
+img.avatar,
+.avatar-img {
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
 .user-meta {
   display: flex;
   flex-direction: column;

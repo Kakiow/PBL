@@ -44,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['user'] = [
         'id' => $user['id'],
         'nama' => $user['nama'],
-        'email' => $user['email']
+        'email' => $user['email'],
+        'foto_profil' => $user['foto_profil'] ?? null
     ];
     $_SESSION['sandi_stempel'] = hash('sha256', $user['hash_kata_sandi']);
 

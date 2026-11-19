@@ -31,6 +31,45 @@ function aset($base, $path)
     return $base . $path . '?v=' . filemtime($berkas);
 }
 
+function base_url_relatif()
+{
+    $app_root = str_replace('\\', '/', dirname(__DIR__));
+    $script_file = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME'] ?? '');
+
+    if ($app_root !== '' && strpos($script_file, $app_root) === 0) {
+        $script_rel = substr($script_file, strlen($app_root));
+        $sub_dir = dirname(trim($script_rel, '/'));
+        return ($sub_dir === '.' || $sub_dir === '')
+            ? ''
+            : str_repeat('../', count(array_filter(explode('/', $sub_dir))));
+    }
+
+    return '../';
+}
+
+function avatar_pengguna($nama, $foto = null, $kelas = '', $opsi = [])
+{
+    $nama = trim((string) $nama);
+    $inisial = $nama !== ''
+        ? strtoupper(function_exists('mb_substr') ? mb_substr($nama, 0, 1) : substr($nama, 0, 1))
+        : 'U';
+    $foto = basename((string) $foto);
+    $kelas_bersih = trim((string) $kelas);
+    $kelas_utama = $kelas_bersih !== '' ? $kelas_bersih : 'avatar';
+
+    if ($foto !== '' && $foto !== '.' && $foto !== '..') {
+        $berkas = dirname(__DIR__) . '/storage/avatars/' . $foto;
+        if (is_file($berkas)) {
+            $base = $opsi['base'] ?? base_url_relatif();
+            $url = $base . 'storage/avatars/' . rawurlencode($foto) . '?v=' . filemtime($berkas);
+            $alt = $opsi['alt'] ?? ('Foto ' . $nama);
+            return '<img class="avatar-img ' . e($kelas_utama) . '" src="' . e($url) . '" alt="' . e($alt) . '">';
+        }
+    }
+
+    return '<span class="avatar ' . e($kelas_utama) . '" aria-hidden="true">' . e($inisial) . '</span>';
+}
+
 function redirect($url)
 {
     header('Location: ' . $url);

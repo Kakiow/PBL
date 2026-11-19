@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $saya_admin) {
     }
 }
 
-$stmt = $pdo->prepare("SELECT ag.id, ag.id_pengguna, ag.peran, ag.bergabung_pada, p.nama, p.email FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY p.nama");
+$stmt = $pdo->prepare("SELECT ag.id, ag.id_pengguna, ag.peran, ag.bergabung_pada, p.nama, p.email, p.foto_profil FROM anggota_grup ag JOIN pengguna p ON p.id = ag.id_pengguna WHERE ag.id_grup = ? ORDER BY p.nama");
 $stmt->execute([$id_grup]);
 $anggota = $stmt->fetchAll();
 
@@ -132,7 +132,12 @@ include __DIR__ . '/../includes/header.php';
                     </tr><?php endif; ?>
                     <?php foreach ($anggota as $a): ?>
                     <tr>
-                        <td class="cell-title"><?php echo e($a['nama']); ?></td>
+                        <td class="cell-title">
+                            <div class="user-inline">
+                                <?php echo avatar_pengguna($a['nama'], $a['foto_profil'], 'avatar-sm'); ?>
+                                <span class="user-inline-name"><?php echo e($a['nama']); ?></span>
+                            </div>
+                        </td>
                         <td class="desc" data-label="Email"><?php echo e($a['email']); ?></td>
                         <td data-label="Peran"><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
                         <td class="nowrap" data-label="Bergabung"><?php echo e(tanggal_id($a['bergabung_pada'])); ?></td>

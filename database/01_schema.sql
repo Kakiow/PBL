@@ -22,6 +22,7 @@ CREATE TABLE pengguna (
     email VARCHAR(255) NOT NULL UNIQUE,
     hash_kata_sandi VARCHAR(255) NOT NULL,
     apakah_aktif BOOLEAN NOT NULL DEFAULT TRUE,
+    foto_profil VARCHAR(255) NULL,
     dibuat_pada TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

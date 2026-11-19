@@ -64,6 +64,12 @@ if ($grup && $peran_aktif) {
 
 $nama_user = trim((string) ($_SESSION['user']['nama'] ?? ''));
 $email_user = trim((string) ($_SESSION['user']['email'] ?? ''));
+if (isset($_SESSION['user']['id']) && !array_key_exists('foto_profil', $_SESSION['user']) && isset($pdo)) {
+    $stmt_f = $pdo->prepare("SELECT foto_profil FROM pengguna WHERE id = ?");
+    $stmt_f->execute([$_SESSION['user']['id']]);
+    $_SESSION['user']['foto_profil'] = $stmt_f->fetchColumn() ?: null;
+}
+$foto_user = $_SESSION['user']['foto_profil'] ?? null;
 $inisial = $nama_user !== ''
     ? strtoupper(function_exists('mb_substr') ? mb_substr($nama_user, 0, 1) : substr($nama_user, 0, 1))
     : 'U';
