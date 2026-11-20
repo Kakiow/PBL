@@ -38,49 +38,148 @@
   font-size: 0.82rem;
   font-weight: 600;
 }
+.proof-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.proof-locked svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
 
 /* Tolak dibuka lewat <details>: alasan wajib diisi sebelum dikirim. */
+.content-card .table-fancy-wrap {
+  overflow: visible;
+}
+.table-fancy .row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
 .reject {
   position: relative;
+  display: inline-block;
 }
 .reject > summary {
   list-style: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .reject > summary::-webkit-details-marker {
   display: none;
 }
-/* Terbuka di dalam sel (bukan melayang) supaya tidak terpotong wrapper tabel yang bisa di-scroll. */
-.row-actions:has(.reject[open]) {
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
-.row-actions .reject[open] {
-  display: flex;
-  flex: 1 0 100%;
-  flex-direction: column;
-  align-items: flex-end;
-}
 .reject[open] > summary {
-  background: var(--danger-soft);
+  background: var(--danger-soft, #fee2e2);
+  color: var(--danger, #dc2626);
+}
+
+/* Floating Bubble Chat WhatsApp style */
+.reject-bubble {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 90;
+  width: 290px;
+  filter: drop-shadow(0 10px 22px rgba(15, 23, 42, 0.14)) drop-shadow(0 4px 6px rgba(15, 23, 42, 0.05));
+  animation: rejectBubbleIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reject-form {
-  display: grid;
-  gap: 8px;
-  width: 240px;
-  margin-top: 8px;
-  padding: 12px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   background: var(--surface);
   text-align: left;
 }
-.reject-form label {
+/* Panah bubble chat */
+.reject-form::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 22px;
+  width: 12px;
+  height: 12px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
+  z-index: 1;
+}
+.reject-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: -2px;
+}
+.reject-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text);
   margin: 0;
 }
-.reject-form textarea {
-  min-height: 70px;
-  font-size: 0.85rem;
+.reject-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
 }
+.reject-close:hover {
+  background: var(--surface-alt, #f1f5f9);
+  color: var(--text);
+}
+.reject-form textarea {
+  width: 100%;
+  min-height: 72px;
+  max-height: 140px;
+  resize: vertical;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-input, #fff);
+  color: var(--text);
+}
+.reject-form textarea:focus {
+  border-color: var(--danger, #dc2626);
+  outline: 2px solid rgba(220, 38, 38, 0.15);
+}
+.reject-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+@keyframes rejectBubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .reason-text {
   display: block;
   max-width: 260px;
@@ -91,8 +190,13 @@
 }
 
 @media (max-width: 640px) {
-  .reject-form {
-    width: 100%;
+  .table-stack td.cell-actions .row-actions {
+    flex-wrap: nowrap;
+    justify-content: stretch;
+  }
+  .reject-bubble {
+    width: min(290px, calc(100vw - 44px));
+    right: 0;
   }
   .reason-text {
     max-width: none;

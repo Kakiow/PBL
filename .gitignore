@@ -31,16 +31,23 @@ storage/uploads/.pembersihan_terakhir
 # Log
 *.log
 
-#Other
+# Dokumen & Laporan non-kode (Proposal, Milestone, kekurangan.md, Jobsheet, docx, dsb)
 /laporan/*
 !/laporan/*.php
-AGENTS.md
-.commandcode
-.dist
 
-.gitignore
+# Diagram dan aset dokumen/laporan
+docs/diagrams/
+
+# File media rekaman / video demo / audio di storage
+storage/*.mp4
+storage/*.mp3
+storage/*.wav
+
+# Konteks AI, desain, & project eksternal
+AGENTS.md
 DESIGN.md
 PRODUCT.md
-.impeccable
-projects/
+.impeccable/
+.commandcode/
+.dist/
 projects/

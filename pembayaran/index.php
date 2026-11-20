@@ -3,8 +3,10 @@ require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Verifikasi';
 $page_css = ['table.css', 'verifikasi.css'];
+$page_js = ['verifikasi.js'];
 
 $id_grup = (int) ($_SESSION['grup_id'] ?? 0);
+$id_user = (int) ($_SESSION['user']['id'] ?? 0);
 $role = cek_role($pdo, $id_grup, akses_menu()['pembayaran']);
 $boleh_verifikasi = peran_pengelola($role);
 
@@ -102,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
 
 // Antrean: yang menunggu paling lama di atas. Riwayat: yang terbaru di atas.
 $stmt = $pdo->prepare("
-    SELECT p.*, u.nama, k.judul
+    SELECT p.*, ak.id_pengguna, u.nama, k.judul
     FROM pembayaran p
     JOIN tagihan_anggota ak ON ak.id = p.id_tagihan_anggota
     JOIN pengguna u ON u.id = ak.id_pengguna
@@ -124,10 +126,19 @@ $data = $tab === 'menunggu' ? $menunggu : $riwayat;
 $kolom_aksi = $tab === 'menunggu' && $boleh_verifikasi;
 
 // Sel bukti: thumbnail gambar, ikon PDF, keterangan tunai, atau peringatan bila bukti non-tunai tidak ada.
-// Di Riwayat, bukti yang sudah dibersihkan otomatis bukan masalah, jadi tidak diberi warna peringatan.
-$tampil_bukti = function ($row) use ($tab) {
+// Anggota biasa hanya dapat melihat bukti pembayarannya sendiri; bukti anggota lain dikunci (khusus pengelola).
+$tampil_bukti = function ($row) use ($tab, $boleh_verifikasi, $id_user) {
     if ($row['metode_pembayaran'] === 'Tunai') {
         return '<span class="muted">Tidak perlu</span>';
+    }
+
+    $milik_sendiri = (int) ($row['id_pengguna'] ?? 0) === $id_user;
+    if (!$boleh_verifikasi && !$milik_sendiri) {
+        return '<span class="muted proof-locked" title="Bukti transfer hanya dapat dilihat oleh pengelola grup">'
+            . '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+            . '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>'
+            . '<path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+            . '</svg>Khusus pengelola</span>';
     }
 
     $nama = (string) $row['berkas_bukti'];
@@ -213,14 +224,22 @@ include __DIR__ . '/../includes/header.php';
                             </form>
                             <details class="reject">
                                 <summary class="btn ghost-danger small">Tolak</summary>
-                                <form method="post" class="reject-form" action="index.php?tab=menunggu">
-                                    <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
-                                    <input type="hidden" name="status" value="Ditolak">
-                                    <label for="catatan-<?php echo (int) $row['id']; ?>">Alasan penolakan</label>
-                                    <textarea id="catatan-<?php echo (int) $row['id']; ?>" name="catatan" maxlength="200" required
-                                        placeholder="Contoh: nominal di bukti tidak sesuai tagihan"></textarea>
-                                    <button class="btn danger small" type="submit">Kirim penolakan</button>
-                                </form>
+                                <div class="reject-bubble">
+                                    <form method="post" class="reject-form" action="index.php?tab=menunggu">
+                                        <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
+                                        <input type="hidden" name="status" value="Ditolak">
+                                        <div class="reject-head">
+                                            <label for="catatan-<?php echo (int) $row['id']; ?>" class="reject-title">Alasan penolakan</label>
+                                            <button type="button" class="reject-close" aria-label="Tutup">✕</button>
+                                        </div>
+                                        <textarea id="catatan-<?php echo (int) $row['id']; ?>" name="catatan" maxlength="200" required
+                                            placeholder="Contoh: nominal di bukti tidak sesuai tagihan"></textarea>
+                                        <div class="reject-actions">
+                                            <button type="button" class="btn text small reject-cancel">Batal</button>
+                                            <button class="btn danger small" type="submit">Kirim penolakan</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </details>
                         </div>
                     </td>
