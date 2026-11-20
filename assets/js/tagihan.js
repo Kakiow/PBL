@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const tombolKirim = form.querySelector("button[type='submit']");
   const statusForm = form.querySelector(".form-status");
   const fieldSasaran = form.querySelector("[data-sasaran-field]");
+  const allInfoSasaran = form.querySelector("[data-sasaran-all-info]");
   const pickerSasaran = form.querySelector("[data-sasaran-picker]");
   const radioMode = form.querySelectorAll("[data-mode-sasaran]");
   const kotakSasaran = form.querySelectorAll('input[name="sasaran[]"]');
@@ -36,7 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const pilih = modeSasaranAktif() === "pilih";
     const jumlah = jumlahSasaranDipilih();
 
-    if (pickerSasaran) pickerSasaran.classList.toggle("is-disabled", !pilih);
+    if (pickerSasaran) {
+      pickerSasaran.hidden = !pilih;
+    }
+    if (allInfoSasaran) {
+      allInfoSasaran.hidden = pilih;
+    }
+
     kotakSasaran.forEach(function (kotak) {
       kotak.disabled = !pilih;
     });
@@ -62,10 +69,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const nilai = parseFloat(inputJumlah.value);
 
     if (nilai > 0) {
-      previewJumlah.textContent = "Tagihan per anggota: " + F.formatRupiah(nilai);
+      previewJumlah.hidden = false;
+      previewJumlah.textContent = "Tagihan: " + F.formatRupiah(nilai) + " / anggota";
       previewJumlah.classList.add("is-filled");
     } else {
-      previewJumlah.textContent = "Pilih nominal cepat atau isi manual.";
+      previewJumlah.hidden = true;
+      previewJumlah.textContent = "";
       previewJumlah.classList.remove("is-filled");
     }
 
@@ -77,8 +86,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!inputTenggat || !previewTenggat) return;
 
     const panjang = F.tanggalPanjang(inputTenggat.value);
-    previewTenggat.textContent = panjang || "Tanggal terakhir pembayaran.";
-    previewTenggat.classList.toggle("is-filled", Boolean(panjang));
+    if (panjang) {
+      previewTenggat.hidden = false;
+      previewTenggat.textContent = panjang;
+      previewTenggat.classList.add("is-filled");
+    } else {
+      previewTenggat.hidden = true;
+      previewTenggat.textContent = "";
+      previewTenggat.classList.remove("is-filled");
+    }
   }
 
   F.pasangValidasi(form);
