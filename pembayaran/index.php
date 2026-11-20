@@ -152,10 +152,18 @@ $tampil_bukti = function ($row) use ($tab, $boleh_verifikasi, $id_user) {
     $pdf = strtolower(pathinfo($nama, PATHINFO_EXTENSION)) === 'pdf';
     $pratinjau = $pdf
         ? '<span class="proof-file" aria-hidden="true">PDF</span>'
-        : '<img src="' . e($url) . '" alt="" width="44" height="44" loading="lazy">';
+        : '<img src="' . e($url) . '" alt="Bukti transfer ' . e($row['nama']) . '" width="44" height="44" loading="lazy">';
 
-    return '<a class="proof" href="' . e($url) . '" target="_blank" rel="noopener">' . $pratinjau
-        . '<span>Lihat bukti<span class="sr-only"> dari ' . e($row['nama']) . '</span></span></a>';
+    $judul_bukti = 'Bukti ' . e($row['nama']) . ' – ' . e($row['judul']);
+
+    return '<a class="proof proof-trigger" href="' . e($url) . '" target="_blank" rel="noopener"'
+        . ' data-proof-url="' . e($url) . '"'
+        . ' data-proof-type="' . ($pdf ? 'pdf' : 'image') . '"'
+        . ' data-proof-title="' . $judul_bukti . '"'
+        . ' title="Klik untuk melihat bukti">'
+        . $pratinjau
+        . '<span class="sr-only">Lihat bukti dari ' . e($row['nama']) . '</span>'
+        . '</a>';
 };
 
 include __DIR__ . '/../includes/header.php';
@@ -250,4 +258,26 @@ include __DIR__ . '/../includes/header.php';
         </table>
     </div>
 </section>
+
+<dialog id="modal-bukti" class="proof-dialog" aria-labelledby="modal-bukti-title">
+    <div class="proof-dialog-card">
+        <div class="proof-dialog-head">
+            <h2 id="modal-bukti-title" class="proof-dialog-title">Bukti pembayaran</h2>
+            <div class="proof-dialog-actions">
+                <a id="modal-bukti-link" href="#" target="_blank" rel="noopener" class="btn secondary small proof-open-btn" title="Buka berkas di tab baru">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    <span>Buka asli</span>
+                </a>
+                <button type="button" class="proof-dialog-close" aria-label="Tutup pratinjau">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="proof-dialog-body">
+            <img id="modal-bukti-img" src="" alt="Pratinjau bukti pembayaran" class="proof-dialog-img" style="display:none;">
+            <iframe id="modal-bukti-pdf" src="" class="proof-dialog-pdf" style="display:none;" title="Pratinjau dokumen PDF"></iframe>
+        </div>
+    </div>
+</dialog>
+
 <?php include __DIR__ . '/../includes/footer.php'; ?>
