@@ -144,16 +144,60 @@ include __DIR__ . '/../includes/header.php';
 
     <form method="post" enctype="multipart/form-data" id="form-bayar">
         <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
-        <p class="field">
-            <label for="metode_pembayaran">Metode pembayaran</label>
-            <select id="metode_pembayaran" name="metode_pembayaran" required>
-                <option value="">Pilih metode</option>
-                <option value="Tunai">Tunai (serahkan langsung ke Bendahara)</option>
-                <option value="Transfer">Transfer bank</option>
-                <option value="E-Wallet">E-Wallet</option>
-                <option value="QRIS">QRIS</option>
-            </select>
-        </p>
+        <div class="field">
+            <span class="field-label">Pilih metode pembayaran</span>
+            <div class="pay-method-grid" role="radiogroup" aria-label="Metode pembayaran">
+                <?php
+                $metode_terpilih = $_POST['metode_pembayaran'] ?? '';
+                $daftar_metode = [
+                    [
+                        'id' => 'metode-tunai',
+                        'val' => 'Tunai',
+                        'judul' => 'Tunai',
+                        'desc' => 'Langsung ke Bendahara',
+                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>',
+                    ],
+                    [
+                        'id' => 'metode-transfer',
+                        'val' => 'Transfer',
+                        'judul' => 'Transfer',
+                        'desc' => 'Transfer bank grup',
+                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"/></svg>',
+                    ],
+                    [
+                        'id' => 'metode-ewallet',
+                        'val' => 'E-Wallet',
+                        'judul' => 'E-Wallet',
+                        'desc' => 'DANA, GoPay, OVO',
+                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><path d="M9 6h6"/></svg>',
+                    ],
+                    [
+                        'id' => 'metode-qris',
+                        'val' => 'QRIS',
+                        'judul' => 'QRIS',
+                        'desc' => 'Scan kode QR grup',
+                        'icon' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>',
+                    ],
+                ];
+                foreach ($daftar_metode as $m):
+                    $checked = $metode_terpilih === $m['val'] ? ' checked' : '';
+                ?>
+                <label for="<?php echo $m['id']; ?>" class="pay-method-card">
+                    <input type="radio" id="<?php echo $m['id']; ?>" name="metode_pembayaran" value="<?php echo $m['val']; ?>" class="pay-method-radio" required<?php echo $checked; ?>>
+                    <span class="pay-method-content">
+                        <span class="pay-method-top">
+                            <span class="pay-method-icon"><?php echo $m['icon']; ?></span>
+                            <span class="pay-method-check" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            </span>
+                        </span>
+                        <strong class="pay-method-title"><?php echo $m['judul']; ?></strong>
+                        <span class="pay-method-desc"><?php echo $m['desc']; ?></span>
+                    </span>
+                </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
         <div class="notice" id="info-tujuan">
             <strong>Kirim ke</strong>
             <span class="notice-body"><?php echo $info_pembayaran !== ''

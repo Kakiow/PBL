@@ -35,11 +35,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const formBayar = document.getElementById("form-bayar");
   if (formBayar) {
-    const selectMetode = formBayar.querySelector("#metode_pembayaran");
     const fieldBukti = formBayar.querySelector("#field-bukti");
     const inputBukti = formBayar.querySelector("#berkas_bukti");
     const namaBukti = formBayar.querySelector("#berkas-nama");
     const infoTujuan = formBayar.querySelector("#info-tujuan");
+
+    const ambilMetode = function () {
+      const radio = formBayar.querySelector('input[name="metode_pembayaran"]:checked');
+      if (radio) return radio.value;
+      const select = formBayar.querySelector("#metode_pembayaran");
+      return select ? select.value : "";
+    };
 
     const perbaruiNama = function () {
       if (!inputBukti || !namaBukti) return;
@@ -48,16 +54,18 @@ document.addEventListener("DOMContentLoaded", function () {
       namaBukti.classList.toggle("is-filled", Boolean(berkas));
     };
 
-    // Tunai: tanpa bukti & tanpa info rekening. Metode non-tunai: tampilkan tujuan transfer.
+    // Tunai: tanpa bukti & tanpa info rekening. Metode non-tunai: tampilkan tujuan transfer & wajib upload bukti.
+    // Jika belum dipilih: sembunyikan keduanya.
     const perbaruiBukti = function () {
-      const metode = selectMetode ? selectMetode.value : "";
+      const metode = ambilMetode();
       const tunai = metode === "Tunai";
+      const belumDipilih = metode === "";
 
-      if (fieldBukti) fieldBukti.hidden = tunai;
-      if (infoTujuan) infoTujuan.hidden = metode === "" || tunai;
+      if (fieldBukti) fieldBukti.hidden = belumDipilih || tunai;
+      if (infoTujuan) infoTujuan.hidden = belumDipilih || tunai;
       if (inputBukti) {
-        inputBukti.required = !tunai;
-        if (tunai) {
+        inputBukti.required = !belumDipilih && !tunai;
+        if (belumDipilih || tunai) {
           inputBukti.value = "";
           perbaruiNama();
         }
@@ -66,10 +74,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (inputBukti) inputBukti.addEventListener("change", perbaruiNama);
 
-    if (selectMetode) {
-      selectMetode.addEventListener("change", perbaruiBukti);
-      perbaruiBukti();
-    }
+    // Pantau perubahan pada opsi metode pembayaran (radio maupun select)
+    formBayar.addEventListener("change", function (e) {
+      if (e.target && e.target.name === "metode_pembayaran") {
+        perbaruiBukti();
+      }
+    });
+
+    perbaruiBukti();
   }
 
   // Tombol berbahaya baru aktif setelah teks konfirmasi diketik persis (mis. nama grup).
