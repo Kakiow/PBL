@@ -116,4 +116,34 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  document.querySelectorAll("a[data-konfirmasi], button[data-konfirmasi]").forEach(function (el) {
+    el.addEventListener("click", function (event) {
+      if (!window.confirm(el.dataset.konfirmasi)) {
+        event.preventDefault();
+      }
+    });
+  });
+
+  const dialogLogout = document.getElementById("dialog-logout");
+  if (dialogLogout && typeof dialogLogout.showModal === "function") {
+    const kartuLogout = dialogLogout.querySelector(".app-dialog-card");
+    document.querySelectorAll("[data-buka-logout]").forEach(function (tombol) {
+      tombol.addEventListener("click", function (event) {
+        event.preventDefault();
+        if (!dialogLogout.open) dialogLogout.showModal();
+      });
+    });
+    dialogLogout.querySelectorAll("[data-tutup-logout]").forEach(function (tombol) {
+      tombol.addEventListener("click", function (event) {
+        event.preventDefault();
+        dialogLogout.close();
+      });
+    });
+    dialogLogout.addEventListener("click", function (event) {
+      if (kartuLogout && !kartuLogout.contains(event.target)) {
+        dialogLogout.close();
+      }
+    });
+  }
 });
