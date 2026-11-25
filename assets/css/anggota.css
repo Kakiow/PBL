@@ -1,28 +1,180 @@
 /* ==========================================================================
-   SIMKAS — halaman Anggota: daftar anggota grup & pengaturan role
+   SIMKAS — halaman Anggota: daftar anggota grup, filter peran, & atur role
    ========================================================================== */
 
-.user-inline {
+.anggota-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.anggota-page-head h1 {
+  margin-bottom: 4px;
+}
+.anggota-page-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+.anggota-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.code-btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-.user-inline-name {
-  font-weight: 600;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   color: var(--text);
-  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.code-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-muted);
+}
+.code-btn svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+}
+
+/* Toolbar Filter & Search ---------------------------------------------- */
+.anggota-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.role-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.role-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.role-tab:hover {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+.role-tab.is-active {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.role-tab-count {
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.82;
+}
+.anggota-search-wrap {
+  position: relative;
+  flex: 0 1 250px;
+  min-width: 190px;
+}
+.anggota-search-wrap svg {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+.anggota-search {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-muted);
+  font: inherit;
+  font-size: 0.86rem;
+  color: var(--text);
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.anggota-search:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+/* Daftar Anggota (Hairline Rows) --------------------------------------- */
+.anggota-rows {
+  display: flex;
+  flex-direction: column;
+}
+.anggota-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+.anggota-row[hidden] {
+  display: none;
+}
+.anggota-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 4px;
+}
+.anggota-row.is-dirty {
+  background: var(--primary-soft);
+  margin: 0 -10px;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-radius: var(--r-sm);
+}
+.anggota-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 240px;
 }
 .avatar-sm {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  font-size: 0.78rem;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  font-size: 0.82rem;
   font-weight: 700;
   border-radius: 50%;
   display: inline-grid;
   place-items: center;
-  background: linear-gradient(140deg, #4a6ea8, var(--primary));
+  background: var(--primary);
   color: #fff;
   flex-shrink: 0;
 }
@@ -30,29 +182,150 @@ img.avatar-sm {
   display: inline-block;
   object-fit: cover;
 }
+.anggota-person-text {
+  min-width: 0;
+}
+.anggota-name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.anggota-name-row strong {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.self-tag {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.anggota-email {
+  margin-top: 2px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.anggota-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 0 0 auto;
+}
+.anggota-joined {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.role-select {
+  width: auto;
+  min-width: 128px;
+  height: 34px;
+  padding: 0 30px 0 11px;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+.anggota-empty {
+  padding: 26px 4px 8px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
 
-.role-form {
-  display: inline-flex;
+/* Bar Perubahan Belum Disimpan ----------------------------------------- */
+.save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.save-bar[hidden] {
+  display: none;
+}
+.save-bar-text {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.save-bar-actions {
+  display: flex;
   align-items: center;
   gap: 8px;
 }
-.role-form .role-select {
-  width: auto;
-  min-width: 132px;
-  padding: 8px 34px 8px 12px;
-  font-size: 0.85rem;
-}
-@media (max-width: 600px) {
-  .role-form {
-    width: 100%;
-  }
-  .role-form .role-select {
-    width: 100%;
-  }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .btn-simpan.is-visible {
-    animation: none;
+@media (max-width: 680px) {
+  .anggota-page-head {
+    align-items: flex-start;
+  }
+  .anggota-head-actions,
+  .anggota-head-actions .code-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .role-tabs {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .role-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .role-tab {
+    flex: 0 0 auto;
+  }
+  .anggota-search-wrap {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+  .anggota-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 0;
+  }
+  .anggota-row.is-dirty {
+    margin: 0 -8px;
+    padding: 14px 8px;
+  }
+  .anggota-person {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  .anggota-person-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .anggota-meta-right {
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 48px;
+    gap: 12px;
+  }
+  .role-select {
+    min-width: 120px;
+  }
+  .save-bar-actions {
+    width: 100%;
+  }
+  .save-bar-actions .btn {
+    flex: 1 1 0;
   }
 }

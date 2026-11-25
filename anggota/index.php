@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Anggota';
-$page_css = ['anggota.css', 'table.css'];
+$page_css = ['anggota.css'];
+$page_js = ['anggota.js'];
 $id_user = $_SESSION['user']['id'];
 
 $grup = grup_aktif($pdo);
@@ -92,74 +93,113 @@ $stmt = $pdo->prepare("SELECT ag.id, ag.id_pengguna, ag.peran, ag.bergabung_pada
 $stmt->execute([$id_grup]);
 $anggota = $stmt->fetchAll();
 
+$hitung_peran = ['Semua' => count($anggota), 'Admin' => 0, 'Bendahara' => 0, 'Anggota' => 0];
+foreach ($anggota as $a) {
+    if (isset($hitung_peran[$a['peran']])) {
+        $hitung_peran[$a['peran']] += 1;
+    }
+}
+
+$kelas_peran = function (string $peran): string {
+    if ($peran === 'Admin') {
+        return 'danger';
+    }
+    if ($peran === 'Bendahara') {
+        return 'success';
+    }
+    return '';
+};
+
 include __DIR__ . '/../includes/header.php';
 ?>
-<div class="page-head">
-    <h1>Anggota <?php echo e($grup['nama_grup']); ?></h1>
-    <p><?php echo count($anggota); ?> orang bergabung pada grup ini.</p>
-</div>
-
-<section class="content-card">
-    <div class="card-head">
-        <div>
-            <h2>Daftar anggota</h2>
-            <p><?php echo $saya_admin
-                    ? 'Ubah peran di kolom terakhir, lalu simpan sekali untuk menerapkan semua perubahan. Admin hanya boleh satu orang.'
-                    : 'Hanya Admin yang dapat mengubah peran anggota.'; ?></p>
-        </div>
-        <?php if ($saya_admin): ?>
-        <button class="btn success" type="submit" form="form-role" id="btn-simpan-role">Simpan perubahan</button>
-        <?php endif; ?>
+<header class="anggota-page-head">
+    <div>
+        <h1>Anggota <?php echo e($grup['nama_grup']); ?></h1>
+        <p><?php echo count($anggota); ?> anggota tergabung<?php echo $saya_admin ? ' &middot; Admin hanya boleh satu orang.' : '.'; ?></p>
     </div>
+    <div class="anggota-head-actions">
+        <button type="button" class="code-btn" data-copy="<?php echo e($grup['kode_grup']); ?>"
+            title="Salin kode undangan grup <?php echo e($grup['kode_grup']); ?>">
+            Kode: <?php echo e($grup['kode_grup']); ?>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="11" height="11" rx="2" />
+                <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+            </svg>
+        </button>
+    </div>
+</header>
 
-    <?php $form_id = $saya_admin ? ' id="form-role"' : ''; ?>
-    <form method="post"<?php echo $form_id; ?>>
-        <?php if ($saya_admin): ?><input type="hidden" name="aksi" value="ubah_role"><?php endif; ?>
-        <div class="table-responsive table-fancy-wrap">
-            <table class="table-fancy table-stack">
-                <thead>
-                    <tr>
-                        <th scope="col">Nama</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Peran</th>
-                        <th scope="col">Bergabung</th>
-                        <th scope="col">Ubah peran</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!$anggota): ?><tr class="empty">
-                        <td colspan="5">Belum ada anggota.</td>
-                    </tr><?php endif; ?>
-                    <?php foreach ($anggota as $a): ?>
-                    <tr>
-                        <td class="cell-title">
-                            <div class="user-inline">
-                                <?php echo avatar_pengguna($a['nama'], $a['foto_profil'], 'avatar-sm'); ?>
-                                <span class="user-inline-name"><?php echo e($a['nama']); ?></span>
-                            </div>
-                        </td>
-                        <td class="desc" data-label="Email"><?php echo e($a['email']); ?></td>
-                        <td data-label="Peran"><span class="badge role-<?php echo strtolower($a['peran']); ?>"><?php echo e($a['peran']); ?></span></td>
-                        <td class="nowrap" data-label="Bergabung"><?php echo e(tanggal_id($a['bergabung_pada'])); ?></td>
-                        <td data-label="Ubah peran">
-                            <?php if ((int) $a['id_pengguna'] === (int) $id_user): ?>
-                            <span class="muted">Akun kamu</span>
-                            <?php elseif ($saya_admin): ?>
-                            <div class="role-form">
-                                <select name="peran[<?php echo (int) $a['id']; ?>]" class="role-select"
-                                    aria-label="Peran untuk <?php echo e($a['nama']); ?>">
-                                    <option value="Anggota" <?php echo $a['peran'] === 'Anggota' ? 'selected' : ''; ?>>Anggota</option>
-                                    <option value="Bendahara" <?php echo $a['peran'] === 'Bendahara' ? 'selected' : ''; ?>>Bendahara</option>
-                                    <option value="Admin" <?php echo $a['peran'] === 'Admin' ? 'selected' : ''; ?>>Admin</option>
-                                </select>
-                            </div>
-                            <?php else: ?><span class="muted">Hanya Admin</span><?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+<form method="post" id="anggota-form-role">
+    <?php if ($saya_admin): ?><input type="hidden" name="aksi" value="ubah_role"><?php endif; ?>
+    <section class="content-card">
+        <div class="anggota-toolbar">
+            <div class="role-tabs" role="tablist" aria-label="Filter peran anggota" id="role-tabs">
+                <?php foreach ($hitung_peran as $label_tab => $jumlah_tab): ?>
+                <button type="button" class="role-tab<?php echo $label_tab === 'Semua' ? ' is-active' : ''; ?>"
+                    data-tab="<?php echo e($label_tab); ?>" role="tab"
+                    aria-selected="<?php echo $label_tab === 'Semua' ? 'true' : 'false'; ?>">
+                    <?php echo e($label_tab); ?> <span class="role-tab-count"><?php echo $jumlah_tab; ?></span>
+                </button>
+                <?php endforeach; ?>
+            </div>
+            <div class="anggota-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input type="search" id="cari-anggota" class="anggota-search" placeholder="Cari nama atau email..."
+                    aria-label="Cari nama atau email anggota">
+            </div>
         </div>
-    </form>
-</section>
+
+        <?php if (!$anggota): ?>
+        <p class="anggota-empty">Belum ada anggota.</p>
+        <?php else: ?>
+        <div class="anggota-rows" id="anggota-rows">
+            <?php foreach ($anggota as $a): $is_saya = (int) $a['id_pengguna'] === (int) $id_user; ?>
+            <div class="anggota-row" data-role="<?php echo e($a['peran']); ?>"
+                data-nama="<?php echo e($a['nama']); ?>" data-email="<?php echo e($a['email']); ?>">
+                <div class="anggota-person">
+                    <?php echo avatar_pengguna($a['nama'], $a['foto_profil'], 'avatar-sm'); ?>
+                    <div class="anggota-person-text">
+                        <div class="anggota-name-row">
+                            <strong><?php echo e($a['nama']); ?></strong>
+                            <?php if ($is_saya): ?><span class="self-tag">Anda</span><?php endif; ?>
+                        </div>
+                        <div class="anggota-email"><?php echo e($a['email']); ?></div>
+                    </div>
+                </div>
+                <div class="anggota-meta-right">
+                    <span class="anggota-joined"><?php echo e(tanggal_id($a['bergabung_pada'])); ?></span>
+                    <?php if ($saya_admin && !$is_saya): ?>
+                    <select name="peran[<?php echo (int) $a['id']; ?>]" class="role-select"
+                        data-awal="<?php echo e($a['peran']); ?>"
+                        aria-label="Peran untuk <?php echo e($a['nama']); ?>">
+                        <option value="Anggota" <?php echo $a['peran'] === 'Anggota' ? 'selected' : ''; ?>>Anggota</option>
+                        <option value="Bendahara" <?php echo $a['peran'] === 'Bendahara' ? 'selected' : ''; ?>>Bendahara</option>
+                        <option value="Admin" <?php echo $a['peran'] === 'Admin' ? 'selected' : ''; ?>>Admin</option>
+                    </select>
+                    <?php else: ?>
+                    <span class="badge <?php echo $kelas_peran($a['peran']); ?>"><?php echo e($a['peran']); ?></span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <p class="anggota-empty" id="anggota-empty" hidden></p>
+        <?php endif; ?>
+    </section>
+
+    <?php if ($saya_admin): ?>
+    <div class="save-bar" id="save-bar" hidden>
+        <span class="save-bar-text" id="save-bar-text"></span>
+        <div class="save-bar-actions">
+            <button type="button" class="btn secondary small" id="btn-reset-role">Batal</button>
+            <button type="submit" class="btn primary small" id="btn-simpan-role">Simpan perubahan</button>
+        </div>
+    </div>
+    <?php endif; ?>
+</form>
 <?php include __DIR__ . '/../includes/footer.php'; ?>
