@@ -7,14 +7,29 @@ if (!isset($mode, $row, $tenggat_min)) {
     exit;
 }
 
+/** @var string $mode */
+/** @var array $row */
+/** @var string $tenggat_min */
+/** @var string $judul */
+/** @var string $deskripsi_halaman */
+/** @var bool|null $nominal_terkunci */
+/** @var array|null $anggota_grup */
+/** @var string|null $mode_sasaran */
+/** @var array|null $sasaran_terpilih */
+
+$judul = $judul ?? 'Tagihan';
+$deskripsi_halaman = $deskripsi_halaman ?? '';
 $is_edit = $mode === 'edit';
 $nominal_terkunci = !empty($nominal_terkunci);
 $val_jumlah = isset($row['jumlah']) && (float) $row['jumlah'] > 0 ? (string) (float) $row['jumlah'] : '';
-$tampil_sasaran = !$is_edit && isset($anggota_grup, $mode_sasaran, $sasaran_terpilih);
-$total_anggota = $tampil_sasaran ? count($anggota_grup) : 0;
+$anggota_grup = $anggota_grup ?? [];
+$mode_sasaran = $mode_sasaran ?? 'semua';
+$sasaran_terpilih = $sasaran_terpilih ?? [];
+$tampil_sasaran = !$is_edit && !empty($anggota_grup);
+$total_anggota = count($anggota_grup);
 ?>
 <div class="page-head">
-    <?php tautan_kembali($is_edit ? 'detail.php?id=' . (int) $row['id'] : 'index.php'); ?>
+    <?php tautan_kembali($is_edit ? 'detail.php?id=' . (int) ($row['id'] ?? 0) : 'index.php'); ?>
     <h1><?php echo e($judul); ?></h1>
     <p><?php echo e($deskripsi_halaman); ?></p>
 </div>
@@ -22,7 +37,7 @@ $total_anggota = $tampil_sasaran ? count($anggota_grup) : 0;
 <section class="form-card form-card--create">
     <form method="post" class="form-tagihan">
         <?php if ($is_edit): ?>
-        <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
+        <input type="hidden" name="id" value="<?php echo (int) ($row['id'] ?? 0); ?>">
         <?php endif; ?>
 
         <div class="form-section">
@@ -155,7 +170,7 @@ $total_anggota = $tampil_sasaran ? count($anggota_grup) : 0;
         <div class="form-actions">
             <button class="btn primary" type="submit" data-loading-text="Menyimpan…"><?php echo $is_edit ? 'Simpan perubahan' : 'Buat tagihan'; ?></button>
             <?php if ($is_edit): ?>
-            <a class="btn secondary" href="detail.php?id=<?php echo (int) $row['id']; ?>">Batal</a>
+            <a class="btn secondary" href="detail.php?id=<?php echo (int) ($row['id'] ?? 0); ?>">Batal</a>
             <?php endif; ?>
             <span class="form-status" role="status" aria-live="polite"></span>
         </div>
