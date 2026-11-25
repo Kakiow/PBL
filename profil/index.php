@@ -97,99 +97,109 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$stmt = $pdo->prepare("
-    SELECT g.id, g.nama_grup, g.kode_grup, ag.peran, ag.bergabung_pada
-    FROM anggota_grup ag
-    JOIN grup g ON g.id = ag.id_grup
-    WHERE ag.id_pengguna = ?
-    ORDER BY ag.bergabung_pada, g.nama_grup
-");
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM anggota_grup WHERE id_pengguna = ?");
 $stmt->execute([$id_user]);
-$grup_saya = $stmt->fetchAll();
+$jumlah_grup = (int) $stmt->fetchColumn();
 
 $grup_aktif = grup_aktif($pdo);
-$id_grup_aktif = $grup_aktif ? (int) $grup_aktif['id'] : 0;
-
-$nama_user = (string) $akun['nama'];
-$inisial = strtoupper(function_exists('mb_substr') ? mb_substr($nama_user, 0, 1) : substr($nama_user, 0, 1));
-$aktif = in_array($akun['apakah_aktif'], [true, 't', '1', 1], true);
+$peran_aktif = $grup_aktif ? role_group($pdo, (int) $grup_aktif['id'], $id_user) : null;
 
 include __DIR__ . '/../includes/header.php';
 ?>
 <div class="page-head">
     <h1>Profil</h1>
-    <p>Data akun dan grup yang kamu ikuti di SIMKAS.</p>
+    <p>Identitas akun SIMKAS dan grup yang sedang aktif.</p>
 </div>
 
-<section class="profile-hero" aria-labelledby="profil-nama">
-    <div class="profile-avatar-col">
-        <div class="profile-avatar-wrap">
-            <div class="profile-avatar-box" id="profile-avatar-box">
-                <?php echo avatar_pengguna($akun['nama'], $akun['foto_profil'], 'profile-avatar'); ?>
+<div class="profile-pair-grid">
+    <section class="content-card profile-pair-card" aria-labelledby="profil-nama">
+        <div class="profile-identity-top">
+            <div class="profile-avatar-col">
+                <div class="profile-avatar-wrap">
+                    <div class="profile-avatar-box" id="profile-avatar-box">
+                        <?php echo avatar_pengguna($akun['nama'], $akun['foto_profil'], 'profile-avatar'); ?>
+                    </div>
+                    <button type="button" class="btn-avatar-camera" id="btn-pilih-foto" title="Kelola foto profil"
+                        aria-label="Kelola foto profil" aria-haspopup="menu" aria-expanded="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" aria-hidden="true">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                            <circle cx="12" cy="13" r="4" />
+                        </svg>
+                    </button>
+                    <div class="avatar-menu" id="avatar-menu" role="menu" hidden>
+                        <button type="button" class="avatar-menu-item" id="btn-ganti-foto" role="menuitem">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                <circle cx="12" cy="13" r="4" />
+                            </svg>
+                            <span>Ubah foto</span>
+                        </button>
+                        <button type="button" class="avatar-menu-item is-danger" id="btn-hapus-foto" role="menuitem">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M10 11v6M14 11v6" />
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                            </svg>
+                            <span>Hapus foto</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button type="button" class="btn-avatar-camera" id="btn-pilih-foto" title="Ubah foto profil" aria-label="Ubah foto profil">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                </svg>
-            </button>
-        </div>
-        <button type="button" class="btn-avatar-hapus" id="btn-hapus-foto" <?php echo empty($akun['foto_profil']) ? 'style="display:none"' : ''; ?>>
-            Hapus foto
-        </button>
-    </div>
-    <input type="file" id="input-foto-profil" accept="image/jpeg,image/png,image/webp" style="display:none" aria-hidden="true">
-    <div class="profile-ident">
-        <h2 id="profil-nama"><?php echo e($akun['nama']); ?></h2>
-        <p><?php echo e($akun['email']); ?></p>
-        <div class="profile-tags">
-            <span class="badge <?php echo $aktif ? 'success' : 'danger'; ?>">
-                <?php echo $aktif ? 'Akun aktif' : 'Akun nonaktif'; ?>
-            </span>
-            <span class="chip"><?php echo count($grup_saya); ?> grup</span>
-            <span class="chip">Bergabung <?php echo e(tanggal_id($akun['dibuat_pada'])); ?></span>
-        </div>
-    </div>
-    <a class="btn primary profile-edit-btn" href="index.php?verifikasi=1" data-buka-verifikasi
-        aria-haspopup="dialog" aria-controls="dialog-verifikasi">Edit profil &amp; password</a>
-</section>
-
-<section class="content-card" aria-labelledby="judul-grup-saya">
-    <div class="card-head">
-        <div>
-            <h2 id="judul-grup-saya">Grup saya</h2>
-            <p>Grup yang kamu ikuti beserta peranmu di dalamnya.</p>
-        </div>
-        <a class="text-link" href="../grup/index.php">Kelola grup →</a>
-    </div>
-
-    <?php if (!$grup_saya): ?>
-    <p class="muted">Belum ada grup. <a href="../grup/index.php">Buat atau gabung grup</a> untuk mulai mencatat kas.</p>
-    <?php else: ?>
-    <ul class="profile-groups">
-        <?php foreach ($grup_saya as $g): $aktif_grup = (int) $g['id'] === $id_grup_aktif; ?>
-        <li>
-            <div class="profile-group-main">
-                <b><?php echo e($g['nama_grup']); ?></b>
-                <span>Kode <?php echo e($g['kode_grup']); ?></span>
+            <input type="file" id="input-foto-profil" accept="image/jpeg,image/png,image/webp" style="display:none"
+                aria-hidden="true">
+            <div class="profile-ident">
+                <h2 id="profil-nama"><?php echo e($akun['nama']); ?></h2>
+                <p class="profile-email-sub"><?php echo e($akun['email']); ?></p>
+                <p class="profile-joined-meta">Bergabung sejak <?php echo e(tanggal_id($akun['dibuat_pada'])); ?></p>
             </div>
-            <span class="badge role-<?php echo strtolower($g['peran']); ?>"><?php echo e($g['peran']); ?></span>
-            <span class="profile-group-date">Sejak <?php echo e(tanggal_id($g['bergabung_pada'])); ?></span>
-            <?php if ($aktif_grup): ?>
-            <span class="badge success">Grup aktif</span>
+        </div>
+        <div class="profile-pair-foot">
+            <a class="btn primary" href="index.php?verifikasi=1" data-buka-verifikasi aria-haspopup="dialog"
+                aria-controls="dialog-verifikasi">Edit profil &amp; password</a>
+        </div>
+    </section>
+
+    <section class="content-card profile-pair-card" aria-labelledby="judul-grup-aktif">
+        <div class="card-head">
+            <div>
+                <h2 id="judul-grup-aktif">Grup aktif</h2>
+                <p>
+                    <?php if ($jumlah_grup > 0): ?>
+                    Tergabung di <?php echo $jumlah_grup; ?> grup
+                    <?php else: ?>
+                    Belum tergabung di grup mana pun
+                    <?php endif; ?>
+                </p>
+            </div>
+            <a class="text-link" href="../grup/index.php">Kelola grup →</a>
+        </div>
+        <div class="profile-active-group-body">
+            <?php if ($grup_aktif && $peran_aktif): ?>
+            <div class="profile-active-box">
+                <div class="profile-group-title-row">
+                    <span class="profile-group-name"><?php echo e($grup_aktif['nama_grup']); ?></span>
+                    <span class="badge role-<?php echo strtolower($peran_aktif); ?>"><?php echo e($peran_aktif); ?></span>
+                </div>
+                <div class="profile-active-meta">
+                    <span>Kode undangan:</span>
+                    <span class="profile-group-code"><?php echo e($grup_aktif['kode_grup']); ?></span>
+                    <button type="button" class="btn-copy-inline"
+                        data-copy="<?php echo e($grup_aktif['kode_grup']); ?>">Salin</button>
+                </div>
+            </div>
             <?php else: ?>
-            <form method="post" class="profile-group-form">
-                <?php csrf_field(); ?>
-                <input type="hidden" name="aksi" value="pilih_grup">
-                <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
-                <button type="submit" class="profile-group-action">Jadikan aktif</button>
-            </form>
+            <div class="profile-empty-inline">
+                <p>Pilih atau buat grup baru untuk mulai mencatat kas kelas.</p>
+                <a class="btn primary small" href="../grup/index.php">Buat atau gabung grup →</a>
+            </div>
             <?php endif; ?>
-        </li>
-        <?php endforeach; ?>
-    </ul>
-    <?php endif; ?>
-</section>
+        </div>
+    </section>
+</div>
 
 <dialog class="profile-dialog" id="dialog-verifikasi" aria-labelledby="judul-verifikasi"<?php echo $buka_verifikasi ? ' open' : ''; ?>>
     <div class="form-card profile-verify">

@@ -13,6 +13,8 @@
   const sliderZoom = document.getElementById('crop-zoom');
   const viewport = document.getElementById('crop-viewport');
   const canvas = document.getElementById('crop-canvas');
+  const avatarMenu = document.getElementById('avatar-menu');
+  const btnGantiFoto = document.getElementById('btn-ganti-foto');
   const btnHapusFoto = document.getElementById('btn-hapus-foto');
   const avatarBox = document.getElementById('profile-avatar-box');
 
@@ -43,9 +45,46 @@
     csrfToken = csrfInput.value;
   }
 
-  btnPilihFoto.addEventListener('click', function () {
+  function tutupMenuAvatar() {
+    if (avatarMenu) {
+      avatarMenu.hidden = true;
+    }
+    btnPilihFoto.setAttribute('aria-expanded', 'false');
+  }
+
+  function bukaPemilihBerkas() {
+    tutupMenuAvatar();
     inputFoto.value = '';
     inputFoto.click();
+  }
+
+  btnPilihFoto.addEventListener('click', function (e) {
+    e.stopPropagation();
+    const adaFoto = avatarBox && avatarBox.querySelector('img');
+    if (!adaFoto || !avatarMenu) {
+      bukaPemilihBerkas();
+      return;
+    }
+    const akanTutup = !avatarMenu.hidden;
+    avatarMenu.hidden = akanTutup;
+    btnPilihFoto.setAttribute('aria-expanded', akanTutup ? 'false' : 'true');
+  });
+
+  if (btnGantiFoto) {
+    btnGantiFoto.addEventListener('click', bukaPemilihBerkas);
+  }
+
+  document.addEventListener('click', function (e) {
+    if (avatarMenu && !avatarMenu.hidden && !e.target.closest('.profile-avatar-wrap')) {
+      tutupMenuAvatar();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && avatarMenu && !avatarMenu.hidden) {
+      tutupMenuAvatar();
+      btnPilihFoto.focus();
+    }
   });
 
   inputFoto.addEventListener('change', function () {
@@ -264,9 +303,7 @@
     if (avatarBox) {
       avatarBox.innerHTML = '<img class="avatar-img profile-avatar" src="' + urlFoto + '" alt="Foto profil">';
     }
-    if (btnHapusFoto) {
-      btnHapusFoto.style.display = 'inline-flex';
-    }
+    tutupMenuAvatar();
 
     // Perbarui juga avatar di sidebar
     const sidebarAvatar = document.querySelector('.sidebar-foot .avatar, .sidebar-foot .avatar-img');
@@ -306,7 +343,7 @@
         .then(function (data) {
           btnHapusFoto.disabled = false;
           if (data && data.sukses) {
-            btnHapusFoto.style.display = 'none';
+            tutupMenuAvatar();
 
             // Ambil inisial nama dari teks judul profil jika ada
             const namaEl = document.getElementById('profil-nama');
