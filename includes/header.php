@@ -102,6 +102,13 @@ $label_peran = label_peran($peran_aktif);
 </head>
 
 <body>
+    <script>
+        try {
+            if (window.matchMedia('(min-width: 1000px)').matches && localStorage.getItem('sidebar-rail') === '1') {
+                document.body.classList.add('sidebar-rail');
+            }
+        } catch (e) {}
+    </script>
     <div class="app-shell">
         <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
 <?php include __DIR__ . '/sidebar.php'; ?>

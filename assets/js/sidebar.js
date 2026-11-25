@@ -61,7 +61,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (railToggle) {
+    let timerAnimasi = null;
+
     railToggle.addEventListener("click", function () {
+      document.body.classList.add("sidebar-animating");
+      if (timerAnimasi) clearTimeout(timerAnimasi);
+      timerAnimasi = setTimeout(function () {
+        document.body.classList.remove("sidebar-animating");
+      }, 340);
+
       const aktif = document.body.classList.toggle("sidebar-rail");
 
       try {
@@ -75,6 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     terapkanRail();
+    requestAnimationFrame(function () {
+      document.body.classList.add("sidebar-ready");
+    });
 
     if (typeof mediaRail.addEventListener === "function") {
       mediaRail.addEventListener("change", terapkanRail);

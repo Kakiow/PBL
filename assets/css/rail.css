@@ -42,26 +42,82 @@
   }
 
   /* Kerangka sidebar */
+  body.sidebar-ready .sidebar {
+    transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1), padding 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.sidebar-ready .app-main {
+    transition: margin-left 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.sidebar-ready .nav-item {
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease,
+      transform 0.18s ease, padding 0.32s cubic-bezier(0.22, 1, 0.36, 1), height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.sidebar-ready .logout-btn {
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+      padding 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .brand-text,
+  .nav-group,
+  .nav-label,
+  .user-meta {
+    white-space: nowrap;
+  }
+  body.sidebar-ready .brand-text {
+    max-width: 180px;
+    max-height: 48px;
+    overflow: hidden;
+    transition: opacity 0.18s ease, max-width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      max-height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.sidebar-ready .nav-label {
+    max-width: 180px;
+    overflow: hidden;
+    transition: opacity 0.18s ease, max-width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.sidebar-ready .nav-group {
+    max-height: 24px;
+    overflow: hidden;
+    transition: opacity 0.2s ease, max-height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  body.sidebar-ready .user-card {
+    max-height: 64px;
+    overflow: hidden;
+    transition: opacity 0.2s ease, max-height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.32s cubic-bezier(0.22, 1, 0.36, 1), padding 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
   body.sidebar-rail .sidebar {
     width: var(--rail-w);
     padding: 18px 10px 14px;
     overflow: visible;
   }
+  body.sidebar-animating .sidebar {
+    overflow: hidden;
+    will-change: width;
+  }
+  body.sidebar-animating .app-main {
+    will-change: margin-left;
+  }
   body.sidebar-rail .sidebar-head {
     flex-direction: column;
+    align-items: flex-start;
     gap: 10px;
     padding: 0;
   }
   body.sidebar-rail .brand {
-    justify-content: center;
+    justify-content: flex-start;
+    padding-left: 11px;
+    gap: 0;
   }
-  body.sidebar-rail .brand-mark {
-    width: 30px;
-    height: 30px;
-    font-size: 0.9rem;
+  body.sidebar-rail .rail-toggle {
+    align-self: center;
   }
   body.sidebar-rail .brand-text {
-    display: none;
+    opacity: 0;
+    max-width: 0;
+    max-height: 34px;
+    overflow: hidden;
+    pointer-events: none;
   }
   body.sidebar-rail .app-main {
     margin-left: var(--rail-w);
@@ -70,12 +126,15 @@
     padding: 12px 0 0;
   }
   body.sidebar-rail .user-card {
-    display: none;
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
   }
   body.sidebar-rail .logout-btn {
-    justify-content: center;
-    gap: 0;
-    padding: 9px;
+    justify-content: flex-start;
+    padding: 9px 19px;
   }
   body.sidebar-rail .logout-icon svg {
     width: 17px;
@@ -83,22 +142,29 @@
   }
 
   /* Item navigasi */
-  body.sidebar-rail .nav-group,
-  body.sidebar-rail .nav-label,
+  body.sidebar-rail .nav-group {
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+  body.sidebar-rail .nav-label {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
   body.sidebar-rail .nav-chevron {
     display: none;
   }
   body.sidebar-rail .nav-item {
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 0;
     height: 40px;
-    padding: 0;
+    padding: 0 13px;
   }
   body.sidebar-rail .nav-item:hover {
     transform: scale(1.04);
-  }
-  body.sidebar-rail .nav-icon {
-    width: 32px;
-    height: 32px;
   }
   body.sidebar-rail .nav-item.is-active {
     background: var(--primary-soft);
@@ -147,6 +213,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .rail-toggle,
+  body.sidebar-ready .sidebar,
+  body.sidebar-ready .app-main,
+  body.sidebar-ready .brand-mark,
+  body.sidebar-ready .nav-item,
+  body.sidebar-ready .nav-icon,
+  body.sidebar-ready .logout-btn,
+  body.sidebar-ready .brand-text,
+  body.sidebar-ready .nav-label,
+  body.sidebar-ready .nav-group,
+  body.sidebar-ready .user-card,
   body.sidebar-rail .nav-item,
   body.sidebar-rail .nav-item::after {
     transition: none !important;
