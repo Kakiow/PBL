@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/auth.php';
 
 $page_title = 'Grup';
 $page_css = ['grup.css'];
-$page_js = ['grup-dialog.js'];
+$page_js = ['grup-dialog.js', 'grup.js'];
 $id_user = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -89,7 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$stmt = $pdo->prepare("SELECT g.*, ag.peran FROM grup g JOIN anggota_grup ag ON ag.id_grup = g.id WHERE ag.id_pengguna = ? ORDER BY g.nama_grup");
+$stmt = $pdo->prepare("
+    SELECT g.*, ag.peran,
+        (SELECT COUNT(*) FROM anggota_grup ag2 WHERE ag2.id_grup = g.id) AS jumlah_anggota
+    FROM grup g
+    JOIN anggota_grup ag ON ag.id_grup = g.id
+    WHERE ag.id_pengguna = ?
+    ORDER BY g.nama_grup
+");
 $stmt->execute([$id_user]);
 $grup_saya = $stmt->fetchAll();
 
@@ -98,10 +105,32 @@ $id_aktif = $grup_terpilih ? (int) $grup_terpilih['id'] : 0;
 
 include __DIR__ . '/../includes/header.php';
 ?>
-<div class="page-head">
-    <h1>Grup kas</h1>
-    <p>Pilih grup yang ingin dikelola, buat grup baru, atau gabung memakai kode.</p>
-</div>
+<header class="grup-page-head">
+    <div>
+        <h1>Grup</h1>
+        <p>Pilih grup aktif untuk bekerja, salin kode undangan, atau buat grup kas baru.</p>
+    </div>
+    <?php if ($grup_saya): ?>
+    <div class="grup-head-actions">
+        <button type="button" class="btn secondary" data-buka-dialog="dialog-gabung-grup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+            </svg>
+            Gabung grup
+        </button>
+        <button type="button" class="btn primary" data-buka-dialog="dialog-buat-grup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" />
+            </svg>
+            Buat grup
+        </button>
+    </div>
+    <?php endif; ?>
+</header>
 
 <?php
 include __DIR__ . '/_daftar_grup.php';

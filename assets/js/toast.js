@@ -1,30 +1,63 @@
 // Notifikasi melayang (pojok kanan atas) + tombol salin ke clipboard.
 (function () {
+  const MAKS_TOAST = 3;
+
   function areaToast() {
     return document.getElementById("toast-area");
   }
 
+  function tutupEl(el) {
+    if (!el || el.classList.contains("is-out")) return;
+    if (el._timerToast) {
+      window.clearTimeout(el._timerToast);
+      el._timerToast = null;
+    }
+    el.classList.add("is-out");
+    window.setTimeout(function () {
+      el.remove();
+    }, 200);
+  }
+
   function pasangTutup(el, durasi) {
-    const tutup = function () {
-      if (el.classList.contains("is-out")) return;
-      el.classList.add("is-out");
-      window.setTimeout(function () {
-        el.remove();
-      }, 200);
-    };
-
     const tombol = el.querySelector(".flash-close");
-    if (tombol) tombol.addEventListener("click", tutup);
+    if (tombol && !tombol._terpasang) {
+      tombol._terpasang = true;
+      tombol.addEventListener("click", function () {
+        tutupEl(el);
+      });
+    }
 
-    window.setTimeout(tutup, durasi);
+    if (el._timerToast) window.clearTimeout(el._timerToast);
+    el._timerToast = window.setTimeout(function () {
+      tutupEl(el);
+    }, durasi);
   }
 
   function tampilToast(pesan, tipe) {
     const area = areaToast();
     if (!area) return;
 
+    const kelasTipe = tipe === "error" ? "error" : "success";
+    const aktif = Array.from(area.querySelectorAll(".flash:not(.is-out)"));
+
+    // Cegah duplikat: jika pesan sama masih tampil, perpanjang durasinya saja.
+    const duplikat = aktif.find(function (item) {
+      const teksEl = item.querySelector(".flash-text");
+      return item.classList.contains(kelasTipe) && teksEl && teksEl.textContent === pesan;
+    });
+    if (duplikat) {
+      pasangTutup(duplikat, 4500);
+      return;
+    }
+
+    // Batasi maksimal 3 toast aktif sekaligus agar layar tidak penuh saat spam klik.
+    while (aktif.length >= MAKS_TOAST) {
+      const terlama = aktif.shift();
+      tutupEl(terlama);
+    }
+
     const el = document.createElement("div");
-    el.className = "flash " + (tipe === "error" ? "error" : "success");
+    el.className = "flash " + kelasTipe;
     el.setAttribute("role", tipe === "error" ? "alert" : "status");
 
     const teks = document.createElement("span");
