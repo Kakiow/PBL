@@ -1,46 +1,43 @@
 /* ==========================================================================
-   SIMKAS — dashboard: tagihan saya, perlu tindakan, statistik kas
+   SIMKAS — dashboard: ringkasan kas, tagihan saya, perlu tindakan, transaksi
    ========================================================================== */
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
   margin-bottom: 20px;
 }
 .stat-card {
   padding: 18px 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
+  border-right: 1px solid var(--border);
+}
+.stat-card:last-child {
+  border-right: 0;
 }
 .stat-card span {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 .stat-card strong {
   display: block;
   color: var(--text);
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1.28rem;
+  font-weight: 700;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 .stat-card.is-primary strong {
   color: var(--primary);
-}
-.stat-card.is-in strong {
-  color: var(--success);
-}
-.stat-card.is-out strong {
-  color: var(--danger);
+  font-weight: 800;
 }
 
-/* Baris atas dashboard: "Tagihan kamu" (+ "Perlu tindakan" untuk pengelola) */
+/* Baris kerja dashboard: "Tagihan kamu" (+ "Perlu tindakan" untuk pengelola) */
 .dash-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -49,15 +46,6 @@
 .dash-grid.has-side {
   grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
   align-items: start;
-}
-.dash-summary {
-  margin: 0;
-  color: var(--text-soft);
-  font-size: 0.92rem;
-}
-.dash-summary strong {
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
 }
 
 /* Daftar tagihan milik user */
@@ -71,47 +59,43 @@
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 6px 16px;
-  padding: 14px 0;
+  padding: 13px 0;
   border-top: 1px solid var(--border);
 }
 .bill-item:first-child {
   border-top: 0;
   padding-top: 4px;
 }
+.bill-item:last-child {
+  padding-bottom: 2px;
+}
 .bill-title {
+  display: inline-block;
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.94rem;
 }
 .bill-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 10px;
-  margin-top: 3px;
+  display: block;
+  margin-top: 2px;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
-.bill-meta .is-late {
+.bill-meta.is-late {
   color: var(--danger);
   font-weight: 600;
 }
 .bill-amount {
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.94rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.bill-reason {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 8px 12px;
-  border-radius: var(--r-sm);
-  background: var(--danger-soft);
-  color: #7d2e29;
-  font-size: 0.82rem;
-}
 .bill-more {
   margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
   font-size: 0.85rem;
 }
 .dash-empty {
@@ -120,55 +104,80 @@
   color: var(--text-soft);
 }
 
-/* Perlu tindakan (Admin/Bendahara) */
+/* Perlu tindakan (Admin/Bendahara): baris hairline bersih tanpa nested box */
 .todo-list {
-  display: grid;
-  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+.todo-list li {
+  border-top: 1px solid var(--border);
+}
+.todo-list li:first-child {
+  border-top: 0;
 }
 .todo-list a {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 11px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
+  padding: 11px 2px;
   color: var(--text);
-  font-weight: 600;
-  transition: border-color 0.18s ease, background 0.18s ease;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
 }
 .todo-list a:hover {
-  border-color: #c9d4e6;
-  background: #f6f8fc;
+  color: var(--primary);
   text-decoration: none;
 }
 .todo-list .todo-count {
-  min-width: 26px;
+  min-width: 24px;
   padding: 2px 8px;
   border-radius: 999px;
   background: var(--warning-soft);
   color: var(--warning);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
 .todo-list .todo-go {
   color: var(--muted);
   font-size: 0.85rem;
-  font-weight: 500;
+}
+
+/* Tabel transaksi terbaru di Dashboard: header polos + kategori teks biasa */
+.dash-table th {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+}
+.dash-table th:first-child,
+.dash-table td:first-child {
+  padding-left: 0;
+}
+.dash-table th:last-child,
+.dash-table td:last-child {
+  padding-right: 0;
+}
+.dash-table .cat-text {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 @media (max-width: 1100px) {
   .dash-grid.has-side {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-@media (max-width: 1000px) {
   .stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stat-card:nth-child(2) {
+    border-right: 0;
+  }
+  .stat-card:nth-child(1),
+  .stat-card:nth-child(2) {
+    border-bottom: 1px solid var(--border);
   }
 }
 @media (max-width: 640px) {
@@ -181,9 +190,6 @@
   .bill-item .bill-action .btn {
     width: 100%;
     min-height: 42px;
-  }
-  .stats {
-    gap: 10px;
   }
   .stat-card {
     padding: 14px 16px;

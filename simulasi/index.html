@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | SIMKAS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="simulasi.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-head">
+                <a class="brand" href="#top">
+                    <span class="brand-mark" aria-hidden="true">S</span>
+                    <span class="brand-text">
+                        <span class="brand-name">SIMKAS</span>
+                        <span class="brand-role" id="sidebar-role-label">Bendahara</span>
+                    </span>
+                </a>
+                <button type="button" class="rail-toggle" id="rail-toggle" aria-label="Ciutkan menu navigasi"
+                    aria-controls="sidebar" aria-pressed="false">
+                    <svg class="rail-icon rail-icon--val" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M11 17l-5-5 5-5" /><path d="M18 17l-5-5 5-5" />
+                    </svg>
+                    <svg class="rail-icon rail-icon--col" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M13 7l5 5-5 5" /><path d="M6 7l5 5-5 5" />
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Navigasi utama">
+                <div class="nav-list">
+                    <span class="nav-group">Menu</span>
+                    <a class="nav-item is-active" href="#top" aria-current="page">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="6" height="6" rx="1.5"/><rect x="15" y="4" width="6" height="6" rx="1.5"/>
+                                <rect x="3" y="14" width="6" height="6" rx="1.5"/><rect x="15" y="14" width="6" height="6" rx="1.5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                    <a class="nav-item" href="#grup">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="7" y="3" width="14" height="14" rx="2"/><path d="M17 21H5a2 2 0 0 1-2-2V7"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Grup</span>
+                    </a>
+                    <a class="nav-item" href="#anggota">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="8" r="3.5"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5a3.5 3.5 0 0 1 0 7"/><path d="M16.5 19a5.5 5.5 0 0 1 4.5-5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Anggota</span>
+                    </a>
+                    <a class="nav-item" href="#profil">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Profil</span>
+                    </a>
+
+                    <span class="nav-group">Kas</span>
+                    <a class="nav-item" href="#tagihan">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16v16l-3-2-2 2-3-2-3 2-2-2-3 2z"/><path d="M8 9h8M8 13h5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Tagihan</span>
+                        <span class="nav-badge">2</span>
+                    </a>
+                    <a class="nav-item" href="#verifikasi" data-manager-only>
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Verifikasi</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                    <a class="nav-item" href="#transaksi">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 8h10l-3-3"/><path d="M17 16H7l3 3"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Transaksi</span>
+                    </a>
+                    <a class="nav-item" href="#laporan">
+                        <span class="nav-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>
+                            </svg>
+                        </span>
+                        <span class="nav-label">Laporan</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-foot">
+                <a class="user-card" href="#profil">
+                    <span class="avatar" aria-hidden="true">M</span>
+                    <span class="user-meta">
+                        <span class="user-name">Muhammad Nur Rochman</span>
+                        <span class="user-email">nur@kelas-ti2b.ac.id</span>
+                    </span>
+                </a>
+                <a class="logout-btn" href="#logout">
+                    <span class="logout-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <path d="M16 17l5-5-5-5M21 12H9" />
+                        </svg>
+                    </span>
+                    <span class="nav-label">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <div class="app-main" id="top">
+            <header class="topbar">
+                <button type="button" class="nav-toggle" id="nav-toggle-btn" aria-label="Buka menu navigasi"
+                    aria-controls="sidebar" aria-expanded="false">
+                    <span class="nav-toggle-box" aria-hidden="true"><span></span><span></span><span></span></span>
+                </button>
+                <span class="topbar-brand">
+                    <span class="brand-mark" aria-hidden="true">S</span>
+                    <span>SIMKAS</span>
+                </span>
+                <span aria-hidden="true" style="width: 36px;"></span>
+            </header>
+
+            <main class="page-wrap">
+                <div class="page-head">
+                    <div class="page-head-main">
+                        <h1>Kas Kelas TI-2B</h1>
+                        <p>Kelola pemasukan, pengeluaran, dan pembayaran kas.</p>
+                    </div>
+                    <div class="sim-switch" role="group" aria-label="Simulasi peran">
+                        <button type="button" class="sim-role-btn is-active" data-sim-role="bendahara">Bendahara</button>
+                        <button type="button" class="sim-role-btn" data-sim-role="anggota">Anggota</button>
+                    </div>
+                </div>
+
+                <!-- Ringkasan kas: 4 angka bersih tanpa teks tambahan -->
+                <section class="stats" aria-label="Ringkasan kas grup">
+                    <article class="stat-card is-primary">
+                        <span>Saldo kas</span>
+                        <strong>Rp 1.845.000</strong>
+                    </article>
+                    <article class="stat-card is-in">
+                        <span>Total pemasukan</span>
+                        <strong>Rp 2.650.000</strong>
+                    </article>
+                    <article class="stat-card is-out">
+                        <span>Total pengeluaran</span>
+                        <strong>Rp 805.000</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Anggota</span>
+                        <strong>32</strong>
+                    </article>
+                </section>
+
+                <div class="dash-grid has-side" id="dash-grid">
+                    <section class="content-card" aria-labelledby="judul-tagihan-kamu">
+                        <div class="card-head">
+                            <h2 id="judul-tagihan-kamu">Tagihan kamu</h2>
+                            <a class="text-link" href="#tagihan">Semua tagihan →</a>
+                        </div>
+
+                        <ul class="bill-list">
+                            <li class="bill-item">
+                                <div>
+                                    <a class="bill-title" href="#tagihan">Kas Bulanan November</a>
+                                    <span class="bill-meta">Tenggat 28 Nov</span>
+                                </div>
+                                <span class="bill-amount">Rp 25.000</span>
+                                <span class="bill-action">
+                                    <a class="btn primary small" href="#bayar" data-sim-pay>Bayar</a>
+                                </span>
+                            </li>
+
+                            <li class="bill-item">
+                                <div>
+                                    <a class="bill-title" href="#tagihan">Iuran Praktikum Jaringan</a>
+                                    <span class="bill-meta is-late">Terlambat 6 hari &middot; Ditolak</span>
+                                </div>
+                                <span class="bill-amount">Rp 50.000</span>
+                                <span class="bill-action">
+                                    <a class="btn primary small" href="#bayar" data-sim-pay>Bayar ulang</a>
+                                </span>
+                            </li>
+
+                            <li class="bill-item">
+                                <div>
+                                    <a class="bill-title" href="#tagihan">Dana Kebersihan Lab</a>
+                                    <span class="bill-meta">Tenggat 5 Des</span>
+                                </div>
+                                <span class="bill-amount">Rp 15.000</span>
+                                <span class="bill-action">
+                                    <span class="badge warning">Menunggu</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section class="content-card" id="card-perlu-tindakan" aria-labelledby="judul-perlu-tindakan">
+                        <div class="card-head">
+                            <div>
+                                <h2 id="judul-perlu-tindakan">Perlu tindakan</h2>
+                                <p>Pekerjaan bendahara untuk grup ini.</p>
+                            </div>
+                        </div>
+                        <ul class="todo-list">
+                            <li>
+                                <a href="#verifikasi">
+                                    <span>Verifikasi pembayaran</span>
+                                    <span class="todo-count">3</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#tagihan-tambah">
+                                    <span>Buat tagihan</span>
+                                    <span class="todo-go">→</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#transaksi-tambah">
+                                    <span>Catat transaksi</span>
+                                    <span class="todo-go">→</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#laporan">
+                                    <span>Lihat laporan</span>
+                                    <span class="todo-go">→</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+
+                <section class="content-card">
+                    <div class="card-head">
+                        <div>
+                            <h2>Transaksi terbaru</h2>
+                            <p>Lima transaksi terakhir pada grup ini.</p>
+                        </div>
+                        <a class="text-link" href="#transaksi">Lihat semua →</a>
+                    </div>
+                    <div class="table-fancy-wrap">
+                        <table class="table-fancy table-stack">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Deskripsi</th>
+                                    <th scope="col">Tanggal</th>
+                                    <th scope="col">Kategori</th>
+                                    <th scope="col" class="num">Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="cell-title">Pelunasan Kas November &mdash; Oktavian Kusuma</td>
+                                    <td class="nowrap" data-label="Tanggal">25 Nov 2026</td>
+                                    <td data-label="Kategori"><span class="cat-text">Iuran Kas</span></td>
+                                    <td class="num amount-in" data-label="Pemasukan">+ Rp 25.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="cell-title">Cetak modul &amp; fotokopi soal kuis</td>
+                                    <td class="nowrap" data-label="Tanggal">24 Nov 2026</td>
+                                    <td data-label="Kategori"><span class="cat-text">Kebutuhan Kelas</span></td>
+                                    <td class="num amount-out" data-label="Pengeluaran">&minus; Rp 120.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="cell-title">Pelunasan Kas November &mdash; Ibni Andarta</td>
+                                    <td class="nowrap" data-label="Tanggal">23 Nov 2026</td>
+                                    <td data-label="Kategori"><span class="cat-text">Iuran Kas</span></td>
+                                    <td class="num amount-in" data-label="Pemasukan">+ Rp 25.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="cell-title">Pembelian spidol &amp; penghapus papan tulis</td>
+                                    <td class="nowrap" data-label="Tanggal">21 Nov 2026</td>
+                                    <td data-label="Kategori"><span class="cat-text">Kebutuhan Kelas</span></td>
+                                    <td class="num amount-out" data-label="Pengeluaran">&minus; Rp 45.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="cell-title">Pelunasan Kas November &mdash; M. Ferdi Afiyanto</td>
+                                    <td class="nowrap" data-label="Tanggal">20 Nov 2026</td>
+                                    <td data-label="Kategori"><span class="cat-text">Iuran Kas</span></td>
+                                    <td class="num amount-in" data-label="Pemasukan">+ Rp 25.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div class="toast-area" id="toast-area" aria-live="polite"></div>
+    <script src="simulasi.js"></script>
+</body>
+
+</html>

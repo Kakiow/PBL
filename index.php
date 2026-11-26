@@ -104,36 +104,28 @@ include __DIR__ . '/includes/header.php';
     <p><?php echo e($grup['deskripsi'] ?: 'Kelola pemasukan, pengeluaran, dan pembayaran kas.'); ?></p>
 </div>
 
+<section class="stats" aria-label="Ringkasan kas grup">
+    <article class="stat-card is-primary"><span>Saldo kas</span><strong><?php echo rupiah($saldo_akhir); ?></strong></article>
+    <article class="stat-card"><span>Total pemasukan</span><strong><?php echo rupiah($saldo['pemasukan']); ?></strong></article>
+    <article class="stat-card"><span>Total pengeluaran</span><strong><?php echo rupiah($saldo['pengeluaran']); ?></strong></article>
+    <article class="stat-card"><span>Anggota</span><strong><?php echo (int) $total_anggota; ?></strong></article>
+</section>
+
 <div class="dash-grid<?php echo $kelola ? ' has-side' : ''; ?>">
     <section class="content-card" aria-labelledby="judul-tagihan-kamu">
         <div class="card-head">
-            <div>
-                <h2 id="judul-tagihan-kamu">Tagihan kamu</h2>
-                <p class="dash-summary">
-                    <?php if ($jumlah_harus_bayar > 0): ?>
-                    <strong><?php echo rupiah($belum_dibayar); ?></strong> belum dibayar dari
-                    <?php echo $jumlah_harus_bayar; ?> tagihan<?php echo $jumlah_menunggu > 0 ? ' &middot; ' . $jumlah_menunggu . ' menunggu verifikasi' : ''; ?>.
-                    <?php elseif ($jumlah_menunggu > 0): ?>
-                    Semua sudah kamu bayar. <?php echo $jumlah_menunggu; ?> pembayaran sedang menunggu verifikasi.
-                    <?php elseif ($total_tagihan > 0): ?>
-                    Semua tagihan kamu sudah lunas.
-                    <?php else: ?>
-                    Belum ada tagihan untukmu di grup ini.
-                    <?php endif; ?>
-                </p>
-            </div>
+            <h2 id="judul-tagihan-kamu">Tagihan kamu</h2>
             <a class="text-link" href="tagihan/index.php">Semua tagihan →</a>
         </div>
 
         <?php if ($tampil_tagihan): ?>
         <ul class="bill-list">
-            <?php foreach ($tampil_tagihan as $t): $tenggat = info_tenggat($t['tenggat_waktu']); ?>
+            <?php foreach ($tampil_tagihan as $t): $tenggat = info_tenggat($t['tenggat_waktu']); $ditolak = $t['status'] === 'Ditolak'; ?>
             <li class="bill-item">
                 <div>
                     <a class="bill-title" href="tagihan/detail.php?id=<?php echo (int) $t['id']; ?>"><?php echo e($t['judul']); ?></a>
-                    <span class="bill-meta">
-                        <span>Tenggat <?php echo e(tanggal_id($t['tenggat_waktu'])); ?></span>
-                        <span class="<?php echo $tenggat['lewat'] ? 'is-late' : ''; ?>"><?php echo e($tenggat['teks']); ?></span>
+                    <span class="bill-meta<?php echo ($tenggat['lewat'] || $ditolak) ? ' is-late' : ''; ?>">
+                        <?php echo $tenggat['lewat'] ? e($tenggat['teks']) : 'Tenggat ' . e(tanggal_id($t['tenggat_waktu'])); ?><?php echo $ditolak ? ' &middot; Ditolak' : ''; ?>
                     </span>
                 </div>
                 <span class="bill-amount"><?php echo rupiah($t['jumlah']); ?></span>
@@ -141,18 +133,17 @@ include __DIR__ . '/includes/header.php';
                     <?php if ($t['status'] === 'Menunggu'): ?>
                     <span class="badge warning"><?php echo e(label_status('Menunggu')); ?></span>
                     <?php else: ?>
-                    <a class="btn primary small" href="tagihan/bayar.php?id=<?php echo (int) $t['id']; ?>"><?php echo $t['status'] === 'Ditolak' ? 'Bayar ulang' : 'Bayar'; ?></a>
+                    <a class="btn primary small" href="tagihan/bayar.php?id=<?php echo (int) $t['id']; ?>"><?php echo $ditolak ? 'Bayar ulang' : 'Bayar'; ?></a>
                     <?php endif; ?>
                 </span>
-                <?php if ($t['status'] === 'Ditolak'): ?>
-                <p class="bill-reason">Ditolak<?php echo trim((string) $t['catatan']) !== '' ? ': ' . e($t['catatan']) : '. Hubungi Bendahara untuk detailnya.'; ?></p>
-                <?php endif; ?>
             </li>
             <?php endforeach; ?>
         </ul>
         <?php if (count($tagihan_terbuka) > count($tampil_tagihan)): ?>
         <p class="bill-more"><a href="tagihan/index.php">dan <?php echo count($tagihan_terbuka) - count($tampil_tagihan); ?> tagihan lainnya</a></p>
         <?php endif; ?>
+        <?php else: ?>
+        <p class="dash-empty"><?php echo $total_tagihan > 0 ? 'Semua tagihan kamu sudah lunas.' : 'Belum ada tagihan untukmu di grup ini.'; ?></p>
         <?php endif; ?>
     </section>
 
@@ -176,13 +167,6 @@ include __DIR__ . '/includes/header.php';
     <?php endif; ?>
 </div>
 
-<section class="stats" aria-label="Ringkasan kas grup">
-    <article class="stat-card is-primary"><span>Saldo kas</span><strong><?php echo rupiah($saldo_akhir); ?></strong></article>
-    <article class="stat-card is-in"><span>Total pemasukan</span><strong><?php echo rupiah($saldo['pemasukan']); ?></strong></article>
-    <article class="stat-card is-out"><span>Total pengeluaran</span><strong><?php echo rupiah($saldo['pengeluaran']); ?></strong></article>
-    <article class="stat-card"><span>Anggota</span><strong><?php echo (int) $total_anggota; ?></strong></article>
-</section>
-
 <section class="content-card">
     <div class="card-head">
         <div>
@@ -192,7 +176,7 @@ include __DIR__ . '/includes/header.php';
         <a class="text-link" href="transaksi/index.php">Lihat semua →</a>
     </div>
     <div class="table-fancy-wrap">
-        <table class="table-fancy table-stack">
+        <table class="table-fancy table-stack dash-table">
             <thead>
                 <tr>
                     <th scope="col">Deskripsi</th>
@@ -209,7 +193,7 @@ include __DIR__ . '/includes/header.php';
                 <tr>
                     <td class="cell-title"><?php echo e($row['deskripsi'] ?: $row['nama_kategori']); ?></td>
                     <td class="nowrap" data-label="Tanggal"><?php echo e(tanggal_id($row['tanggal_transaksi'])); ?></td>
-                    <td data-label="Kategori"><span class="chip"><?php echo e($row['nama_kategori']); ?></span></td>
+                    <td data-label="Kategori"><span class="cat-text"><?php echo e($row['nama_kategori']); ?></span></td>
                     <td class="num <?php echo $masuk ? 'amount-in' : 'amount-out'; ?>" data-label="<?php echo e($row['jenis']); ?>">
                         <?php echo $masuk ? '+' : '&minus;'; ?> <?php echo rupiah($row['jumlah']); ?>
                     </td>
