@@ -176,12 +176,16 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <section class="content-card">
-    <nav class="tabs" aria-label="Saring pembayaran">
-        <a href="index.php?tab=menunggu"<?php echo $tab === 'menunggu' ? ' aria-current="page"' : ''; ?>>Menunggu
+    <nav class="tabs" aria-label="Saring pembayaran" data-verif-tabs>
+        <a href="index.php?tab=menunggu" data-tab="menunggu"<?php echo $tab === 'menunggu' ? ' aria-current="page"' : ''; ?>>Menunggu
             <span class="tab-count"><?php echo count($menunggu); ?></span></a>
-        <a href="index.php?tab=riwayat"<?php echo $tab === 'riwayat' ? ' aria-current="page"' : ''; ?>>Riwayat
+        <a href="index.php?tab=riwayat" data-tab="riwayat"<?php echo $tab === 'riwayat' ? ' aria-current="page"' : ''; ?>>Riwayat
             <span class="tab-count"><?php echo count($riwayat); ?></span></a>
     </nav>
+    <?php
+    $render_tabel = function (array $rows, string $mode) use ($boleh_verifikasi, $tampil_bukti) {
+        $kolom_aksi = $mode === 'menunggu' && $boleh_verifikasi;
+        ?>
     <div class="table-fancy-wrap">
         <table class="table-fancy table-stack">
             <thead>
@@ -192,17 +196,17 @@ include __DIR__ . '/../includes/header.php';
                     <th scope="col">Metode</th>
                     <th scope="col">Dikirim</th>
                     <th scope="col">Bukti</th>
-                    <?php if ($tab === 'riwayat'): ?><th scope="col">Status</th><?php endif; ?>
+                    <?php if ($mode === 'riwayat'): ?><th scope="col">Status</th><?php endif; ?>
                     <?php if ($kolom_aksi): ?><th scope="col" class="num"><span class="sr-only">Aksi</span></th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>
-                <?php if (!$data): ?><tr class="empty">
-                    <td colspan="7"><?php echo $tab === 'menunggu'
+                <?php if (!$rows): ?><tr class="empty">
+                    <td colspan="7"><?php echo $mode === 'menunggu'
                             ? 'Tidak ada pembayaran yang menunggu verifikasi.'
                             : 'Belum ada pembayaran yang diproses.'; ?></td>
                 </tr><?php endif; ?>
-                <?php foreach ($data as $row):
+                <?php foreach ($rows as $row):
                     $tanpa_bukti = $row['metode_pembayaran'] !== 'Tunai' && (string) $row['berkas_bukti'] === '';
                     $pesan_setuju = 'Setujui pembayaran ' . rupiah($row['jumlah']) . ' dari ' . $row['nama'] . '? Nominal ini dicatat sebagai pemasukan kas.'
                         . ($tanpa_bukti ? ' Perhatian: bukti pembayaran tidak ada.' : '');
@@ -214,7 +218,7 @@ include __DIR__ . '/../includes/header.php';
                     <td class="cell-nowrap" data-label="Metode"><?php echo e($row['metode_pembayaran']); ?></td>
                     <td class="nowrap" data-label="Dikirim"><?php echo e(tanggal_id($row['tanggal_pembayaran'], true)); ?></td>
                     <td data-label="Bukti"><?php echo $tampil_bukti($row); ?></td>
-                    <?php if ($tab === 'riwayat'): ?>
+                    <?php if ($mode === 'riwayat'): ?>
                     <td data-label="Status"><span class="cell-value">
                         <span class="badge <?php echo kelas_status($row['status']); ?>"><?php echo e(label_status($row['status'])); ?></span>
                         <?php if ($row['status'] === 'Ditolak' && trim((string) $row['catatan']) !== ''): ?>
@@ -256,6 +260,19 @@ include __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </div>
+        <?php
+    };
+    ?>
+    <div class="verif-viewport" id="verif-viewport">
+        <div class="verif-track" id="verif-track" data-active-tab="<?php echo e($tab); ?>">
+            <div class="verif-panel<?php echo $tab === 'menunggu' ? ' is-active' : ''; ?>" data-panel="menunggu">
+                <?php $render_tabel($menunggu, 'menunggu'); ?>
+            </div>
+            <div class="verif-panel<?php echo $tab === 'riwayat' ? ' is-active' : ''; ?>" data-panel="riwayat">
+                <?php $render_tabel($riwayat, 'riwayat'); ?>
+            </div>
+        </div>
     </div>
 </section>
 

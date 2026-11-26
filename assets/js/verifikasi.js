@@ -142,4 +142,115 @@
       });
     }
   }
+
+  // --- 3. Animasi Geser Halus Tab Menunggu <-> Riwayat ---
+
+  const tabsNav = document.querySelector('[data-verif-tabs]');
+  const viewport = document.getElementById('verif-viewport');
+  const track = document.getElementById('verif-track');
+
+  if (tabsNav && viewport && track) {
+    let slideTimer = null;
+    let rafId = null;
+
+    function selesaikanSlide(targetTab) {
+      if (slideTimer) {
+        clearTimeout(slideTimer);
+        slideTimer = null;
+      }
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      viewport.classList.remove('is-sliding');
+      viewport.style.height = '';
+      track.style.transition = '';
+      track.style.transform = '';
+      track.setAttribute('data-active-tab', targetTab);
+      track.querySelectorAll('.verif-panel').forEach(function (panel) {
+        panel.classList.remove('is-target');
+        panel.classList.toggle('is-active', panel.getAttribute('data-panel') === targetTab);
+      });
+    }
+
+    tabsNav.addEventListener('click', function (e) {
+      const link = e.target.closest('a[data-tab]');
+      if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+
+      const targetTab = link.getAttribute('data-tab');
+      const currentTab = track.getAttribute('data-active-tab') || 'menunggu';
+      if (targetTab === currentTab) return;
+
+      tutupSemuaReject(null);
+
+      tabsNav.querySelectorAll('a[data-tab]').forEach(function (a) {
+        if (a === link) {
+          a.setAttribute('aria-current', 'page');
+        } else {
+          a.removeAttribute('aria-current');
+        }
+      });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', link.getAttribute('href'));
+      }
+
+      const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) {
+        selesaikanSlide(targetTab);
+        return;
+      }
+
+      if (slideTimer) {
+        clearTimeout(slideTimer);
+        slideTimer = null;
+      }
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      const startH = viewport.offsetHeight;
+      const startX = currentTab === 'riwayat' ? '-50%' : '0%';
+      const endX = targetTab === 'riwayat' ? '-50%' : '0%';
+      const currentPanel = track.querySelector('.verif-panel[data-panel="' + currentTab + '"]');
+      const targetPanel = track.querySelector('.verif-panel[data-panel="' + targetTab + '"]');
+
+      track.style.transition = 'none';
+      track.style.transform = 'translate3d(' + startX + ', 0, 0)';
+      if (currentPanel) currentPanel.classList.add('is-target');
+      if (targetPanel) targetPanel.classList.remove('is-target');
+
+      viewport.style.height = startH + 'px';
+      viewport.classList.add('is-sliding');
+
+      const endH = targetPanel ? targetPanel.offsetHeight : startH;
+      track.setAttribute('data-active-tab', targetTab);
+
+      // Tunggu 1 frame agar layout panel tujuan selesai sebelum animasi dimulai
+      rafId = requestAnimationFrame(function () {
+        rafId = requestAnimationFrame(function () {
+          track.style.transition = '';
+          track.style.transform = 'translate3d(' + endX + ', 0, 0)';
+          if (currentPanel) currentPanel.classList.remove('is-target');
+          if (targetPanel) targetPanel.classList.add('is-target');
+          if (Math.abs(endH - startH) > 2) {
+            viewport.style.height = endH + 'px';
+          }
+
+          const onEnd = function (ev) {
+            if (ev.target !== track || ev.propertyName !== 'transform') return;
+            track.removeEventListener('transitionend', onEnd);
+            selesaikanSlide(targetTab);
+          };
+          track.addEventListener('transitionend', onEnd);
+
+          slideTimer = setTimeout(function () {
+            track.removeEventListener('transitionend', onEnd);
+            selesaikanSlide(targetTab);
+          }, 420);
+        });
+      });
+    });
+  }
 })();

@@ -357,3 +357,48 @@ body:has(.proof-dialog[open]) {
     padding: 6px 8px;
   }
 }
+
+/* Transisi geser halus antar tab Menunggu <-> Riwayat -------------------- */
+.verif-viewport {
+  overflow: visible;
+  transition: height 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.verif-viewport.is-sliding {
+  overflow: hidden;
+}
+.verif-track {
+  display: block;
+}
+.verif-viewport.is-sliding .verif-track {
+  display: flex;
+  align-items: flex-start;
+  width: 200%;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.verif-panel {
+  display: none;
+  min-width: 0;
+  contain: layout style;
+}
+.verif-panel.is-active {
+  display: block;
+}
+.verif-viewport.is-sliding .verif-panel {
+  display: block;
+  flex: 0 0 50%;
+  width: 50%;
+  opacity: 0.45;
+  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.verif-viewport.is-sliding .verif-panel.is-target {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verif-viewport,
+  .verif-viewport.is-sliding .verif-track,
+  .verif-viewport.is-sliding .verif-panel {
+    transition: none !important;
+  }
+}
