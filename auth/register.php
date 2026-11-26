@@ -9,6 +9,11 @@ if (isset($_SESSION['user'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('register.php');
+    }
+
     $nama = trim($_POST['nama'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -45,6 +50,7 @@ include __DIR__ . '/../includes/auth_head.php';
         <p class="muted">Daftarkan akun untuk mulai menggunakan SIMKAS.</p>
         <?php tampil_flash(); ?>
         <form method="post">
+            <?php csrf_field(); ?>
             <p><label for="nama">Nama</label><input type="text" id="nama" name="nama" required></p>
             <p><label for="email">Email</label><input type="email" id="email" name="email" required></p>
             <p>

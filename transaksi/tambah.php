@@ -16,6 +16,11 @@ if (!boleh_kelola_transaksi($role)) {
 $kategori = opsi_form_transaksi($pdo, $id_grup);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('tambah.php');
+    }
+
     $in = input_transaksi();
 
     if ($in === null) {

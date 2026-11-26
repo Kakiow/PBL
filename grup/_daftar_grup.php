@@ -119,6 +119,7 @@ if ($grup_aktif_data === null && $grup_lainnya) {
             </div>
             <div class="grup-row-actions">
                 <form method="post" class="grup-pilih-form">
+                    <?php csrf_field(); ?>
                     <input type="hidden" name="aksi" value="pilih_grup">
                     <input type="hidden" name="id_grup" value="<?php echo (int) $g['id']; ?>">
                     <button type="submit" class="btn secondary small">Jadikan aktif</button>

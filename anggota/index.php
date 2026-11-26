@@ -17,6 +17,11 @@ $id_grup = (int) $grup['id'];
 $saya_admin = role_group($pdo, $id_grup, $id_user) === 'Admin';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $saya_admin) {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('index.php');
+    }
+
     $aksi = $_POST['aksi'] ?? '';
 
     if ($aksi === 'ubah_role') {
@@ -131,6 +136,7 @@ include __DIR__ . '/../includes/header.php';
 </header>
 
 <form method="post" id="anggota-form-role">
+    <?php csrf_field(); ?>
     <?php if ($saya_admin): ?><input type="hidden" name="aksi" value="ubah_role"><?php endif; ?>
     <section class="content-card">
         <div class="anggota-toolbar">

@@ -47,6 +47,11 @@ if (!$sasaran_semua) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $kelola) {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('detail.php?id=' . $id);
+    }
+
     $aksi = $_POST['aksi'] ?? '';
 
     if ($aksi === 'tagihkan_anggota_baru') {
@@ -134,6 +139,7 @@ include __DIR__ . '/../includes/header.php';
             <a class="btn secondary small" href="edit.php?id=<?php echo (int) $k['id']; ?>">Edit tagihan</a>
             <form method="post" action="hapus.php"
                 data-konfirmasi="Hapus tagihan <?php echo e($k['judul']); ?>? Pembayaran yang belum disetujui dan buktinya ikut terhapus.">
+                <?php csrf_field(); ?>
                 <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
                 <button class="btn ghost-danger small" type="submit">Hapus</button>
             </form>
@@ -191,6 +197,7 @@ include __DIR__ . '/../includes/header.php';
         </div>
         <?php if ($kelola && $sasaran_semua && $belum_tertagih > 0): ?>
         <form method="post" data-konfirmasi="Tagihkan <?php echo e($k['judul']); ?> ke <?php echo $belum_tertagih; ?> anggota baru?">
+            <?php csrf_field(); ?>
             <input type="hidden" name="aksi" value="tagihkan_anggota_baru">
             <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
             <button class="btn primary small" type="submit">Tagihkan ke <?php echo $belum_tertagih; ?> anggota baru</button>
@@ -201,6 +208,7 @@ include __DIR__ . '/../includes/header.php';
     <details class="sasaran-tambah">
         <summary class="btn secondary small">Tambah sasaran</summary>
         <form method="post" class="sasaran-tambah-form">
+            <?php csrf_field(); ?>
             <input type="hidden" name="aksi" value="tambah_sasaran">
             <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
             <p class="form-hint">Centang anggota yang ingin ditambahkan ke tagihan ini.</p>

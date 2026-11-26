@@ -24,6 +24,7 @@ if (!isset($grup_saya)) {
         <p class="form-hint">Buat grup baru dan kamu otomatis menjadi Admin. Kode grup dibuat
             otomatis dan dapat dibagikan dari halaman Detail grup.</p>
         <form method="post" action="index.php">
+            <?php csrf_field(); ?>
             <input type="hidden" name="aksi" value="buat_grup">
             <p>
                 <label for="nama_grup">Nama grup</label>
@@ -62,6 +63,7 @@ if (!isset($grup_saya)) {
         </h2>
         <p class="form-hint">Punya kode dari teman? Masukkan kodenya untuk bergabung ke grup kas.</p>
         <form method="post" action="index.php">
+            <?php csrf_field(); ?>
             <input type="hidden" name="aksi" value="gabung_grup">
             <p>
                 <label for="kode_grup">Kode grup</label>

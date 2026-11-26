@@ -37,6 +37,11 @@ $nominal_terkunci = (bool) $row['nominal_terkunci'];
 $tenggat_min = min(date('Y-m-d'), (string) $row['tenggat_waktu']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('edit.php?id=' . $id);
+    }
+
     $judul = trim($_POST['judul'] ?? '');
     $jumlah = $nominal_terkunci ? (float) $row['jumlah'] : (float) ($_POST['jumlah'] ?? 0);
     $tenggat = (string) ($_POST['tenggat_waktu'] ?? '');

@@ -16,6 +16,11 @@ bersihkan_bukti_otomatis($pdo);
 $tab = ($_GET['tab'] ?? '') === 'riwayat' ? 'riwayat' : 'menunggu';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $boleh_verifikasi) {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('index.php?tab=' . $tab);
+    }
+
     $id = (int) ($_POST['id'] ?? 0);
     $status = $_POST['status'] ?? '';
     $catatan = trim((string) ($_POST['catatan'] ?? ''));
@@ -148,7 +153,7 @@ $tampil_bukti = function ($row) use ($tab, $boleh_verifikasi, $id_user) {
             : '<span class="muted">Sudah dihapus</span>';
     }
 
-    $url = '../storage/uploads/' . rawurlencode($nama);
+    $url = 'bukti.php?id=' . (int) $row['id'];
     $pdf = strtolower(pathinfo($nama, PATHINFO_EXTENSION)) === 'pdf';
     $pratinjau = $pdf
         ? '<span class="proof-file" aria-hidden="true">PDF</span>'
@@ -231,6 +236,7 @@ include __DIR__ . '/../includes/header.php';
                         <div class="row-actions">
                             <form method="post" class="inline-form" action="index.php?tab=menunggu"
                                 data-konfirmasi="<?php echo e($pesan_setuju); ?>">
+                                <?php csrf_field(); ?>
                                 <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
                                 <button name="status" value="Disetujui" class="btn success small">Setujui</button>
                             </form>
@@ -238,6 +244,7 @@ include __DIR__ . '/../includes/header.php';
                                 <summary class="btn ghost-danger small">Tolak</summary>
                                 <div class="reject-bubble">
                                     <form method="post" class="reject-form" action="index.php?tab=menunggu">
+                                        <?php csrf_field(); ?>
                                         <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
                                         <input type="hidden" name="status" value="Ditolak">
                                         <div class="reject-head">

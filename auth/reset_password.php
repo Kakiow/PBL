@@ -12,6 +12,9 @@ $error = null;
 if (!$reset) {
     $error = 'Link reset tidak valid atau sudah kedaluwarsa. Silakan minta link baru.';
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        $error = 'Sesi formulir kedaluwarsa. Silakan muat ulang halaman dan coba lagi.';
+    } else {
     $password = $_POST['password'] ?? '';
     $konfirmasi = $_POST['konfirmasi'] ?? '';
 
@@ -72,6 +75,7 @@ if (!$reset) {
             $reset = false;
         }
     }
+    }
 }
 
 $page_title = 'Reset password';
@@ -89,6 +93,7 @@ include __DIR__ . '/../includes/auth_head.php';
 
         <?php if ($reset): ?>
         <form method="post">
+            <?php csrf_field(); ?>
             <input type="hidden" name="token" value="<?php echo e($token); ?>">
             <p>
                 <label for="password">Password baru</label>

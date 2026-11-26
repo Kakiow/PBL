@@ -34,6 +34,11 @@ if ($jumlah_anggota <= 1) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['aksi'] ?? '') === 'keluar_grup') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('detail.php?id=' . $id);
+    }
+
     if ($alasan_tak_bisa_keluar !== '') {
         flash('error', $alasan_tak_bisa_keluar);
     } else {
@@ -118,6 +123,7 @@ include __DIR__ . '/../includes/header.php';
             <a class="btn secondary" href="edit.php?id=<?php echo $id; ?>">Edit grup</a>
             <?php endif; ?>
             <form method="post" data-konfirmasi="Keluar dari grup <?php echo e($g['nama_grup']); ?>?">
+                <?php csrf_field(); ?>
                 <input type="hidden" name="aksi" value="keluar_grup">
                 <input type="hidden" name="id" value="<?php echo $id; ?>">
                 <button class="btn ghost-danger" type="submit"<?php echo $alasan_tak_bisa_keluar !== '' ? ' disabled aria-describedby="alasan-keluar"' : ''; ?>>Keluar grup</button>

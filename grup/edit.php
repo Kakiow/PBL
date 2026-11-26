@@ -17,6 +17,11 @@ if (!$g || $peran !== 'Admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('edit.php?id=' . $id);
+    }
+
     $nama = trim($_POST['nama_grup'] ?? '');
     $deskripsi = trim($_POST['deskripsi'] ?? '');
     $info_pembayaran = trim($_POST['info_pembayaran'] ?? '');
@@ -60,6 +65,7 @@ include __DIR__ . '/../includes/header.php';
         Data grup
     </h2>
     <form method="post">
+        <?php csrf_field(); ?>
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <p>
             <label for="nama_grup">Nama grup</label>

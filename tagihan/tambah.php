@@ -22,6 +22,11 @@ $mode_sasaran = 'semua';
 $sasaran_terpilih = $id_anggota;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('tambah.php');
+    }
+
     $judul = trim($_POST['judul'] ?? '');
     $jumlah = (float) ($_POST['jumlah'] ?? 0);
     $tenggat = (string) ($_POST['tenggat_waktu'] ?? '');

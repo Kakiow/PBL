@@ -30,6 +30,7 @@ $val_deskripsi = (string) ($row['deskripsi'] ?? '');
         <h2>Detail transaksi</h2>
     </div>
     <form method="post" class="form-transaksi" data-jenis="<?php echo e(strtolower($val_jenis)); ?>">
+        <?php csrf_field(); ?>
         <div class="trx-layout">
             <div class="trx-fields">
                 <p class="field">

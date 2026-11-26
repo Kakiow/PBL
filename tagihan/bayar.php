@@ -47,6 +47,11 @@ if (in_array($ak['status'], ['Lunas', 'Menunggu'], true)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('bayar.php?id=' . $id);
+    }
+
     $metode = $_POST['metode_pembayaran'] ?? '';
     $jumlah = (float) $k['jumlah'];
     $tunai = $metode === 'Tunai';
@@ -143,6 +148,7 @@ include __DIR__ . '/../includes/header.php';
     </div>
 
     <form method="post" enctype="multipart/form-data" id="form-bayar">
+        <?php csrf_field(); ?>
         <input type="hidden" name="id" value="<?php echo (int) $k['id']; ?>">
         <div class="field">
             <span class="field-label">Pilih metode pembayaran</span>

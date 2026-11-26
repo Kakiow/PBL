@@ -13,6 +13,11 @@ $mail_config = require __DIR__ . '/../config/mail.php';
 $email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('lupa_password.php');
+    }
+
     $email = trim($_POST['email'] ?? '');
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -66,6 +71,7 @@ include __DIR__ . '/../includes/auth_head.php';
             terdaftar.</p>
         <?php tampil_flash(); ?>
         <form method="post">
+            <?php csrf_field(); ?>
             <p>
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" value="<?php echo e($email); ?>" required

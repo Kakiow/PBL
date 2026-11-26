@@ -10,6 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('index.php');
 }
 
+if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+    flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+    redirect($id > 0 ? 'detail.php?id=' . $id : 'index.php');
+}
+
 if (!peran_pengelola($role)) {
     flash('error', 'Hanya Admin dan Bendahara yang dapat menghapus tagihan.');
     redirect('index.php');

@@ -36,6 +36,7 @@ $total_anggota = count($anggota_grup);
 
 <section class="form-card form-card--create">
     <form method="post" class="form-tagihan">
+        <?php csrf_field(); ?>
         <?php if ($is_edit): ?>
         <input type="hidden" name="id" value="<?php echo (int) ($row['id'] ?? 0); ?>">
         <?php endif; ?>

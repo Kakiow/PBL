@@ -7,6 +7,11 @@ $page_js = ['grup-dialog.js', 'grup.js'];
 $id_user = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('index.php');
+    }
+
     $aksi = $_POST['aksi'] ?? '';
 
     if ($aksi === 'buat_grup') {

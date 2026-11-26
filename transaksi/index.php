@@ -8,6 +8,11 @@ $role = cek_role($pdo, $id_grup, akses_menu()['transaksi']);
 $kelola = boleh_kelola_transaksi($role);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $kelola) {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('index.php');
+    }
+
     $aksi = $_POST['aksi'] ?? '';
 
     if ($aksi === 'hapus') {
@@ -80,6 +85,7 @@ include __DIR__ . '/../includes/header.php';
                             <a class="btn secondary small" href="edit.php?id=<?php echo (int) $row['id']; ?>">Edit</a>
                             <form method="post" class="inline-form"
                                 data-konfirmasi="Hapus transaksi <?php echo e(($masuk ? 'pemasukan ' : 'pengeluaran ') . rupiah($row['jumlah'])); ?>? Saldo kas akan berubah.">
+                                <?php csrf_field(); ?>
                                 <input type="hidden" name="aksi" value="hapus">
                                 <input type="hidden" name="id" value="<?php echo (int) $row['id']; ?>">
                                 <button class="btn ghost-danger small" type="submit">Hapus</button>

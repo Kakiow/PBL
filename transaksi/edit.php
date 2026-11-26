@@ -27,6 +27,11 @@ if (!$row) {
 $kategori = opsi_form_transaksi($pdo, $id_grup);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('edit.php?id=' . $id);
+    }
+
     $in = input_transaksi();
 
     if ($in === null) {

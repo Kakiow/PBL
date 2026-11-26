@@ -18,6 +18,11 @@ if (!$g || $peran !== 'Admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_valid($_POST['csrf_token'] ?? '')) {
+        flash('error', 'Sesi formulir kedaluwarsa. Silakan coba lagi.');
+        redirect('hapus.php?id=' . $id);
+    }
+
     $konfirmasi = trim($_POST['konfirmasi'] ?? '');
 
     if (!hash_equals((string) $g['nama_grup'], $konfirmasi)) {
@@ -104,6 +109,7 @@ include __DIR__ . '/../includes/header.php';
         <strong><?php echo e($g['nama_grup']); ?></strong>. Ketik <strong><?php echo e($g['nama_grup']); ?></strong>
         untuk mengaktifkan tombol hapus.</p>
     <form method="post">
+        <?php csrf_field(); ?>
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <p>
             <label for="konfirmasi">Ketik nama grup</label>
