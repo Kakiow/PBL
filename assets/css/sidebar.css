@@ -3,8 +3,8 @@
    ========================================================================== */
 
 :root {
-  --sidebar-w: 264px;
-  --rail-w: 76px;
+  --sidebar-w: 244px;
+  --rail-w: 72px;
 }
 
 .app-shell {
@@ -21,9 +21,9 @@
   display: flex;
   flex-direction: column;
   width: var(--sidebar-w);
-  padding: 20px 14px 16px;
-  background: var(--sidebar);
-  border-right: 1px solid var(--sidebar-border);
+  padding: 18px 12px 14px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
   overflow-y: auto;
 }
 
@@ -31,8 +31,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 0 6px;
+  gap: 8px;
+  padding: 0 4px;
 }
 .brand {
   display: flex;
@@ -47,14 +47,13 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: linear-gradient(140deg, #4a6ea8, var(--primary));
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  background: var(--primary);
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(47, 74, 122, 0.26);
 }
 .brand-text {
   display: flex;
@@ -64,26 +63,27 @@
 .brand-name {
   display: block;
   color: var(--text);
-  font-size: 1.24rem;
+  font-size: 0.96rem;
   font-weight: 800;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 .brand-role {
   display: block;
-  margin-top: 2px;
-  color: var(--sidebar-muted);
-  font-size: 0.8rem;
-  font-weight: 600;
+  margin-top: 1px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 500;
 }
 
 /* Kotak pengguna --------------------------------------------------------- */
 .sidebar-foot {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
   margin-top: auto;
-  padding: 16px 6px 0;
-  border-top: 1px solid var(--border-strong);
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border);
 }
 .user-card {
   display: flex;
@@ -92,13 +92,12 @@
   min-width: 0;
 }
 a.user-card {
-  margin: -6px;
-  padding: 6px;
+  padding: 7px 8px;
   border-radius: var(--r-sm);
-  transition: background 0.18s ease;
+  transition: background 0.15s ease;
 }
 a.user-card:hover {
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--bg);
   text-decoration: none;
 }
 a.user-card:focus-visible {
@@ -109,12 +108,12 @@ a.user-card:focus-visible {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: linear-gradient(140deg, #4a6ea8, var(--primary));
-  color: #fff;
-  font-size: 0.85rem;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.8rem;
   font-weight: 700;
 }
 img.avatar,
@@ -137,39 +136,41 @@ img.avatar,
 }
 .user-name {
   color: var(--text);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 .user-email {
-  color: var(--sidebar-muted);
-  font-size: 0.74rem;
+  color: var(--muted);
+  font-size: 0.72rem;
 }
 .logout-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 12px;
-  border: 1px solid var(--border-strong);
+  gap: 10px;
+  padding: 8px 10px;
+  border: 0;
   border-radius: var(--r-sm);
-  background: var(--surface);
-  color: var(--danger);
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .logout-btn:hover {
-  border-color: #efd4d2;
   background: var(--danger-soft);
+  color: var(--danger);
   text-decoration: none;
 }
 .logout-icon {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
 }
 .logout-icon svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }
 
 /* Area utama ------------------------------------------------------------- */

@@ -3,18 +3,18 @@
    ========================================================================== */
 
 .sidebar-nav {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 .nav-list {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 5px;
+  gap: 2px;
 }
 .nav-group {
-  margin: 14px 8px 4px;
-  color: var(--sidebar-muted);
-  font-size: 0.72rem;
+  margin: 14px 10px 4px;
+  color: var(--muted);
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -29,20 +29,17 @@
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  border: 1px solid transparent;
   border-radius: var(--r-sm);
   color: var(--text-soft);
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease,
-    transform 0.18s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .nav-item:hover {
-  border-color: var(--border-strong);
-  background: var(--surface);
+  background: var(--bg);
   color: var(--text);
-  transform: translateX(3px);
+  text-decoration: none;
 }
 .nav-item:focus-visible {
   outline: 2px solid var(--primary);
@@ -60,36 +57,21 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  transition: background 0.2s ease, color 0.2s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  transition: color 0.15s ease;
 }
 .nav-icon svg {
   width: 17px;
   height: 17px;
 }
 .nav-item:hover .nav-icon {
-  background: #dbe4f6;
-  transform: scale(1.06);
+  color: var(--text);
 }
 
-/* Chevron muncul saat hover ---------------------------------------------- */
 .nav-chevron {
-  flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
-  margin-left: auto;
-  color: var(--primary);
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-.nav-item:hover .nav-chevron {
-  opacity: 1;
-  transform: none;
+  display: none;
 }
 
 /* Badge angka (dari database) -------------------------------------------- */
@@ -100,50 +82,34 @@
   min-width: 20px;
   height: 20px;
   margin-left: auto;
-  padding: 0 6px;
+  padding: 0 7px;
   border-radius: 999px;
-  background: var(--danger);
-  color: #fff;
-  font-size: 0.72rem;
+  background: var(--bg);
+  color: var(--text-soft);
+  font-size: 0.74rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.nav-item:hover .nav-badge {
-  transform: scale(1.08);
-}
-.nav-badge + .nav-chevron {
-  margin-left: 4px;
 }
 
 /* Status aktif ----------------------------------------------------------- */
 .nav-item.is-active {
-  background: var(--surface);
-  border-color: transparent;
-  box-shadow: inset 3px 0 0 var(--primary), 0 8px 20px rgba(47, 74, 122, 0.11);
+  background: var(--primary-soft);
   color: var(--primary);
   font-weight: 700;
 }
-.nav-item.is-active .nav-label {
+.nav-item.is-active .nav-label,
+.nav-item.is-active .nav-icon {
   color: var(--primary);
 }
-.nav-item.is-active .nav-icon {
-  background: var(--primary);
-  color: #fff;
-  transform: none;
-}
-.nav-item.is-active:hover .nav-chevron {
-  opacity: 0.9;
+.nav-item.is-active .nav-badge {
+  background: var(--surface);
+  color: var(--primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nav-item,
   .nav-icon,
-  .nav-chevron,
   .nav-badge {
     transition: none !important;
-  }
-  .nav-item:hover {
-    transform: none;
   }
 }
